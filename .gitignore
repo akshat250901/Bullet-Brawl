@@ -1,0 +1,10 @@
+# Executables
+*.exe
+*.out
+*.app
+
+# Directories
+/template/build/*
+/template/out/*
+/.vs/*
+/.vscode/*
