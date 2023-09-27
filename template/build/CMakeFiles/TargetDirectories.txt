@@ -1,3 +1,0 @@
-C:/Users/danny/OneDrive/Desktop/template/build/CMakeFiles/salmon.dir
-C:/Users/danny/OneDrive/Desktop/template/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/danny/OneDrive/Desktop/template/build/CMakeFiles/ZERO_CHECK.dir

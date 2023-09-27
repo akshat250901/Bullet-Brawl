@@ -8,3 +8,10 @@
 /template/out/*
 /.vs/*
 /.vscode/*
+
+/build/*
+/template/.vscode/*
+
+/template/ext/project_path.hpp
+
+/template/ext/src/*
