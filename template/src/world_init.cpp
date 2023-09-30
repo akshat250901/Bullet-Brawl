@@ -19,6 +19,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
+	registry.colors.insert(entity, { 1.0f, 0.8f, 0.8f });
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
@@ -28,7 +29,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	return entity;
 }
 
-Entity createPlatform(RenderSystem* renderer, vec2 position)
+Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position)
 {
 	// Reserve en entity
 	auto entity = Entity();
@@ -45,7 +46,8 @@ Entity createPlatform(RenderSystem* renderer, vec2 position)
 
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = vec2({ 300, 20 });
-
+	registry.platforms.emplace(entity);
+	registry.colors.insert(entity, color);
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
