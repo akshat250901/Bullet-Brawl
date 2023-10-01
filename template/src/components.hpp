@@ -7,7 +7,10 @@
 // Player component
 struct Player
 {
-
+	// If player is colliding with a platmorm, they are grounded
+	bool is_grounded = false;
+	// Number of jumps available after the player is no longer grounded
+	int jump_remaining = 1;
 };
 
 // Turtles have a hard shell
@@ -28,6 +31,12 @@ struct Platform
 	bool colliderActive = true;
 };
 
+// Gravity
+struct Gravity
+{
+	// This value is how strong the gravity is
+	float force = 500.0f;
+};
 
 // All data relevant to the shape and motion of entities
 struct Motion {

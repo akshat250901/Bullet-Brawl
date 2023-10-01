@@ -17,6 +17,9 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	
 	motion.scale = vec2({ 20, 50 });
 
+	// Add gravity component
+	Gravity& gravity = registry.gravity.emplace(entity);
+
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
 	registry.renderRequests.insert(
@@ -44,7 +47,7 @@ Entity createPlatform(RenderSystem* renderer, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({ 300, 20 });
+	motion.scale = vec2({ 900, 20 });
 
 	registry.renderRequests.insert(
 		entity,
