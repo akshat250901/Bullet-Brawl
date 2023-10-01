@@ -199,11 +199,11 @@ void WorldSystem::restart_game() {
 
 	// Create a new player
 	player = createPlayer(renderer, { 500, 200 });
-	registry.colors.insert(player, {1, 0.8f, 0.8f});
+	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create a platform
-	Entity platform = createPlatform(renderer, {600, 400});
-	registry.platforms.emplace(platform);
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 });
+
 }
 
 // Compute collisions between entities
