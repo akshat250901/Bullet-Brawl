@@ -11,6 +11,8 @@ struct Player
 	bool is_grounded = false;
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
+	// Jump force
+	float jump_force = 300.0f;
 };
 
 // Turtles have a hard shell

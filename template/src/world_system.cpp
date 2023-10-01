@@ -201,8 +201,11 @@ void WorldSystem::restart_game() {
 	player = createPlayer(renderer, { 500, 200 });
 	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
-	// Create a platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 });
+	// Create platforms
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 }, { 500, 20 }); // bottom platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 200 }, { 200, 20 }); // top platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 900, 300 }, { 200, 20 }); // top left
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 300, 300 }, { 200, 20 }); // top right
 
 }
 
@@ -303,21 +306,13 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		if (upKey) {
 			if (player_object.is_grounded) {
-				playerMotion.velocity.y = -200.0f;
+				playerMotion.velocity.y = -player_object.jump_force;
 			}
 			else if (player_object.jump_remaining > 0) {
-				playerMotion.velocity.y = -200.0f;
+				playerMotion.velocity.y = -player_object.jump_force;
 				player_object.jump_remaining--;
 			}
 		}
-
-		/*if (upKey && !downKey) {
-			playerMotion.velocity.y = -playerSpeed;
-		} else if (!upKey && downKey) {
-			playerMotion.velocity.y = playerSpeed;
-		} else if ((upKey && downKey) || (!upKey && !downKey)) {
-			playerMotion.velocity.y = 0;
-		}*/
 	}
 
 	// Resetting game

@@ -32,7 +32,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	return entity;
 }
 
-Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position)
+Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size)
 {
 	// Reserve en entity
 	auto entity = Entity();
@@ -48,7 +48,7 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position)
 	motion.position = position;
 
 	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = vec2({ 900, 20 });
+	motion.scale = size;
 	registry.platforms.emplace(entity);
 	registry.colors.insert(entity, color);
 	registry.renderRequests.insert(
