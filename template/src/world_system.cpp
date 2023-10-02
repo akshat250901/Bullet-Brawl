@@ -287,22 +287,27 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	} else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 		downKey = false;
 	}
-	
 
+	Player& player_object = registry.players.get(player);
+	
 	if (!registry.deathTimers.has(player)) {
-		float playerSpeed = 200.f;
 		Motion& playerMotion = registry.motions.get(player);
 		//Handle inputs for left and right arrow keys
 
 		if (rightKey && !leftKey) {
-			playerMotion.velocity.x = playerSpeed;
+			playerMotion.velocity.x = player_object.speed;
+			player_object.is_running_right = true;
 		} else if (!rightKey && leftKey) {
-			playerMotion.velocity.x = -playerSpeed;
-		} else if ((rightKey && leftKey) || (!rightKey && !leftKey)) {
+			playerMotion.velocity.x = -player_object.speed;
+			player_object.is_running_left = true;
+		} else if (rightKey && leftKey) {
 			playerMotion.velocity.x = 0;
+			player_object.is_running_left = false;
+			player_object.is_running_right = false;
+		} else if (!rightKey && !leftKey) {
+			player_object.is_running_left = false;
+			player_object.is_running_right = false;
 		}
-
-		Player& player_object = registry.players.get(player);
 
 		if (upKey) {
 			if (player_object.is_grounded) {

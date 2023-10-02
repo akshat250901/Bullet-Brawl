@@ -33,6 +33,38 @@ void PhysicsSystem::step(float elapsed_ms)
 		motion.position += step_seconds * motion.velocity;
 	}
 
+	// Apply friction to all entities with friction component that just stopped moving
+	
+	auto& friction_container = registry.friction;
+
+	for (uint i = 0; i < friction_container.size(); i++)
+	{
+		Friction& friction = friction_container.components[i];
+		
+		// Get player entity
+		Entity entity_i = friction_container.entities[i];
+
+		// Get player
+		Player& player = registry.players.get(entity_i);
+
+		// Get motion component
+		Motion& motion = registry.motions.get(entity_i);
+
+		if (motion.velocity.x != 0.0f) {
+			// apply friction force to left if player just stops moving right
+			if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
+				motion.velocity -= vec2(friction.force * step_seconds, 0.0f);
+			}
+
+			// apply friction force to right if player just stops moving left
+			if ((!player.is_running_left) && (motion.velocity.x < 0.0f)) {
+				motion.velocity += vec2(friction.force * step_seconds, 0.0f);
+			}
+			}
+	}
+
+
+
 	auto& gravity_container = registry.gravity;
 
 	// Apply gravity to all entities with gravity component
