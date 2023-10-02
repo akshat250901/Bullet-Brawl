@@ -198,21 +198,24 @@ void WorldSystem::restart_game() {
 	registry.list_all_components();
 
 	// Create a new player
-	player = createPlayer(renderer, { 100, 200 });
-	//registry.colors.insert(player, {1, 0.8f, 0.8f});
+	player = createPlayer(renderer, { 500, 200 });
+	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
-	// Create a platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, {600, 400});
-	//registry.platforms.emplace(platform);
+	// Create platforms
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 }, { 500, 20 }); // bottom platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 200 }, { 200, 20 }); // top platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 900, 300 }, { 200, 20 }); // top left
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 300, 300 }, { 200, 20 }); // top right
 
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, {600, 200});
-	//registry.platforms.emplace(platform2);
 }
 
 // Compute collisions between entities
 void WorldSystem::handle_collisions() {
 	// Loop over all collisions detected by the physics system
 	auto& collisionsRegistry = registry.collisions;
+
+	// Flag to check if there are no player-platform collisions
+	bool noPlayerPlatformCollisions = true;
 
 	for (uint i = 0; i < collisionsRegistry.components.size(); i++) {
 		// The entity and its collider
@@ -226,11 +229,28 @@ void WorldSystem::handle_collisions() {
 				Motion& platformMotion = registry.motions.get(entity_other);
 				Platform& platform = registry.platforms.get(entity_other);
 
+				// Player is touching the platform
+				Player& player = registry.players.get(entity);
+
 				if (playerMotion.velocity.y > 0 && platform.colliderActive) {
 					playerMotion.position.y = platformMotion.position.y - (platformMotion.scale.y / 2.0f) - (playerMotion.scale.y / 2.0f);
+					player.is_grounded = true;
+					player.jump_remaining = 1;
+					playerMotion.velocity.y = 0;
+
+					// There is a player platform collision
+					noPlayerPlatformCollisions = false;
 				}
 			}
 		}
+	}
+
+
+	Player& player_object = registry.players.get(player);
+
+	// if there are no player platform collisions, the player is not grounded
+	if (noPlayerPlatformCollisions) {
+		player_object.is_grounded = false;
 	}
 
 	// Remove all collisions from this simulation step
@@ -282,12 +302,16 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 			playerMotion.velocity.x = 0;
 		}
 
-		if (upKey && !downKey) {
-			playerMotion.velocity.y = -playerSpeed;
-		} else if (!upKey && downKey) {
-			playerMotion.velocity.y = playerSpeed;
-		} else if ((upKey && downKey) || (!upKey && !downKey)) {
-			playerMotion.velocity.y = 0;
+		Player& player_object = registry.players.get(player);
+
+		if (upKey) {
+			if (player_object.is_grounded) {
+				playerMotion.velocity.y = -player_object.jump_force;
+			}
+			else if (player_object.jump_remaining > 0) {
+				playerMotion.velocity.y = -player_object.jump_force;
+				player_object.jump_remaining--;
+			}
 		}
 	}
 
