@@ -53,12 +53,12 @@ void PhysicsSystem::step(float elapsed_ms)
 		if (motion.velocity.x != 0.0f) {
 			// apply friction force to left if player just stops moving right
 			if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
-				motion.velocity -= vec2(friction.force * step_seconds, 0.0f);
+				motion.velocity -= vec2(motion.velocity.x * 2 * step_seconds, 0.0f);
 			}
 
 			// apply friction force to right if player just stops moving left
 			if ((!player.is_running_left) && (motion.velocity.x < 0.0f)) {
-				motion.velocity += vec2(friction.force * step_seconds, 0.0f);
+				motion.velocity -= vec2(motion.velocity.x *	2 * step_seconds, 0.0f);
 			}
 			}
 	}

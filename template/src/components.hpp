@@ -13,6 +13,8 @@ struct Player
 	int jump_remaining = 1;
 	// Jump force
 	float jump_force = 300.0f;
+	// Running force
+	float running_force = 20.f;
 	// Running speed
 	float speed = 200.f;
 	// True if player is running left
@@ -42,8 +44,7 @@ struct Platform
 // Horizontal Friction
 struct Friction
 {
-	// Horozontal frictional force acting opposite to running direction
-	float force = 250.f;
+	
 };
 
 // Gravity
