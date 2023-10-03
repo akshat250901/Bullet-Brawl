@@ -18,7 +18,11 @@ const size_t FISH_DELAY_MS = 5000 * 3;
 WorldSystem::WorldSystem()
 	: points(0)
 	, next_turtle_spawn(0.f)
-	, next_fish_spawn(0.f) {
+	, next_fish_spawn(0.f)
+	, upKey(false)
+	, downKey(false)
+	, rightKey(false)
+	, leftKey(false) {
 	// Seeding rng with random device
 	rng = std::default_random_engine(std::random_device()());
 }
@@ -134,20 +138,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	while (registry.debugComponents.entities.size() > 0)
 	    registry.remove_all_components_of(registry.debugComponents.entities.back());
 
-	// Removing out of screen entities
-	auto& motion_container = registry.motions;
-
-	// Remove entities that leave the screen on the left side
-	// Iterate backwards to be able to remove without unterfering with the next object to visit
-	// (the containers exchange the last element with the current)
-	for (int i = (int)motion_container.components.size()-1; i>=0; --i) {
-	    Motion& motion = motion_container.components[i];
-		if (motion.position.x + abs(motion.scale.x) < 0.f) {
-			if(!registry.players.has(motion_container.entities[i])) // don't remove the player
-				registry.remove_all_components_of(motion_container.entities[i]);
-		}
-	}
-
 	// Enable and disable platform colliders based on player position
 	Motion& playerMotion = registry.motions.get(player);
 	for (Entity entity : registry.platforms.entities) {
@@ -208,40 +198,24 @@ void WorldSystem::restart_game() {
 	registry.list_all_components();
 
 	// Create a new player
-	player = createPlayer(renderer, { 100, 200 });
-	//registry.colors.insert(player, {1, 0.8f, 0.8f});
+	player = createPlayer(renderer, { 500, 200 });
+	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
-	// Create a platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, {600, 400});
-	//registry.platforms.emplace(platform);
+	// Create platforms
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 }, { 500, 20 }); // bottom platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 200 }, { 200, 20 }); // top platform
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 900, 300 }, { 200, 20 }); // top left
+	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 300, 300 }, { 200, 20 }); // top right
 
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, {600, 200});
-	//registry.platforms.emplace(platform2);
-}
-
-
-bool collides1(const Motion& motion1, const Motion& motion2)
-{
-    // Calculate the half width and half height for each rectangle
-    float halfWidth1 = motion1.scale.x / 2.0f;
-    float halfHeight1 = motion1.scale.y / 2.0f;
-    float halfWidth2 = motion2.scale.x / 2.0f;
-    float halfHeight2 = motion2.scale.y / 2.0f;
-
-    // Check for overlap in the x-axis
-    if (abs(motion1.position.x - motion2.position.x) < (halfWidth1 + halfWidth2)) {
-        // Check for overlap in the y-axis
-        if (abs(motion1.position.y - motion2.position.y) < (halfHeight1 + halfHeight2)) {
-            return true; // The rectangles intersect
-        }
-    }
-    return false; // The rectangles don't intersect
 }
 
 // Compute collisions between entities
 void WorldSystem::handle_collisions() {
 	// Loop over all collisions detected by the physics system
 	auto& collisionsRegistry = registry.collisions;
+
+	// Flag to check if there are no player-platform collisions
+	bool noPlayerPlatformCollisions = true;
 
 	for (uint i = 0; i < collisionsRegistry.components.size(); i++) {
 		// The entity and its collider
@@ -255,11 +229,28 @@ void WorldSystem::handle_collisions() {
 				Motion& platformMotion = registry.motions.get(entity_other);
 				Platform& platform = registry.platforms.get(entity_other);
 
+				// Player is touching the platform
+				Player& player = registry.players.get(entity);
+
 				if (playerMotion.velocity.y > 0 && platform.colliderActive) {
 					playerMotion.position.y = platformMotion.position.y - (platformMotion.scale.y / 2.0f) - (playerMotion.scale.y / 2.0f);
+					player.is_grounded = true;
+					player.jump_remaining = 1;
+					playerMotion.velocity.y = 0;
+
+					// There is a player platform collision
+					noPlayerPlatformCollisions = false;
 				}
 			}
 		}
+	}
+
+
+	Player& player_object = registry.players.get(player);
+
+	// if there are no player platform collisions, the player is not grounded
+	if (noPlayerPlatformCollisions) {
+		player_object.is_grounded = false;
 	}
 
 	// Remove all collisions from this simulation step
@@ -275,33 +266,53 @@ bool WorldSystem::is_over() const {
 void WorldSystem::on_key(int key, int, int action, int mod) {
 
 	// Key handler for arrow keys
-	if (!registry.deathTimers.has(player)) {
-	float salmonSpeed = 200.f;
-	if (key == GLFW_KEY_RIGHT || key == GLFW_KEY_LEFT) {
-		Motion& salmonMotion = registry.motions.get(player);
-		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-			salmonMotion.velocity.x += salmonSpeed;
-		} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			salmonMotion.velocity.x -= salmonSpeed;
-		} else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-			salmonMotion.velocity.x -= salmonSpeed;
-		} else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-			salmonMotion.velocity.x += salmonSpeed;
-		}
+	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+		rightKey = true;
+	} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+		leftKey = true;
+	} else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+		rightKey = false;
+	} else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+		leftKey = false;
 	}
+	
 
-	if (key == GLFW_KEY_UP || key == GLFW_KEY_DOWN) {
-		Motion& salmonMotion = registry.motions.get(player);
-		if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-			salmonMotion.velocity.y -= salmonSpeed;
-		} else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-			salmonMotion.velocity.y += salmonSpeed;
-		} else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-			salmonMotion.velocity.y += salmonSpeed;
-		} else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-			salmonMotion.velocity.y -= salmonSpeed;
-		}
+			
+	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+		upKey = true;
+	} else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+		downKey = true;
+	} else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+		upKey = false;
+	} else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+		downKey = false;
 	}
+	
+
+	if (!registry.deathTimers.has(player)) {
+		float playerSpeed = 200.f;
+		Motion& playerMotion = registry.motions.get(player);
+		//Handle inputs for left and right arrow keys
+
+		if (rightKey && !leftKey) {
+			playerMotion.velocity.x = playerSpeed;
+		} else if (!rightKey && leftKey) {
+			playerMotion.velocity.x = -playerSpeed;
+		} else if ((rightKey && leftKey) || (!rightKey && !leftKey)) {
+			playerMotion.velocity.x = 0;
+		}
+
+		Player& player_object = registry.players.get(player);
+
+		if (upKey) {
+			if (player_object.is_grounded) {
+				playerMotion.velocity.y = -player_object.jump_force;
+			}
+			else if (player_object.jump_remaining > 0) {
+				playerMotion.velocity.y = -player_object.jump_force;
+				player_object.jump_remaining--;
+			}
+		}
 	}
 
 	// Resetting game

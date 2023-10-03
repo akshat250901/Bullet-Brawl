@@ -58,6 +58,12 @@ private:
 	float next_fish_spawn;
 	Entity player;
 
+	//Key states
+	bool upKey;
+	bool downKey;
+	bool rightKey;
+	bool leftKey;
+
 	// music references
 	Mix_Music* background_music;
 	Mix_Chunk* salmon_dead_sound;
