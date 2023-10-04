@@ -313,6 +313,12 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 				player_object.jump_remaining--;
 			}
 		}
+
+		if (downKey) {
+			if (player_object.is_grounded) {
+				playerMotion.position.y += 10.0f;
+			}
+		}
 	}
 
 	// Resetting game
