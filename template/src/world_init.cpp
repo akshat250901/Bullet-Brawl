@@ -22,7 +22,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
-	registry.colors.insert(entity, { 1.0f, 0.8f, 0.8f });
+	registry.colors.insert(entity, { 0.0f, 1.0f, 0.0f });
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed

@@ -202,10 +202,10 @@ void WorldSystem::restart_game() {
 	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 }, { 500, 20 }); // bottom platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 200 }, { 200, 20 }); // top platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 900, 300 }, { 200, 20 }); // top left
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 300, 300 }, { 200, 20 }); // top right
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 400 }, { 500, 20 }); // bottom platform
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 200 }, { 200, 20 }); // top platform
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 900, 300 }, { 200, 20 }); // top left
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 300, 300 }, { 200, 20 }); // top right
 
 }
 
@@ -316,7 +316,7 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		if (downKey) {
 			if (player_object.is_grounded) {
-				playerMotion.position.y += 10.0f;
+				playerMotion.position.y += 1.0f;
 			}
 		}
 	}
