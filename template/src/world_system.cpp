@@ -292,29 +292,18 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	
 	if (!registry.deathTimers.has(player)) {
 		Motion& playerMotion = registry.motions.get(player);
+		
 		//Handle inputs for left and right arrow keys
-
 		if (rightKey && !leftKey) {
-			if(playerMotion.velocity.x <= player_object.speed - player_object.running_force) {
-				playerMotion.velocity.x += player_object.running_force;
-				if (playerMotion.velocity.x == 0) {
-					playerMotion.velocity.x += player_object.running_force;
-				}
-			}
 			player_object.is_running_right = true;
 		} else if (!rightKey && leftKey) {
-			if(playerMotion.velocity.x >= -player_object.speed + player_object.running_force) {
-				playerMotion.velocity.x -= player_object.running_force;
-				if (playerMotion.velocity.x == 0) {
-					playerMotion.velocity.x -= player_object.running_force;
-				}
-			}
 			player_object.is_running_left = true;
-		} else if ((rightKey && leftKey) || (!rightKey && !leftKey)) {
+		} else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
 			player_object.is_running_left = false;
 			player_object.is_running_right = false;
 		}
 
+		// Handle up arrow input for jumping
 		if (upKey) {
 			if (player_object.is_grounded) {
 				playerMotion.velocity.y = -player_object.jump_force;
