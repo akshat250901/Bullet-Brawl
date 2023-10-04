@@ -14,13 +14,13 @@ struct Player
 	// Jump force
 	float jump_force = 300.0f;
 	// Running force
-	float running_force = 20.f;
+	float running_force = 400.f;
 	// Running speed
 	float speed = 200.f;
 	// True if player is running left
 	bool is_running_left = false; 
 	// True if player is running right
-	bool is_running_right = false; 
+	bool is_running_right = false;
 };
 
 // Turtles have a hard shell
@@ -44,7 +44,7 @@ struct Platform
 // Horizontal Friction
 struct Friction
 {
-	
+
 };
 
 // Gravity
