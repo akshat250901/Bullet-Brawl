@@ -60,10 +60,13 @@ void PhysicsSystem::step(float elapsed_ms)
 		// Get motion component
 		Motion& motion = registry.motions.get(entity_i);
 
+		const float deceleration_force = 5.0;
+		const float opposite_direction_force = 3.0;
+
 		if (motion.velocity.x != 0.0f) {
 			// Apply friction force to left if player just stops moving right
 			if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
-				motion.velocity.x -= motion.velocity.x * 5 * step_seconds;
+				motion.velocity.x -= motion.velocity.x * deceleration_force * step_seconds;
 			}
 
 			// Apply friction force to right if player just stops moving left
@@ -71,13 +74,13 @@ void PhysicsSystem::step(float elapsed_ms)
 				motion.velocity.x -= motion.velocity.x * 5 * step_seconds;
 			}
 
-			// Apply more force to slow down if opposite arrow keys are presses
+			// Apply more force to slow down if opposite arrow keys are pressed
 			if ((player.is_running_left) && (motion.velocity.x > 0.0f)) {
-				motion.velocity.x -= motion.velocity.x * 3 * step_seconds;
+				motion.velocity.x -= motion.velocity.x * opposite_direction_force * step_seconds;
 			}
 
 			if ((player.is_running_right) && (motion.velocity.x < 0.0f)) {
-				motion.velocity.x -= motion.velocity.x * 3 * step_seconds;
+				motion.velocity.x -= motion.velocity.x * opposite_direction_force * step_seconds;
 			}
 		}
 	}
