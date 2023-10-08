@@ -20,6 +20,9 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	// Add gravity component
 	Gravity& gravity = registry.gravity.emplace(entity);
 
+	// Add horizontal friction component
+	Friction& friction = registry.friction.emplace(entity);
+
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
 	registry.colors.insert(entity, { 0.0f, 1.0f, 0.0f });
