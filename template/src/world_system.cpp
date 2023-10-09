@@ -217,10 +217,10 @@ void WorldSystem::restart_game() {
 	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 400 }, { 500, 20 }); // bottom platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 600, 200 }, { 200, 20 }); // top platform
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 900, 300 }, { 200, 20 }); // top left
-	createPlatform(renderer, { 1, 0.8f, 0.8f }, { 300, 300 }, { 200, 20 }); // top right
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 400 }, { 500, 20 }); // bottom platform
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 200 }, { 200, 20 }); // top platform
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 900, 300 }, { 200, 20 }); // top left
+	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 300, 300 }, { 200, 20 }); // top right
 
 }
 
@@ -314,23 +314,23 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	} else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 		downKey = false;
 	}
+
+	Player& player_object = registry.players.get(player);
 	
-
 	if (!registry.deathTimers.has(player)) {
-		float playerSpeed = 200.f;
 		Motion& playerMotion = registry.motions.get(player);
+		
 		//Handle inputs for left and right arrow keys
-
 		if (rightKey && !leftKey) {
-			playerMotion.velocity.x = playerSpeed;
+			player_object.is_running_right = true;
 		} else if (!rightKey && leftKey) {
-			playerMotion.velocity.x = -playerSpeed;
-		} else if ((rightKey && leftKey) || (!rightKey && !leftKey)) {
-			playerMotion.velocity.x = 0;
+			player_object.is_running_left = true;
+		} else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
+			player_object.is_running_left = false;
+			player_object.is_running_right = false;
 		}
 
-		Player& player_object = registry.players.get(player);
-
+		// Handle up arrow input for jumping
 		if (upKey) {
 			if (player_object.is_grounded) {
 				playerMotion.velocity.y = -player_object.jump_force;
@@ -338,6 +338,12 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 			else if (player_object.jump_remaining > 0) {
 				playerMotion.velocity.y = -player_object.jump_force;
 				player_object.jump_remaining--;
+			}
+		}
+
+		if (downKey) {
+			if (player_object.is_grounded) {
+				playerMotion.position.y += 1.0f;
 			}
 		}
 	}

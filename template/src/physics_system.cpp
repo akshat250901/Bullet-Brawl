@@ -30,8 +30,62 @@ void PhysicsSystem::step(float elapsed_ms)
 	for(uint i = 0; i < motion_container.size(); i++)
 	{
 		Motion& motion = motion_container.components[i];
+		Entity entity_i = motion_container.entities[i];
+
+		// Accelerate to change velocity if entity is player
+		if(registry.players.has(entity_i)) {
+			Player& player = registry.players.get(entity_i);
+			if ((player.is_running_right) && (motion.velocity.x <= player.speed)) {
+				motion.velocity.x += player.running_force * step_seconds;
+			}
+			if ((player.is_running_left) && (motion.velocity.x >= -player.speed)) {
+				motion.velocity.x -= player.running_force * step_seconds;
+			}
+		}
+
 		motion.position += step_seconds * motion.velocity;
 	}
+
+	// Apply friction to all entities with friction component that just stopped moving
+	auto& friction_container = registry.friction;
+
+	for (uint i = 0; i < friction_container.size(); i++)
+	{		
+		// Get entity
+		Entity entity_i = friction_container.entities[i];
+
+		// Get player
+		Player& player = registry.players.get(entity_i);
+
+		// Get motion component
+		Motion& motion = registry.motions.get(entity_i);
+
+		const float deceleration_force = 5.0;
+		const float opposite_direction_force = 3.0;
+
+		if (motion.velocity.x != 0.0f) {
+			// Apply friction force to left if player just stops moving right
+			if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
+				motion.velocity.x -= motion.velocity.x * deceleration_force * step_seconds;
+			}
+
+			// Apply friction force to right if player just stops moving left
+			if ((!player.is_running_left) && (motion.velocity.x < 0.0f)) {
+				motion.velocity.x -= motion.velocity.x * 5 * step_seconds;
+			}
+
+			// Apply more force to slow down if opposite arrow keys are pressed
+			if ((player.is_running_left) && (motion.velocity.x > 0.0f)) {
+				motion.velocity.x -= motion.velocity.x * opposite_direction_force * step_seconds;
+			}
+
+			if ((player.is_running_right) && (motion.velocity.x < 0.0f)) {
+				motion.velocity.x -= motion.velocity.x * opposite_direction_force * step_seconds;
+			}
+		}
+	}
+
+
 
 	auto& gravity_container = registry.gravity;
 
