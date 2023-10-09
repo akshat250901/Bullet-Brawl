@@ -25,6 +25,7 @@ public:
 	ComponentContainer<DebugComponent> debugComponents;
 	ComponentContainer<vec3> colors;
 	ComponentContainer<Platform> platforms;
+	ComponentContainer<Bullet> bullets;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -44,6 +45,7 @@ public:
 		registry_list.push_back(&debugComponents);
 		registry_list.push_back(&colors);
 		registry_list.push_back(&platforms);
+		registry_list.push_back(&bullets);
 	}
 
 	void clear_all_components() {

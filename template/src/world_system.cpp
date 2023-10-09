@@ -138,6 +138,21 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	while (registry.debugComponents.entities.size() > 0)
 	    registry.remove_all_components_of(registry.debugComponents.entities.back());
 
+	// Removing out of screen entities
+	auto& motion_container = registry.motions;
+
+	// Remove entities that leave the screen
+	// Iterate backwards to be able to remove without unterfering with the next object to visit
+	// (the containers exchange the last element with the current)
+	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
+		Motion& motion = motion_container.components[i];
+		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px || 
+			motion.position.y + abs(motion.scale.y) < 0.f || motion.position.y + abs(motion.scale.y) > window_height_px) {
+			if (!registry.players.has(motion_container.entities[i]) && registry.bullets.has(motion_container.entities[i])) // removing only bullets
+				registry.remove_all_components_of(motion_container.entities[i]);
+		}
+	}
+
 	// Enable and disable platform colliders based on player position
 	Motion& playerMotion = registry.motions.get(player);
 	for (Entity entity : registry.platforms.entities) {
@@ -264,6 +279,18 @@ bool WorldSystem::is_over() const {
 
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
+
+	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+		Motion& player_motion = registry.motions.get(player);
+
+		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
+		Motion& bullet_motion = registry.motions.get(bullet);
+	}else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+		Motion& player_motion = registry.motions.get(player);
+
+		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
+		Motion& bullet_motion = registry.motions.get(bullet);
+	}
 
 	// Key handler for arrow keys
 	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {

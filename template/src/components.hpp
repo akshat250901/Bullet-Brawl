@@ -40,6 +40,12 @@ struct Gravity
 	float force = 500.0f;
 };
 
+// Bullet
+struct Bullet
+{
+
+};
+
 // All data relevant to the shape and motion of entities
 struct Motion {
 	vec2 position = { 0.f, 0.f };
