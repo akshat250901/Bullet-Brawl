@@ -26,11 +26,17 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
 	registry.colors.insert(entity, { 0.0f, 1.0f, 0.0f });
+	//registry.renderRequests.insert(
+	//	entity,
+	//	{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+	//		EFFECT_ASSET_ID::COLOURED,
+	//		GEOMETRY_BUFFER_ID::SQUARE });
+
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+		{ TEXTURE_ASSET_ID::PLAYER,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
 }
@@ -70,14 +76,16 @@ Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 	float angle = -45.f * M_PI/180;
 	auto entity = Entity();
 
+	Player& player_entity = registry.players.get(player);
+
 	// Setting initial motion values
 	Motion& motion = registry.motions.emplace(entity);
 	motion.position = pos; // Set the bullet's initial position
-	float vx = bulletSpeed;
+	float vx = bulletSpeed * (player_entity.facing_right == 1 ? 1: -1);
 	float vy = 0;
 	if (isProjectile) {
 		// Calculate the initial velocity components
-		 vx = bulletSpeed * cos(angle);
+		 vx = bulletSpeed * cos(angle) * (player_entity.facing_right == 1 ? 1 : -1);
 		 vy = 2.f * bulletSpeed * sin(angle) + initialUpwardVelocity;
 	}
 	

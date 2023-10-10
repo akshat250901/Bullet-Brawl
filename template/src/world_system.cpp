@@ -325,8 +325,10 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		//Handle inputs for left and right arrow keys
 		if (rightKey && !leftKey) {
 			player_object.is_running_right = true;
+			player_object.facing_right = true;
 		} else if (!rightKey && leftKey) {
 			player_object.is_running_left = true;
+			player_object.facing_right = false;
 		} else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
 			player_object.is_running_left = false;
 			player_object.is_running_right = false;

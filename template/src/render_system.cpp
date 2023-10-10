@@ -11,9 +11,21 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	// Transformation code, see Rendering and Transformation in the template
 	// specification for more info Incrementally updates transformation matrix,
 	// thus ORDER IS IMPORTANT
+	
 	Transform transform;
 	transform.translate(motion.position);
-	transform.scale(motion.scale);
+
+	// flip player
+	if (registry.players.has(entity)) {
+		Player& player = registry.players.get(entity);
+		vec2 flipScale = { -20.0f, 50.0f }; // I just got this value through guess and checking, will need to change later
+		transform.scale(player.facing_right ? motion.scale : flipScale);
+	}
+	else {
+		transform.scale(motion.scale);
+	}
+
+
 	// !!! TODO A1: add rotation to the chain of transformations, mind the order
 	// of transformations
 
