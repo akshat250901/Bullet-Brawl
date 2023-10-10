@@ -9,6 +9,8 @@ struct Player
 {
 	// If player is colliding with a platmorm, they are grounded
 	bool is_grounded = false;
+	// Direction player is facing for sprite (default facing right)
+	bool facing_right = true;
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
 	// Jump force
@@ -151,7 +153,8 @@ struct Mesh
 enum class TEXTURE_ASSET_ID {
 	FISH = 0,
 	TURTLE = FISH + 1,
-	TEXTURE_COUNT = TURTLE + 1
+	PLAYER = TURTLE + 1,
+	TEXTURE_COUNT = PLAYER + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
