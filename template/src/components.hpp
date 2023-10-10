@@ -12,7 +12,15 @@ struct Player
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
 	// Jump force
-	float jump_force = 300.0f;
+	float jump_force = 400.0f;
+	// Running force
+	float running_force = 400.f;
+	// Running speed
+	float speed = 200.f;
+	// True if player is running left
+	bool is_running_left = false; 
+	// True if player is running right
+	bool is_running_right = false;
 };
 
 // Turtles have a hard shell
@@ -33,11 +41,23 @@ struct Platform
 	bool colliderActive = true;
 };
 
+// Horizontal Friction
+struct Friction
+{
+
+};
+
 // Gravity
 struct Gravity
 {
 	// This value is how strong the gravity is
-	float force = 500.0f;
+	float force = 800.0f;
+};
+
+// Bullet
+struct Bullet
+{
+
 };
 
 // All data relevant to the shape and motion of entities

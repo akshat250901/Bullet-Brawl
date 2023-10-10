@@ -20,9 +20,12 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	// Add gravity component
 	Gravity& gravity = registry.gravity.emplace(entity);
 
+	// Add horizontal friction component
+	Friction& friction = registry.friction.emplace(entity);
+
 	// Create and (empty) Salmon component to be able to refer to all turtles
 	registry.players.emplace(entity);
-	registry.colors.insert(entity, { 1.0f, 0.8f, 0.8f });
+	registry.colors.insert(entity, { 0.0f, 1.0f, 0.0f });
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
@@ -51,6 +54,46 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	motion.scale = size;
 	registry.platforms.emplace(entity);
 	registry.colors.insert(entity, color);
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+			EFFECT_ASSET_ID::COLOURED,
+			GEOMETRY_BUFFER_ID::SQUARE });
+
+	return entity;
+}
+
+Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
+{
+	float bulletSpeed = 500.f; // Adjust the bullet's speed as needed
+	float initialUpwardVelocity = 500.f; // Adjust the initial upward velocity as needed
+	float angle = -45.f * M_PI/180;
+	auto entity = Entity();
+
+	// Setting initial motion values
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = pos; // Set the bullet's initial position
+	float vx = bulletSpeed;
+	float vy = 0;
+	if (isProjectile) {
+		// Calculate the initial velocity components
+		 vx = bulletSpeed * cos(angle);
+		 vy = 2.f * bulletSpeed * sin(angle) + initialUpwardVelocity;
+	}
+	
+
+	// Apply the initial upward velocity
+	motion.velocity.x = vx;
+	motion.velocity.y = vy;
+
+
+	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
+	registry.bullets.emplace(entity);
+	if (isProjectile)
+	{
+		registry.gravity.emplace(entity);
+	}
+
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed

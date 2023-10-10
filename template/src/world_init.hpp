@@ -20,5 +20,6 @@ Entity createTurtle(RenderSystem* renderer, vec2 position);
 Entity createLine(vec2 position, vec2 size);
 // a pebble
 Entity createPebble(vec2 pos, vec2 size);
-
+// a bullet
+Entity createBullet(bool isProjectile, vec2 pos, Entity& player);
 
