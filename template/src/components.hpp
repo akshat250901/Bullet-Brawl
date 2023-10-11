@@ -43,6 +43,12 @@ struct Platform
 	bool colliderActive = true;
 };
 
+// Platforms
+struct Background
+{
+
+};
+
 // Horizontal Friction
 struct Friction
 {

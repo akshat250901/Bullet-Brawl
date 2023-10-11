@@ -211,6 +211,8 @@ void WorldSystem::restart_game() {
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
+	//change background color
+	createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 10,10 }, { 5000, 5000 });
 
 	// Create a new player
 	player = createPlayer(renderer, { 500, 200 });
