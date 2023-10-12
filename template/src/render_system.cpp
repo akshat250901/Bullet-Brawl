@@ -18,7 +18,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	// flip player
 	if (registry.players.has(entity)) {
 		Player& player = registry.players.get(entity); 
-		vec2 flipScale = { -20.0f,50.0f }; // I just got this value through guess and checking, will need to change later
+		vec2 flipScale = { -motion.scale.x ,motion.scale.y };
 		transform.scale(player.facing_right ? motion.scale : flipScale);
 	}
 	else {

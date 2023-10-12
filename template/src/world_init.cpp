@@ -15,7 +15,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	motion.angle = 0.f;
 	motion.velocity = { 0.f, 0.f };
 	
-	motion.scale = vec2({ 20, 50 });
+	motion.scale = vec2({ 30, 50 });
 
 	// Add gravity component
 	Gravity& gravity = registry.gravity.emplace(entity);
@@ -48,7 +48,7 @@ Entity createPlayer2(RenderSystem* renderer, vec2 pos)
 	motion.angle = 0.f;
 	motion.velocity = { 0.f, 0.f };
 
-	motion.scale = vec2({ 20, 50 });
+	motion.scale = vec2({ 30, 50 });
 
 	// Add gravity component
 	Gravity& gravity = registry.gravity.emplace(entity);
