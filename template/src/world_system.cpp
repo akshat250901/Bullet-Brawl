@@ -319,6 +319,9 @@ bool WorldSystem::is_over() const {
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
 
+	Player& player_object = registry.players.get(player);
+	Player& player_object_2 = registry.players.get(player2); 
+
 	if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player);
 
@@ -331,7 +334,7 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
 		Motion& bullet_motion = registry.motions.get(bullet);
 		player_object.is_shooting = true;
-	}else if (key == GLFW_KEY_F && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
+	}else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
 		player_object.is_shooting = false;
 	}
 
@@ -377,6 +380,10 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
 		Motion& bullet_motion = registry.motions.get(bullet);
+		player_object_2.is_shooting = true;
+	}
+	else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
+		player_object_2.is_shooting = false;
 	}
 
 	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
@@ -408,8 +415,6 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 	if (!registry.deathTimers.has(player)) {
 		Motion& playerMotion = registry.motions.get(player);
-
-		Player& player_object = registry.players.get(player);
 
 		if (!registry.deathTimers.has(player)) {
 			Motion& playerMotion = registry.motions.get(player);
