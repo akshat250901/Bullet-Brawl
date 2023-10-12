@@ -172,6 +172,20 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	// check if players are out of window
+	if (playerMotion.position.y > window_height_px + 50) {
+		// Player death logic
+		playerMotion.position = vec2( 500, 200);
+		playerMotion.velocity = vec2(0, 0);
+	}
+
+	// check if players are out of window
+	if (playerMotion2.position.y > window_height_px) {
+		// Player death logic
+		playerMotion2.position = vec2(700, 200);
+		playerMotion2.velocity = vec2(0, 0);
+	}
+
 	// Processing the salmon state
 	assert(registry.screenStates.components.size() <= 1);
     ScreenState &screen = registry.screenStates.components[0];
@@ -196,8 +210,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// reduce window brightness if any of the present salmons is dying
 	screen.screen_darken_factor = 1 - min_timer_ms / 3000;
 
-	// !!! TODO A1: update LightUp timers and remove if time drops below zero, similar to the death timer
-
 	return true;
 }
 
@@ -220,9 +232,8 @@ void WorldSystem::restart_game() {
 	//change background color
 	createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 10,10 }, { 5000, 5000 });
 
-	// Create a new player
-	player = createPlayer(renderer, { 500, 200 });
-	player2 = createPlayer2(renderer, { 600, 400 });
+	// Create players
+	spawn_player(-1);
 	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
@@ -231,6 +242,13 @@ void WorldSystem::restart_game() {
 	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 900, 300 }, { 200, 20 }); // top left
 	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 300, 300 }, { 200, 20 }); // top right
 
+}
+
+void WorldSystem::spawn_player(int player_num) {
+	if (player_num == -1) {
+		player = createPlayer(renderer, { 500, 200 });
+		player2 = createPlayer2(renderer, { 700, 200 });
+	}
 }
 
 // Compute collisions between entities
@@ -301,13 +319,13 @@ bool WorldSystem::is_over() const {
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
 
-	if (key == GLFW_KEY_P && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player);
 
 		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
 		Motion& bullet_motion = registry.motions.get(bullet);
 	}
-	else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player);
 
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
@@ -345,13 +363,13 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 	// Key handler for player 2 keys
 
-	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player2);
 
 		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
 		Motion& bullet_motion = registry.motions.get(bullet);
 	}
-	else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+	else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player2);
 
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);

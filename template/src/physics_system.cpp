@@ -100,9 +100,9 @@ void PhysicsSystem::step(float elapsed_ms)
 		// apply gravity force onto the motion component of the player
 		Motion& motion = registry.motions.get(entity_i);
 		motion.velocity += vec2(0.0f, gravity.force * step_seconds);
-
-		/*Player& player = registry.players.get(entity_i);*/
 	}
+
+
 
 	// Predict the collisions between all moving entities
 	for(uint i = 0; i < motion_container.components.size(); i++)
