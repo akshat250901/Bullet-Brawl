@@ -51,6 +51,9 @@ private:
 	// Number of fish eaten by the salmon, displayed in the window title
 	unsigned int points;
 
+	// Respawns players
+	void spawn_player(int player_num);
+
 	// Game state
 	RenderSystem* renderer;
 	float current_speed;
