@@ -34,6 +34,39 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	return entity;
 }
 
+Entity createPlayer2(RenderSystem* renderer, vec2 pos)
+{
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial motion values
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = pos;
+	motion.angle = 0.f;
+	motion.velocity = { 0.f, 0.f };
+
+	motion.scale = vec2({ 20, 50 });
+
+	// Add gravity component
+	Gravity& gravity = registry.gravity.emplace(entity);
+
+	// Add horizontal friction component
+	Friction& friction = registry.friction.emplace(entity);
+
+	registry.players.emplace(entity);
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::PLAYER2,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size)
 {
 	// Reserve en entity

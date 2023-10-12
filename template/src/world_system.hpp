@@ -57,12 +57,19 @@ private:
 	float next_turtle_spawn;
 	float next_fish_spawn;
 	Entity player;
+	Entity player2;
 
 	//Key states
 	bool upKey;
 	bool downKey;
 	bool rightKey;
 	bool leftKey;
+
+	//Key states P2
+	bool wUpKey;
+	bool sDownKey;
+	bool aLeftKey;
+	bool dRightKey;
 
 	// music references
 	Mix_Music* background_music;

@@ -22,7 +22,11 @@ WorldSystem::WorldSystem()
 	, upKey(false)
 	, downKey(false)
 	, rightKey(false)
-	, leftKey(false) {
+	, leftKey(false)
+	, wUpKey(false)
+	, dRightKey(false)
+	, aLeftKey(false)
+	, sDownKey(false) {
 	// Seeding rng with random device
 	rng = std::default_random_engine(std::random_device()());
 }
@@ -155,11 +159,13 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 	// Enable and disable platform colliders based on player position
 	Motion& playerMotion = registry.motions.get(player);
+	Motion& playerMotion2 = registry.motions.get(player2);
 	for (Entity entity : registry.platforms.entities) {
 		Motion& platformMotion = registry.motions.get(entity);
 		Platform& platform = registry.platforms.get(entity);
 
-		if ((playerMotion.position.y + playerMotion.scale.y / 2.0f) <= (platformMotion.position.y - platformMotion.scale.y / 2.0f) ) {
+		if ((playerMotion.position.y + playerMotion.scale.y / 2.0f) <= (platformMotion.position.y - platformMotion.scale.y / 2.0f) || 
+			(playerMotion2.position.y + playerMotion2.scale.y / 2.0f) <= (platformMotion.position.y - platformMotion.scale.y / 2.0f)) {
 			platform.colliderActive = true;
 		} else {
 			platform.colliderActive = false;
@@ -216,6 +222,7 @@ void WorldSystem::restart_game() {
 
 	// Create a new player
 	player = createPlayer(renderer, { 500, 200 });
+	player2 = createPlayer2(renderer, { 600, 400 });
 	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
@@ -232,7 +239,8 @@ void WorldSystem::handle_collisions() {
 	auto& collisionsRegistry = registry.collisions;
 
 	// Flag to check if there are no player-platform collisions
-	bool noPlayerPlatformCollisions = true;
+	bool noPlayer1PlatformCollisions = true;
+	bool noPlayer2PlatformCollisions = true;
 
 	for (uint i = 0; i < collisionsRegistry.components.size(); i++) {
 		// The entity and its collider
@@ -247,16 +255,20 @@ void WorldSystem::handle_collisions() {
 				Platform& platform = registry.platforms.get(entity_other);
 
 				// Player is touching the platform
-				Player& player = registry.players.get(entity);
+				Player& player1 = registry.players.get(entity);
 
 				if (playerMotion.velocity.y > 0 && platform.colliderActive) {
 					playerMotion.position.y = platformMotion.position.y - (platformMotion.scale.y / 2.0f) - (playerMotion.scale.y / 2.0f);
-					player.is_grounded = true;
-					player.jump_remaining = 1;
+					player1.is_grounded = true;
+					player1.jump_remaining = 1;
 					playerMotion.velocity.y = 0;
+					if (entity == player) {
+						noPlayer1PlatformCollisions = false;
+					}
+					else if (entity == player2) {
+						noPlayer2PlatformCollisions = false;
+					}
 
-					// There is a player platform collision
-					noPlayerPlatformCollisions = false;
 				}
 			}
 		}
@@ -266,8 +278,15 @@ void WorldSystem::handle_collisions() {
 	Player& player_object = registry.players.get(player);
 
 	// if there are no player platform collisions, the player is not grounded
-	if (noPlayerPlatformCollisions) {
+	if (noPlayer1PlatformCollisions) {
 		player_object.is_grounded = false;
+	}
+
+	Player& player2_object = registry.players.get(player2);
+
+	// if there are no player platform collisions, the player 2 is not grounded
+	if (noPlayer2PlatformCollisions) {
+		player2_object.is_grounded = false;
 	}
 
 	// Remove all collisions from this simulation step
@@ -287,7 +306,8 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
 		Motion& bullet_motion = registry.motions.get(bullet);
-	}else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
+	}
+	else if (key == GLFW_KEY_F && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player);
 
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
@@ -297,89 +317,181 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	// Key handler for arrow keys
 	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
 		rightKey = true;
-	} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+	}
+	else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
 		leftKey = true;
-	} else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+	}
+	else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
 		rightKey = false;
-	} else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+	}
+	else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
 		leftKey = false;
 	}
-	
 
-			
+
+
 	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
 		upKey = true;
-	} else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+	}
+	else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
 		downKey = true;
-	} else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+	}
+	else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
 		upKey = false;
-	} else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+	}
+	else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
 		downKey = false;
 	}
 
-	Player& player_object = registry.players.get(player);
-	
+	// Key handler for player 2 keys
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+		Motion& player_motion = registry.motions.get(player2);
+
+		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
+		Motion& bullet_motion = registry.motions.get(bullet);
+	}
+	else if (key == GLFW_KEY_M && action == GLFW_PRESS) {
+		Motion& player_motion = registry.motions.get(player2);
+
+		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
+		Motion& bullet_motion = registry.motions.get(bullet);
+	}
+
+	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+		dRightKey = true;
+	}
+	else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+		aLeftKey = true;
+	}
+	else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+		dRightKey = false;
+	}
+	else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+		aLeftKey = false;
+	}
+
+	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+		wUpKey = true;
+	}
+	else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+		sDownKey = true;
+	}
+	else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+		wUpKey = false;
+	}
+	else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+		sDownKey = false;
+	}
+
+
 	if (!registry.deathTimers.has(player)) {
 		Motion& playerMotion = registry.motions.get(player);
+
+		Player& player_object = registry.players.get(player);
+
+		if (!registry.deathTimers.has(player)) {
+			Motion& playerMotion = registry.motions.get(player);
+
+			//Handle inputs for left and right arrow keys
+			if (rightKey && !leftKey) {
+				player_object.is_running_right = true;
+				player_object.facing_right = true;
+			}
+			else if (!rightKey && leftKey) {
+				player_object.is_running_left = true;
+				player_object.facing_right = false;
+			}
+			else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
+				player_object.is_running_left = false;
+				player_object.is_running_right = false;
+			}
+
+			// Handle up arrow input for jumping
+			if (upKey) {
+				if (player_object.is_grounded) {
+					playerMotion.velocity.y = -player_object.jump_force;
+
+				}
+				else if (player_object.jump_remaining > 0) {
+					playerMotion.velocity.y = -player_object.jump_force;
+					player_object.jump_remaining--;
+				}
+			}
+
+			if (downKey) {
+				if (player_object.is_grounded) {
+					playerMotion.position.y += 1.0f;
+				}
+			}
+		}
+
 		
-		//Handle inputs for left and right arrow keys
-		if (rightKey && !leftKey) {
-			player_object.is_running_right = true;
-			player_object.facing_right = true;
-		} else if (!rightKey && leftKey) {
-			player_object.is_running_left = true;
-			player_object.facing_right = false;
-		} else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
-			player_object.is_running_left = false;
-			player_object.is_running_right = false;
+		
+		if (!registry.deathTimers.has(player2)) {
+			Player& player2_object = registry.players.get(player2);
+			Motion& playerMotion2 = registry.motions.get(player2);
+
+			//Handle inputs for left and right arrow keys
+			if (dRightKey && !aLeftKey) {
+				player2_object.is_running_right = true;
+				player2_object.facing_right = true;
+			}
+			else if (!dRightKey && aLeftKey) {
+				player2_object.is_running_left = true;
+				player2_object.facing_right = false;
+			}
+			else if ((!dRightKey && !aLeftKey) || (dRightKey && aLeftKey)) {
+				player2_object.is_running_left = false;
+				player2_object.is_running_right = false;
+			}
+
+			// Handle up arrow input for jumping
+			if (wUpKey) {
+				if (player2_object.is_grounded) {
+					playerMotion2.velocity.y = -player2_object.jump_force;
+				}
+				else if (player2_object.jump_remaining > 0) {
+					playerMotion2.velocity.y = -player2_object.jump_force;
+					player2_object.jump_remaining--;
+				}
+			}
+
+			if (sDownKey) {
+				if (player2_object.is_grounded) {
+					playerMotion2.position.y += 1.0f;
+				}
+			}
 		}
 
-		// Handle up arrow input for jumping
-		if (upKey) {
-			if (player_object.is_grounded) {
-				playerMotion.velocity.y = -player_object.jump_force;
-			}
-			else if (player_object.jump_remaining > 0) {
-				playerMotion.velocity.y = -player_object.jump_force;
-				player_object.jump_remaining--;
-			}
+		// Resetting game
+		if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
+			int w, h;
+			glfwGetWindowSize(window, &w, &h);
+
+			restart_game();
 		}
 
-		if (downKey) {
-			if (player_object.is_grounded) {
-				playerMotion.position.y += 1.0f;
-			}
+		// Debugging
+		if (key == GLFW_KEY_Q) {
+			if (action == GLFW_RELEASE)
+				debugging.in_debug_mode = false;
+			else
+				debugging.in_debug_mode = true;
 		}
-	}
 
-	// Resetting game
-	if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
-		int w, h;
-		glfwGetWindowSize(window, &w, &h);
-
-        restart_game();
+		// Control the current speed with `<` `>`
+		if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA) {
+			current_speed -= 0.1f;
+			printf("Current speed = %f\n", current_speed);
+		}
+		if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD) {
+			current_speed += 0.1f;
+			printf("Current speed = %f\n", current_speed);
+		}
+		current_speed = fmax(0.f, current_speed);
 	}
-
-	// Debugging
-	if (key == GLFW_KEY_D) {
-		if (action == GLFW_RELEASE)
-			debugging.in_debug_mode = false;
-		else
-			debugging.in_debug_mode = true;
-	}
-
-	// Control the current speed with `<` `>`
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA) {
-		current_speed -= 0.1f;
-		printf("Current speed = %f\n", current_speed);
-	}
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD) {
-		current_speed += 0.1f;
-		printf("Current speed = %f\n", current_speed);
-	}
-	current_speed = fmax(0.f, current_speed);
 }
-
 void WorldSystem::on_mouse_move(vec2 mouse_position) {
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	// TODO A1: HANDLE SALMON ROTATION HERE
