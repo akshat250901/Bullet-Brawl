@@ -41,6 +41,14 @@ void PhysicsSystem::step(float elapsed_ms)
 			if ((player.is_running_left) && (motion.velocity.x >= -player.speed)) {
 				motion.velocity.x -= player.running_force * step_seconds;
 			}
+			if (player.is_shooting && !player.facing_right) {
+				motion.velocity.x += player.recoil_force * step_seconds;
+				player.is_shooting = false;
+			}
+			if (player.is_shooting && player.facing_right) {
+				motion.velocity.x -= player.recoil_force * step_seconds;
+				player.is_shooting = false;
+			}
 		}
 
 		motion.position += step_seconds * motion.velocity;

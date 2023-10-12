@@ -23,6 +23,10 @@ struct Player
 	bool is_running_left = false; 
 	// True if player is running right
 	bool is_running_right = false;
+	// True if the player is shooting
+	bool is_shooting = false;
+	// recoil force
+	float recoil_force = 2000.f;
 };
 
 // Turtles have a hard shell

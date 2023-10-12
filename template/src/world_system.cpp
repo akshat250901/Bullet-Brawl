@@ -330,6 +330,9 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
 		Motion& bullet_motion = registry.motions.get(bullet);
+		player_object.is_shooting = true;
+	}else if (key == GLFW_KEY_F && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
+		player_object.is_shooting = false;
 	}
 
 	// Key handler for arrow keys
