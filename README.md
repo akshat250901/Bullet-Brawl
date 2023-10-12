@@ -11,3 +11,4 @@
 - Basic map with 4 platforms at different levels [WorldSystem::restart_game()]
 - Player respawn if they leave the map boundaries [WorldSystem::step()]
 - Player sprite that reflects player orientation [RenderSystem::drawTexturedMesh()]
+- Shooting projectile has recoil (player is pushed in direction opposite to projectile)
