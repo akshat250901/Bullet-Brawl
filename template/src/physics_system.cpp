@@ -41,6 +41,8 @@ void PhysicsSystem::step(float elapsed_ms)
 			if ((player.is_running_left) && (motion.velocity.x >= -player.speed)) {
 				motion.velocity.x -= player.running_force * step_seconds;
 			}
+
+			// add a constant force for recoil, change later to add recoil force based on gun
 			if (player.is_shooting && !player.facing_right) {
 				motion.velocity.x += player.recoil_force * step_seconds;
 				player.is_shooting = false;
