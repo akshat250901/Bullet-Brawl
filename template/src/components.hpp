@@ -44,7 +44,8 @@ struct SoftShell
 // Platforms
 struct Platform
 {
-	bool colliderActive = true;
+	bool collider_active_player1 = true;
+	bool collider_active_player2 = true;
 };
 
 // Platforms
