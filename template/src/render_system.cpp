@@ -20,6 +20,29 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		Player& player = registry.players.get(entity); 
 		vec2 flipScale = { -motion.scale.x ,motion.scale.y };
 		transform.scale(player.facing_right ? motion.scale : flipScale);
+
+		// state machine logic for movement
+		if (player.movement_state == 0)
+		{
+			transform.rotate(0);
+		}
+		else if (player.movement_state == 1)
+		{
+			transform.rotate(0.3);
+		}
+		else if (player.movement_state == 2)
+		{
+			transform.rotate(-1.5);
+		}
+		else if (player.movement_state == 3)
+		{
+			transform.rotate(0);
+		}
+		else
+		{
+			transform.rotate(0);
+		}
+
 	}
 	else {
 		transform.scale(motion.scale);

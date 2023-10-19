@@ -4,9 +4,19 @@
 #include <unordered_map>
 #include "../ext/stb_image/stb_image.h"
 
+
 // Player component
 struct Player
 {
+	// For sprite
+	/*
+	* 0 = IDLE
+	* 1 = RUNNING
+	* 2 = JUMPING
+	* 3 = SHOOTING
+	*/
+	int movement_state = 0; 
+
 	// If player is colliding with a platmorm, they are grounded
 	bool is_grounded = false;
 	// Direction player is facing for sprite (default facing right)
