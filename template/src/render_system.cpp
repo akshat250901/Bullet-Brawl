@@ -153,6 +153,38 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		gl_has_errors();
 	}
+	//else if (render_request.used_effect == EFFECT_ASSET_ID::BACKGROUND) {
+	//	if (registry.renderRequests.get(entity).used_texture == TEXTURE_ASSET_ID::BACKGROUND) {
+	//		GLuint backgroundTextureID =
+	//			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
+	//		glActiveTexture(GL_TEXTURE0);
+	//		glBindTexture(GL_TEXTURE_2D, backgroundTextureID);
+	//		glUniform1i(glGetUniformLocation(program, "uBackgroundTexture"), 0);
+	//		float backgroundSpeed = registry.parallaxes.get(entity).scrollingSpeed; // Assuming this fetches the speed correctly.
+	//		glUniform1f(glGetUniformLocation(program, "uBackgroundOffset"), backgroundSpeed);
+
+	//	}
+	//	else if (registry.renderRequests.get(entity).used_texture == TEXTURE_ASSET_ID::MIDDLEGROUND) {
+	//		GLuint middlegroundTextureID =
+	//			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
+	//		glActiveTexture(GL_TEXTURE1);
+	//		glBindTexture(GL_TEXTURE_2D, middlegroundTextureID);
+	//		glUniform1i(glGetUniformLocation(program, "uMiddlegroundTexture"), 1);
+	//		float middlegroundSpeed = registry.parallaxes.get(entity).scrollingSpeed; // Adjust this to fetch the middleground speed.
+	//		glUniform1f(glGetUniformLocation(program, "uMiddlegroundOffset"), middlegroundSpeed);
+
+	//	}
+	//	else if (registry.renderRequests.get(entity).used_texture == TEXTURE_ASSET_ID::FOREGROUND) {
+	//		GLuint foregroundTextureID =
+	//			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
+	//		glActiveTexture(GL_TEXTURE2);
+	//		glBindTexture(GL_TEXTURE_2D, foregroundTextureID);
+	//		glUniform1i(glGetUniformLocation(program, "uForegroundTexture"), 2);
+	//		float foregroundSpeed = registry.parallaxes.get(entity).scrollingSpeed; // Adjust this to fetch the foreground speed.
+	//		glUniform1f(glGetUniformLocation(program, "uForegroundOffset"), foregroundSpeed);
+	//	}
+	//	gl_has_errors();
+	//	}
 	else
 	{
 		assert(false && "Type of render request not supported");

@@ -211,7 +211,7 @@ Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeeed = 0.2f; // Adjust this value as needed.
+	parallax.scrollingSpeed = 0.2f; // Adjust this value as needed.
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::BACKGROUND,
@@ -237,7 +237,7 @@ Entity createBackgroundMiddle(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the middle layer.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeeed = 0.5f; // Adjust this value as needed.
+	parallax.scrollingSpeed = 0.5f; // Adjust this value as needed.
 
 	registry.renderRequests.insert(
 		entity,
@@ -267,7 +267,7 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeeed = 0.8f; // Adjust this value as needed.
+	parallax.scrollingSpeed = 0.8f; // Adjust this value as needed.
 
 	registry.renderRequests.insert(
 		entity,

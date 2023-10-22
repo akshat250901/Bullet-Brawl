@@ -46,6 +46,7 @@ class RenderSystem {
 		shader_path("pebble"),
 		shader_path("player"),
 		shader_path("textured"),
+		//shader_path("background"),
 		shader_path("water") };
 
 	std::array<GLuint, geometry_count> vertex_buffers;
