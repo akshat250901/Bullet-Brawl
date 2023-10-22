@@ -104,7 +104,10 @@ struct Bullet
 // Background Parallax
 struct ParallaxBackground
 {
-	float scrollingSpeed = 0.1f;
+	float scrollingSpeedBack = 0.0f;
+	float scrollingSpeedMiddle = 0.0f;
+	float scrollingSpeedFront= 0.0f;
+	float scrollingSpeed = 0.0f;
 };
 
 // All data relevant to the shape and motion of entities
@@ -213,8 +216,8 @@ enum class EFFECT_ASSET_ID {
 	PLAYER = PEBBLE + 1,
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
-	//BACKGROUND = WATER + 1,
-	EFFECT_COUNT = WATER + 1
+	BACKGROUND = WATER + 1,
+	EFFECT_COUNT = BACKGROUND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 

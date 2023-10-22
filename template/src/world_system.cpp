@@ -235,6 +235,21 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	//parallax background
+	for (Entity backgroundEntity : registry.parallaxes.entities) {
+		ParallaxBackground& parallaxBackground = registry.parallaxes.get(backgroundEntity);
+		// Update the offset based on the speed and elapsed time.
+		if (parallaxBackground.scrollingSpeedBack != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedBack * (elapsed_ms_since_last_update / 1000);
+		}
+		else if (parallaxBackground.scrollingSpeedMiddle != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedMiddle * (elapsed_ms_since_last_update / 1000);
+		}
+		else if (parallaxBackground.scrollingSpeedFront != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedFront * (elapsed_ms_since_last_update / 1000);
+		}
+	}
+
 	return true;
 }
 
@@ -254,8 +269,8 @@ void WorldSystem::restart_game() {
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-	//change background color
-	//createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 0,0 }, { window_width_px * 2, window_height_px * 2 });
+
+	//make background parallax
 	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
 	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
@@ -263,7 +278,6 @@ void WorldSystem::restart_game() {
 
 	// Create players
 	spawn_player(-1);
-	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
 	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 400 }, { 500, 20 }); // bottom platform

@@ -141,33 +141,6 @@ Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 	return entity;
 }
 
-Entity createBackground(RenderSystem* renderer, vec3 color, vec2 position, vec2 size)
-{
-	// Reserve en entity
-	auto entity = Entity();
-
-	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
-	registry.meshPtrs.emplace(entity, &mesh);
-
-	// Initialize the position, scale, and physics components
-	auto& motion = registry.motions.emplace(entity);
-	motion.angle = 0.f;
-	motion.velocity = { 0.f, 0.f };
-	motion.position = position;
-
-	// Setting initial values, scale is negative to make it face the opposite way
-	motion.scale = size;
-	registry.colors.insert(entity, color);
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
-
-	return entity;
-}
-
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 color) 
 {
     auto entity = Entity();
@@ -211,11 +184,11 @@ Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeed = 0.2f; // Adjust this value as needed.
+	parallax.scrollingSpeedBack = 0.05f; // Adjust this value as needed.
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::BACKGROUND,
-			EFFECT_ASSET_ID::TEXTURED,
+			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
@@ -237,12 +210,12 @@ Entity createBackgroundMiddle(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the middle layer.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeed = 0.5f; // Adjust this value as needed.
+	parallax.scrollingSpeedMiddle = 0.08f; // Adjust this value as needed.
 
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::MIDDLEGROUND,
-			EFFECT_ASSET_ID::TEXTURED,
+			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
@@ -267,12 +240,12 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeed = 0.8f; // Adjust this value as needed.
+	parallax.scrollingSpeedFront = 0.2f;
 
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::FOREGROUND,
-			EFFECT_ASSET_ID::TEXTURED,
+			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
