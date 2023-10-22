@@ -236,7 +236,11 @@ void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 	//change background color
-	createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 10,10 }, { 5000, 5000 });
+	//createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 0,0 }, { window_width_px * 2, window_height_px * 2 });
+	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
+	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
+
 
 	// Create players
 	spawn_player(-1);

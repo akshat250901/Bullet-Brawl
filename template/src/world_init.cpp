@@ -163,3 +163,86 @@ Entity createBackground(RenderSystem* renderer, vec3 color, vec2 position, vec2 
 
 	return entity;
 }
+
+Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	parallax.scrollingSpeeed = 0.2f; // Adjust this value as needed.
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::BACKGROUND,
+			EFFECT_ASSET_ID::TEXTURED,
+			GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+Entity createBackgroundMiddle(RenderSystem* renderer, vec2 position, vec2 size)
+{
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the middle layer.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	parallax.scrollingSpeeed = 0.5f; // Adjust this value as needed.
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::MIDDLEGROUND,
+			EFFECT_ASSET_ID::TEXTURED,
+			GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
+Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 size)
+{
+
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = { 0.f, 0.f };
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	parallax.scrollingSpeeed = 0.8f; // Adjust this value as needed.
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::FOREGROUND,
+			EFFECT_ASSET_ID::TEXTURED,
+			GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}

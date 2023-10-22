@@ -95,6 +95,8 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
     	glUniform3fv(color_uloc, 1, (float*)&entityColor);
 		gl_has_errors();
+	} else if (render_request.used_effect == EFFECT_ASSET_ID::BACKGROUND) {
+		
 	}
 	else
 	{
