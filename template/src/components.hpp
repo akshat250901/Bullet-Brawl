@@ -1,16 +1,18 @@
 #pragma once
 #include "common.hpp"
-#include <vector>
+#include <set>
 #include <unordered_map>
 #include "../ext/stb_image/stb_image.h"
 
 // Player component
 struct Player
 {
-	// If player is colliding with a platmorm, they are grounded
+	// If player is colliding with a platform, they are grounded
 	bool is_grounded = false;
 	// Direction player is facing for sprite (default facing right)
 	bool facing_right = true;
+	// Max number of jumps allowed in the air
+	int max_jumps = 1;
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
 	// Jump force
@@ -27,6 +29,32 @@ struct Player
 	bool is_shooting = false;
 	// recoil force
 	float recoil_force = 2000.f;
+};
+
+// Player stat modifier struct for use in power ups and gun pick ups
+struct StatModifier
+{
+	std::string name = "";
+
+	bool hasTimer = false;
+	float timer_ms = 0;
+
+	int extra_jumps = 0;
+	float jump_force_modifier = 1;
+	float running_force_modifier = 1;
+	float max_speed_modifier = 1;
+};
+
+// Stat Modifier component
+struct PlayerStatModifier
+{
+	std::unordered_map<std::string, StatModifier> powerUpStatModifiers;
+};
+
+// Power Up
+struct PowerUp
+{
+	StatModifier statModifier;
 };
 
 // Turtles have a hard shell
@@ -182,8 +210,8 @@ const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 enum class EFFECT_ASSET_ID {
 	COLOURED = 0,
 	PEBBLE = COLOURED + 1,
-	SALMON = PEBBLE + 1,
-	TEXTURED = SALMON + 1,
+	PLAYER = PEBBLE + 1,
+	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
 	BACKGROUND = WATER + 1,
 	EFFECT_COUNT = WATER + 1

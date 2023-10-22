@@ -27,6 +27,8 @@ public:
 	ComponentContainer<vec3> colors;
 	ComponentContainer<Platform> platforms;
 	ComponentContainer<Bullet> bullets;
+	ComponentContainer<PlayerStatModifier> playerStatModifiers;
+	ComponentContainer<PowerUp> powerUps;
 	ComponentContainer<ParallaxBackground> parallaxes;
 
 	// constructor that adds all containers for looping over them
@@ -49,6 +51,8 @@ public:
 		registry_list.push_back(&colors);
 		registry_list.push_back(&platforms);
 		registry_list.push_back(&bullets);
+		registry_list.push_back(&playerStatModifiers);
+		registry_list.push_back(&powerUps);
 		registry_list.push_back(&parallaxes);
 	}
 

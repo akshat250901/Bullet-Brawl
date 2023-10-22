@@ -25,10 +25,12 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	registry.players.emplace(entity);
 
+	registry.playerStatModifiers.emplace(entity);
+
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLAYER,
-		 EFFECT_ASSET_ID::TEXTURED,
+		 EFFECT_ASSET_ID::PLAYER,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
@@ -58,10 +60,12 @@ Entity createPlayer2(RenderSystem* renderer, vec2 pos)
 
 	registry.players.emplace(entity);
 
+	registry.playerStatModifiers.emplace(entity);
+
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLAYER2,
-		 EFFECT_ASSET_ID::TEXTURED,
+		 EFFECT_ASSET_ID::PLAYER,
 		 GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
@@ -162,6 +166,34 @@ Entity createBackground(RenderSystem* renderer, vec3 color, vec2 position, vec2 
 			GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
+}
+
+Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 color) 
+{
+    auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderSystem->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial motion values
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = pos;
+	motion.angle = 0.f;
+	motion.velocity = { 0.f, 0.f };
+	
+	motion.scale = scale;
+
+	registry.colors.insert(entity, color);
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+			EFFECT_ASSET_ID::COLOURED,
+			GEOMETRY_BUFFER_ID::SQUARE });
+
+	return entity;
+}
 }
 
 Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
