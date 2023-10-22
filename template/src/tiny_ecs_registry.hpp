@@ -29,6 +29,7 @@ public:
 	ComponentContainer<Bullet> bullets;
 	ComponentContainer<PlayerStatModifier> playerStatModifiers;
 	ComponentContainer<PowerUp> powerUps;
+	ComponentContainer<ParallaxBackground> parallaxes;
 
 	// constructor that adds all containers for looping over them
 	// IMPORTANT: Don't forget to add any newly added containers!
@@ -52,6 +53,7 @@ public:
 		registry_list.push_back(&bullets);
 		registry_list.push_back(&playerStatModifiers);
 		registry_list.push_back(&powerUps);
+		registry_list.push_back(&parallaxes);
 	}
 
 	void clear_all_components() {

@@ -76,7 +76,7 @@ struct Platform
 	bool collider_active_player2 = true;
 };
 
-// Platforms
+// Background
 struct Background
 {
 
@@ -99,6 +99,15 @@ struct Gravity
 struct Bullet
 {
 
+};
+
+// Background Parallax
+struct ParallaxBackground
+{
+	float scrollingSpeedBack = 0.0f;
+	float scrollingSpeedMiddle = 0.0f;
+	float scrollingSpeedFront= 0.0f;
+	float scrollingSpeed = 0.0f;
 };
 
 // All data relevant to the shape and motion of entities
@@ -194,7 +203,10 @@ enum class TEXTURE_ASSET_ID {
 	TURTLE = FISH + 1,
 	PLAYER = TURTLE + 1,
 	PLAYER2 = PLAYER + 1,
-	TEXTURE_COUNT = PLAYER2 + 1
+	BACKGROUND = PLAYER2 + 1,
+	MIDDLEGROUND = BACKGROUND + 1,
+	FOREGROUND = MIDDLEGROUND + 1,
+	TEXTURE_COUNT = FOREGROUND + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -204,7 +216,8 @@ enum class EFFECT_ASSET_ID {
 	PLAYER = PEBBLE + 1,
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
-	EFFECT_COUNT = WATER + 1
+	BACKGROUND = WATER + 1,
+	EFFECT_COUNT = BACKGROUND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 

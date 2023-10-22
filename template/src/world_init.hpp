@@ -19,12 +19,16 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 Entity createTurtle(RenderSystem* renderer, vec2 position);
 // a red line for debugging purposes
 Entity createLine(vec2 position, vec2 size);
-// the background
-Entity createBackground(RenderSystem* renderer, vec3 color, vec2 position, vec2 size);
 // a pebble
 Entity createPebble(vec2 pos, vec2 size);
 // a bullet
 Entity createBullet(bool isProjectile, vec2 pos, Entity& player);
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
+// a background back layer
+Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size);
+// a background middle layer
+Entity createBackgroundMiddle(RenderSystem* renderer, vec2 position, vec2 size);
+// a background
+Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 size);
 
