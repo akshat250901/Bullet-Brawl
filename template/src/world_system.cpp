@@ -80,7 +80,7 @@ GLFWwindow* WorldSystem::create_window() {
 	glfwWindowHint(GLFW_RESIZABLE, 0);
 
 	// Create the main window (for rendering, keyboard, and mouse input)
-	window = glfwCreateWindow(window_width_px, window_height_px, "Salmon Game Assignment", nullptr, nullptr);
+	window = glfwCreateWindow(window_width_px, window_height_px, "Bullet Brawl", nullptr, nullptr);
 	if (window == nullptr) {
 		fprintf(stderr, "Failed to glfwCreateWindow");
 		return nullptr;
@@ -133,11 +133,6 @@ void WorldSystem::init(RenderSystem* renderer_arg) {
 
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update) {
-	// Updating window title with points
-	std::stringstream title_ss;
-	title_ss << "Points: " << points;
-	glfwSetWindowTitle(window, title_ss.str().c_str());
-
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 	    registry.remove_all_components_of(registry.debugComponents.entities.back());
@@ -183,6 +178,16 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Player death logic
 		playerMotion.position = vec2( 500, 200);
 		playerMotion.velocity = vec2(0, 0);
+
+
+		// Set timer to 0 for all power ups to stats are reset
+
+		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player);
+		
+		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
+    		kv.second.timer_ms = 0;
+		}
+
 	}
 
 	// check if players are out of window
@@ -190,31 +195,45 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Player death logic
 		playerMotion2.position = vec2(700, 200);
 		playerMotion2.velocity = vec2(0, 0);
-	}
 
-	// Processing the salmon state
-	assert(registry.screenStates.components.size() <= 1);
-    ScreenState &screen = registry.screenStates.components[0];
+		// Set timer to 0 for all power ups to stats are reset
 
-    float min_timer_ms = 3000.f;
-	for (Entity entity : registry.deathTimers.entities) {
-		// progress timer
-		DeathTimer& timer = registry.deathTimers.get(entity);
-		timer.timer_ms -= elapsed_ms_since_last_update;
-		if(timer.timer_ms < min_timer_ms){
-			min_timer_ms = timer.timer_ms;
-		}
-
-		// restart the game once the death timer expired
-		if (timer.timer_ms < 0) {
-			registry.deathTimers.remove(entity);
-			screen.screen_darken_factor = 0;
-            restart_game();
-			return true;
+		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player2);
+		
+		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
+    		kv.second.timer_ms = 0;
 		}
 	}
-	// reduce window brightness if any of the present salmons is dying
-	screen.screen_darken_factor = 1 - min_timer_ms / 3000;
+
+	// Decrement timers in the PlayerStatModifier
+	for (Entity playerEntity: registry.players.entities) {
+		PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(playerEntity);
+
+		auto& powerUpMap = playerStatModifier.powerUpStatModifiers;
+
+		for (auto it = powerUpMap.begin(); it != powerUpMap.end();) {
+			StatModifier& statModifier = it->second;
+
+			if (statModifier.hasTimer) {
+				statModifier.timer_ms -= elapsed_ms_since_last_update;
+
+				if (statModifier.timer_ms <= 0) {
+					Player& currPlayer = registry.players.get(playerEntity);
+
+					currPlayer.max_jumps -= statModifier.extra_jumps;
+					currPlayer.jump_force /= statModifier.jump_force_modifier;
+					currPlayer.running_force /= statModifier.running_force_modifier;
+					currPlayer.speed /= statModifier.max_speed_modifier;
+
+					it = powerUpMap.erase(it);
+					
+					continue;
+				}
+			}
+
+			it++;
+		}
+	}
 
 	return true;
 }
@@ -272,36 +291,59 @@ void WorldSystem::handle_collisions() {
 		Entity entity_other = collisionsRegistry.components[i].other_entity;
 
 		// Player platform collisions
-		if (registry.players.has(entity)) {
-			if (registry.platforms.has(entity_other)) {
-				Motion& playerMotion = registry.motions.get(entity);
-				Motion& platformMotion = registry.motions.get(entity_other);
-				Platform& platform = registry.platforms.get(entity_other);
+		if (registry.players.has(entity) && registry.platforms.has(entity_other)) {
+			
+			Motion& playerMotion = registry.motions.get(entity);
+			Motion& platformMotion = registry.motions.get(entity_other);
+			Platform& platform = registry.platforms.get(entity_other);
 
-				// Player model intersects the platform
-				Player& curr_player = registry.players.get(entity);
+			// Player model intersects the platform
+			Player& curr_player = registry.players.get(entity);
 
-				bool players_collider_active = platform.collider_active_player1;
+			bool players_collider_active = platform.collider_active_player1;
 
-				if (entity == player2) {
-					players_collider_active = platform.collider_active_player2;
+			if (entity == player2) {
+				players_collider_active = platform.collider_active_player2;
+			}
+
+			if (playerMotion.velocity.y > 0 && players_collider_active) {
+				playerMotion.position.y = platformMotion.position.y - (platformMotion.scale.y / 2.0f) - (playerMotion.scale.y / 2.0f);
+				curr_player.is_grounded = true;
+				curr_player.jump_remaining = curr_player.max_jumps;
+				playerMotion.velocity.y = 0;
+
+				if (entity == player) {
+					noPlayer1PlatformCollisions = false;
 				}
-
-				if (playerMotion.velocity.y > 0 && players_collider_active) {
-					playerMotion.position.y = platformMotion.position.y - (platformMotion.scale.y / 2.0f) - (playerMotion.scale.y / 2.0f);
-					curr_player.is_grounded = true;
-					curr_player.jump_remaining = 1;
-					playerMotion.velocity.y = 0;
-
-					if (entity == player) {
-						noPlayer1PlatformCollisions = false;
-					}
-					else if (entity == player2) {
-						noPlayer2PlatformCollisions = false;
-					}
-
+				else if (entity == player2) {
+					noPlayer2PlatformCollisions = false;
 				}
 			}
+		}
+
+		// Player powerup collisions
+		if (registry.players.has(entity) && registry.powerUps.has(entity_other)) {
+			Player& player = registry.players.get(entity);
+			Motion& playerMotion = registry.motions.get(entity);
+			PowerUp& powerUp = registry.powerUps.get(entity_other);
+			PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(entity);
+			StatModifier& statModifier = powerUp.statModifier;
+
+			if (playerStatModifier.powerUpStatModifiers.find(statModifier.name) != playerStatModifier.powerUpStatModifiers.end()) {
+				//if player has powerup, reset the timer of the powerup
+				StatModifier& modifier = playerStatModifier.powerUpStatModifiers.at(statModifier.name);
+				modifier.timer_ms = 5000;
+			} else { 
+				// if player does not have power up, modify players stats and add to powerup map
+				playerStatModifier.powerUpStatModifiers[statModifier.name] = statModifier;
+
+				player.max_jumps += statModifier.extra_jumps;
+				player.jump_force *= statModifier.jump_force_modifier;
+				player.running_force *= statModifier.running_force_modifier;
+				player.speed *= statModifier.max_speed_modifier;
+			}
+
+			registry.remove_all_components_of(entity_other);
 		}
 	}
 

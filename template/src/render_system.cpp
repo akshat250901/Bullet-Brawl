@@ -118,6 +118,63 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
     	glUniform3fv(color_uloc, 1, (float*)&entityColor);
 		gl_has_errors();
+	} else if (render_request.used_effect == EFFECT_ASSET_ID::PLAYER){
+		GLint in_position_loc = glGetAttribLocation(program, "in_position");
+		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
+		GLint glowColorLocation = glGetUniformLocation(program, "glowColor");
+		GLint glowIntensityLocation = glGetUniformLocation(program, "glowIntensity");
+
+		gl_has_errors();
+		assert(in_texcoord_loc >= 0);
+		assert(glowColorLocation >= 0); // Ensure the uniform is found
+		assert(glowIntensityLocation >= 0); // Ensure the uniform is found
+
+		glEnableVertexAttribArray(in_position_loc);
+		glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE,
+							  sizeof(TexturedVertex), (void *)0);
+		gl_has_errors();
+
+		glEnableVertexAttribArray(in_texcoord_loc);
+		glVertexAttribPointer(
+			in_texcoord_loc, 2, GL_FLOAT, GL_FALSE, sizeof(TexturedVertex),
+			(void *)sizeof(
+				vec3)); // note the stride to skip the preceeding vertex position
+
+		// Enabling and binding texture to slot 0
+		glActiveTexture(GL_TEXTURE0);
+		gl_has_errors();
+
+		assert(registry.renderRequests.has(entity));
+		GLuint texture_id =
+			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
+
+		glBindTexture(GL_TEXTURE_2D, texture_id);
+		gl_has_errors();
+
+		auto& powerUps = registry.playerStatModifiers.get(entity).powerUpStatModifiers;
+
+		vec3 glowColor = {0.0f, 0.0f, 0.0f};
+		float glowIntensity = 0.0f;
+
+		if (powerUps.find("Super Jump") != powerUps.end()) {
+			glowColor.z = 255.0f;
+			glowIntensity = 0.8f;
+		}
+		
+		if (powerUps.find("Speed Boost") != powerUps.end()) {
+			glowColor.y = 255.0f;
+			glowIntensity = 0.8f;
+		}
+
+		if (powerUps.find("Triple Jump") != powerUps.end()) {
+			glowColor.x = 255.0f;
+			glowIntensity = 0.8f;
+		}
+
+		glUniform3f(glowColorLocation, glowColor.x, glowColor.y, glowColor.z);
+    	glUniform1f(glowIntensityLocation, glowIntensity);
+
+		gl_has_errors();
 	}
 	else
 	{
