@@ -194,7 +194,6 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 
 	return entity;
 }
-}
 
 Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
 {
