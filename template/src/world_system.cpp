@@ -272,7 +272,7 @@ void WorldSystem::restart_game() {
 void WorldSystem::spawn_player(int player_num) {
 	if (player_num == -1) {
 		player = createPlayer(renderer, { 500, 200 });
-		player2 = createPlayer2(renderer, { 700, 200 });
+		player2 = createPlayer(renderer, { 700, 200 });
 	}
 }
 

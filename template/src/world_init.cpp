@@ -8,7 +8,6 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	// Store a reference to the potentially re-used mesh object
 	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
 	registry.meshPtrs.emplace(entity, &mesh);
-
 	// Setting initial motion values
 	Motion& motion = registry.motions.emplace(entity);
 	motion.position = pos;
@@ -23,40 +22,9 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	// Add horizontal friction component
 	Friction& friction = registry.friction.emplace(entity);
 
-	registry.players.emplace(entity);
-
-	registry.playerStatModifiers.emplace(entity);
-
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::PLAYER,
-		 EFFECT_ASSET_ID::PLAYER,
-		 GEOMETRY_BUFFER_ID::SPRITE });
-
-	return entity;
-}
-
-Entity createPlayer2(RenderSystem* renderer, vec2 pos)
-{
-	auto entity = Entity();
-
-	// Store a reference to the potentially re-used mesh object
-	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
-	registry.meshPtrs.emplace(entity, &mesh);
-
-	// Setting initial motion values
-	Motion& motion = registry.motions.emplace(entity);
-	motion.position = pos;
-	motion.angle = 0.f;
-	motion.velocity = { 0.f, 0.f };
-
-	motion.scale = vec2({ 30, 50 });
-
-	// Add gravity component
-	Gravity& gravity = registry.gravity.emplace(entity);
-
-	// Add horizontal friction component
-	Friction& friction = registry.friction.emplace(entity);
+	// Add animated sprite component
+	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
+	animated_sprite.frame_count_per_type = { {0, 8}, {1, 8}, {2, 8}, {3, 8} };
 
 	registry.players.emplace(entity);
 
@@ -64,12 +32,13 @@ Entity createPlayer2(RenderSystem* renderer, vec2 pos)
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::PLAYER2,
-		 EFFECT_ASSET_ID::PLAYER,
-		 GEOMETRY_BUFFER_ID::SPRITE });
+		{ TEXTURE_ASSET_ID::PLAYER_SPRITESHEET,
+		 EFFECT_ASSET_ID::ANIMATED,
+		 GEOMETRY_BUFFER_ID::ANIMATED_SPRITE });
 
 	return entity;
 }
+
 
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size)
 {

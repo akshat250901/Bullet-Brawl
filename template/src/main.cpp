@@ -51,7 +51,7 @@ int main()
 
 		world_system.step(elapsed_ms);
 		physics_system.step(elapsed_ms);
-		animation_system.step();
+		animation_system.step(elapsed_ms);
 		random_drops_system.step(elapsed_ms);
 		world_system.handle_collisions();
 

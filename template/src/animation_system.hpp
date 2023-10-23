@@ -9,7 +9,8 @@
 class AnimationSystem
 {
 public:
-	void step();
+	void step(float elapsed_ms_since_last_update);
+	void manageSpriteFrame(float elapsed_ms_since_last_update, Entity entity);
 
 	AnimationSystem()
 	{

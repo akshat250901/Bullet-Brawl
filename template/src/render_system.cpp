@@ -8,6 +8,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 									const mat3 &projection)
 {
 	Motion &motion = registry.motions.get(entity);
+	
 	// Transformation code, see Rendering and Transformation in the template
 	// specification for more info Incrementally updates transformation matrix,
 	// thus ORDER IS IMPORTANT
@@ -20,29 +21,6 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		Player& player = registry.players.get(entity); 
 		vec2 flipScale = { -motion.scale.x ,motion.scale.y };
 		transform.scale(player.facing_right ? motion.scale : flipScale);
-
-		// state machine logic for movement
-		if (player.movement_state == 0)
-		{
-			transform.rotate(0);
-		}
-		else if (player.movement_state == 1)
-		{
-			transform.rotate(0.3);
-		}
-		else if (player.movement_state == 2)
-		{
-			transform.rotate(-1.5);
-		}
-		else if (player.movement_state == 3)
-		{
-			transform.rotate(0);
-		}
-		else
-		{
-			transform.rotate(0);
-		}
-
 	}
 	else {
 		transform.scale(motion.scale);
@@ -73,7 +51,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	gl_has_errors();
 
 	// Input data location as in the vertex buffer
-	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED)
+	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED	|| render_request.used_effect == EFFECT_ASSET_ID::ANIMATED)
 	{
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
@@ -101,6 +79,11 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 		gl_has_errors();
+
+		if (render_request.used_effect == EFFECT_ASSET_ID::ANIMATED) {
+			drawAnimated(entity);
+		}
+
 	} else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED){
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		gl_has_errors();
@@ -265,6 +248,26 @@ void RenderSystem::drawToScreen()
 				  // no offset from the bound index buffer
 	gl_has_errors();
 }
+
+void RenderSystem::drawAnimated(Entity entity) {
+	AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity);
+	GLuint textured_animation_program = effects[(GLuint)EFFECT_ASSET_ID::ANIMATED];
+	glUseProgram(textured_animation_program);
+
+	GLint frame_height_uloc = glGetUniformLocation(textured_animation_program, "sprite_height");
+	glUniform1f(frame_height_uloc, animated_sprite.sprite_height);
+	GLint frame_width_uloc = glGetUniformLocation(textured_animation_program, "sprite_width");
+	glUniform1f(frame_width_uloc, animated_sprite.sprite_width);
+
+	GLint animation_frame_uloc = glGetUniformLocation(textured_animation_program, "animation_frame");
+	glUniform1f(animation_frame_uloc, (float)animated_sprite.animation_frame);
+
+	GLint animation_type_uloc = glGetUniformLocation(textured_animation_program, "animation_type");
+	glUniform1f(animation_type_uloc, (float)animated_sprite.animation_type);
+
+	gl_has_errors();
+}
+
 
 // Render our game world
 // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/

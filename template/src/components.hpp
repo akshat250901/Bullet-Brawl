@@ -3,6 +3,7 @@
 #include <set>
 #include <unordered_map>
 #include "../ext/stb_image/stb_image.h"
+#include <map>
 
 
 // Player component
@@ -13,7 +14,7 @@ struct Player
 	* 0 = IDLE
 	* 1 = RUNNING
 	* 2 = JUMPING
-	* 3 = SHOOTING
+	* 3 = FALLING
 	*/
 	int movement_state = 0; 
 
@@ -67,16 +68,18 @@ struct PowerUp
 	StatModifier statModifier;
 };
 
-// Turtles have a hard shell
-struct HardShell
-{
+// Component for sprite sheet
+struct AnimatedSprite {
+	float sprite_height = 0.25;
+	float sprite_width = 0.125;
 
-};
+	float animation_speed_ms = 250;
+	float ms_since_last_update = 0;
 
-// Fish and Salmon have a soft shell
-struct SoftShell
-{
+	int animation_type = 0;  // y axis - relates to player movement_state
+	int animation_frame = 0; // x axis - frame of animation
 
+	std::map<int, int> frame_count_per_type = {};
 };
 
 // Platforms
@@ -204,7 +207,8 @@ enum class TEXTURE_ASSET_ID {
 	TURTLE = FISH + 1,
 	PLAYER = TURTLE + 1,
 	PLAYER2 = PLAYER + 1,
-	TEXTURE_COUNT = PLAYER2 + 1
+	PLAYER_SPRITESHEET = PLAYER2 + 1,
+	TEXTURE_COUNT = PLAYER_SPRITESHEET + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -214,7 +218,8 @@ enum class EFFECT_ASSET_ID {
 	PLAYER = PEBBLE + 1,
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
-	EFFECT_COUNT = WATER + 1
+	ANIMATED = WATER + 1,
+	EFFECT_COUNT = ANIMATED + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 
@@ -225,7 +230,8 @@ enum class GEOMETRY_BUFFER_ID {
 	DEBUG_LINE = PEBBLE + 1,
 	SCREEN_TRIANGLE = DEBUG_LINE + 1,
 	SQUARE = SCREEN_TRIANGLE + 1,
-	GEOMETRY_COUNT = SQUARE + 1
+	ANIMATED_SPRITE = SQUARE + 1,
+	GEOMETRY_COUNT = ANIMATED_SPRITE + 1
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 
