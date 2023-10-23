@@ -284,10 +284,11 @@ void WorldSystem::restart_game() {
 	spawn_player(-1);
 
 	// Create platforms
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 400 }, { 500, 20 }); // bottom platform
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 200 }, { 200, 20 }); // top platform
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 900, 300 }, { 200, 20 }); // top left
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 300, 300 }, { 200, 20 }); // top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Third Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // bottom platform
 
 }
 

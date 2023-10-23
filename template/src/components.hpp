@@ -16,7 +16,7 @@ struct Player
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
 	// Jump force
-	float jump_force = 400.0f;
+	float jump_force = 430.0f;
 	// Running force
 	float running_force = 400.f;
 	// Running speed

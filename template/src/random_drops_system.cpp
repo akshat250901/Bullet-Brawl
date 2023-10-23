@@ -38,7 +38,7 @@ void RandomDropsSystem::step(float elapsed_ms_since_last_update)
 
         // Get random x coordinate along the platform
         int xCoord = uniform_dist_int(rng, decltype(uniform_dist_int)::param_type{(int) platformMotion.position.x - (int) (platformMotion.scale.x / 2) + (int) POWERUP_SIZE, (int) platformMotion.position.x + (int) (platformMotion.scale.x / 2) - (int) POWERUP_SIZE});
-        int yCoord = (int) (platformMotion.position.y) - (int) (platformMotion.scale.y / 2) - (int) (POWERUP_SIZE / 2) - 5;
+        int yCoord = (int) (platformMotion.position.y) - (int) (platformMotion.scale.y / 2) - (int) (POWERUP_SIZE / 2);
 
         vec2 powerUpPos = {xCoord, yCoord};
         // HERE

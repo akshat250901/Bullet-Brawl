@@ -89,12 +89,12 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = size;
 	registry.platforms.emplace(entity);
-	registry.colors.insert(entity, color);
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+	//registry.colors.insert(entity, color);
+	// registry.renderRequests.insert(
+	// 	entity,
+	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+	// 		EFFECT_ASSET_ID::COLOURED,
+	// 		GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
 }
