@@ -248,6 +248,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		else if (parallaxBackground.scrollingSpeedFront != 0.0f) {
 			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedFront * (elapsed_ms_since_last_update / 1000);
 		}
+		else {
+			parallaxBackground.scrollingSpeed = 0.0f;
+		}
 	}
 
 	return true;
@@ -274,6 +277,7 @@ void WorldSystem::restart_game() {
 	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
 	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundIsland(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
 
 	// Create players

@@ -168,6 +168,31 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 	return entity;
 }
 
+Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::PLATFORM,
+			EFFECT_ASSET_ID::BACKGROUND,
+			GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+}
+
 Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size)
 {
 	// Reserve en entity

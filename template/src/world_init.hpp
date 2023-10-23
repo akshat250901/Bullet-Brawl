@@ -25,6 +25,8 @@ Entity createPebble(vec2 pos, vec2 size);
 Entity createBullet(bool isProjectile, vec2 pos, Entity& player);
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
+//Island
+Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size);
 // a background back layer
 Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size);
 // a background middle layer
