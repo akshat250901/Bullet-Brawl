@@ -8,6 +8,13 @@
 // A simple physics system that moves rigid bodies and checks for collision
 class PhysicsSystem
 {
+private:
+// ... (other private members and methods)
+
+void checkCollisionBetweenPlayersAndPlatforms(float step_seconds);
+void checkCollisionBetweenPlayersAndPowerups();
+void checkCollisionBetweenPlayersAndBullets();
+
 public:
 	void step(float elapsed_ms);
 

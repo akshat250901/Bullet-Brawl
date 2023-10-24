@@ -16,7 +16,12 @@ public:
 	ComponentContainer<Gravity> gravity;
 	ComponentContainer<DeathTimer> deathTimers;
 	ComponentContainer<Motion> motions;
-	ComponentContainer<Collision> collisions;
+
+	// Collision containers
+	ComponentContainer<PlayerPlatformCollision> playerPlatformCollisions;
+	ComponentContainer<PlayerPlatformCollision> playerPowerUpCollisions;
+	ComponentContainer<PlayerBulletCollision> playerBulletCollisions;
+
 	ComponentContainer<Player> players;
 	ComponentContainer<Mesh*> meshPtrs;
 	ComponentContainer<RenderRequest> renderRequests;
@@ -40,7 +45,6 @@ public:
 		registry_list.push_back(&gravity);
 		registry_list.push_back(&deathTimers);
 		registry_list.push_back(&motions);
-		registry_list.push_back(&collisions);
 		registry_list.push_back(&players);
 		registry_list.push_back(&meshPtrs);
 		registry_list.push_back(&renderRequests);
@@ -53,6 +57,12 @@ public:
 		registry_list.push_back(&powerUps);
 		registry_list.push_back(&animatedSprite);
 		registry_list.push_back(&parallaxes);
+
+		// Collisions
+		registry_list.push_back(&playerPlatformCollisions);
+		registry_list.push_back(&playerPowerUpCollisions);
+		registry_list.push_back(&playerBulletCollisions);
+
 		// registry_list.push_back(&buttons);
 	}
 

@@ -129,11 +129,26 @@ struct Motion {
 };
 
 // Stucture to store collision information
-struct Collision
+struct PlayerPlatformCollision
 {
 	// Note, the first object is stored in the ECS container.entities
 	Entity other_entity; // the second object involved in the collision
-	Collision(Entity& other_entity) { this->other_entity = other_entity; };
+	PlayerPlatformCollision(Entity& other_entity) { this->other_entity = other_entity; };
+};
+
+struct PlayerCollectibleCollisions
+{
+	// Note, the first object is stored in the ECS container.entities
+	Entity other_entity; // the second object involved in the collision
+	PlayerCollectibleCollisions(Entity& other_entity) { this->other_entity = other_entity; };
+};
+
+// Stucture to store collision information
+struct PlayerBulletCollision
+{
+	// Note, the first object is stored in the ECS container.entities
+	Entity other_entity; // the second object involved in the collision
+	PlayerBulletCollision(Entity& other_entity) { this->other_entity = other_entity; };
 };
 
 // Data structure for toggling debug mode

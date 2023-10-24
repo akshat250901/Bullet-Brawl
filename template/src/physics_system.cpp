@@ -21,10 +21,106 @@ bool collides(const Motion& motion1, const Motion& motion2)
     return false; // The rectangles don't intersect
 }
 
+void PhysicsSystem::checkCollisionBetweenPlayersAndPlatforms(float step_seconds) {
+    auto& motion_container = registry.motions;
+    auto& players_container = registry.players;
+    auto& platforms_container = registry.platforms;
+
+    for(uint i = 0; i < players_container.components.size(); i++)
+	{
+		Entity entity_i = players_container.entities[i];
+		Motion& motion_i = motion_container.get(entity_i);
+
+		vec2 predicted_position_i = motion_i.position + (step_seconds * motion_i.velocity);
+		
+		// compare players to all platforms
+		for(uint j = 0; j < platforms_container.components.size(); j++)
+		{
+			Entity entity_j = platforms_container.entities[j];
+			Motion& motion_j = motion_container.get(entity_j);
+
+			// Temporary update the player position to predicted position
+        	vec2 original_position_i = motion_i.position;
+        
+        	motion_i.position = predicted_position_i;
+
+			if (collides(motion_i, motion_j))
+			{
+				// Create a collisions event
+				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+				registry.playerPlatformCollisions.emplace_with_duplicates(entity_i, entity_j);
+				registry.playerPlatformCollisions.emplace_with_duplicates(entity_j, entity_i);
+			}
+
+			// Restore the original positions
+			motion_i.position = original_position_i;
+		}
+	}
+}
+
+void PhysicsSystem::checkCollisionBetweenPlayersAndPowerups() {
+    auto& motion_container = registry.motions;
+    auto& players_container = registry.players;
+    auto& powerups_container = registry.powerUps;
+
+    // Check for collisions between players and powerups
+	for(uint i = 0; i < players_container.components.size(); i++)
+	{
+		Entity entity_i = players_container.entities[i];
+		Motion& motion_i = motion_container.get(entity_i);
+		
+		// compare all players to all powerups
+		for(uint j = 0; j < powerups_container.components.size(); j++)
+		{
+			Entity entity_j = powerups_container.entities[j];
+			Motion& motion_j = motion_container.get(entity_j);
+
+			if (collides(motion_i, motion_j))
+			{
+				// Create a collisions event
+				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+				registry.playerPowerUpCollisions.emplace_with_duplicates(entity_i, entity_j);
+				registry.playerPowerUpCollisions.emplace_with_duplicates(entity_j, entity_i);
+			}
+		}
+	}
+}
+
+void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
+    auto& motion_container = registry.motions;
+    auto& players_container = registry.players;
+    auto& bullets_container = registry.bullets;
+
+    // Check for collisions between players and bullets
+	for(uint i = 0; i < players_container.components.size(); i++)
+	{
+		Entity entity_i = players_container.entities[i];
+		Motion& motion_i = motion_container.get(entity_i);
+		
+		// compare all players to all bullets
+		for(uint j = 0; j < bullets_container.components.size(); j++)
+		{
+			Entity entity_j = bullets_container.entities[j];
+			Motion& motion_j = motion_container.get(entity_j);
+
+			if (collides(motion_i, motion_j))
+			{
+				// Create a collisions event
+				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+				registry.playerBulletCollisions.emplace_with_duplicates(entity_i, entity_j);
+				registry.playerBulletCollisions.emplace_with_duplicates(entity_j, entity_i);
+			}
+		}
+	}
+}
+
+
 void PhysicsSystem::step(float elapsed_ms)
 {
 	auto& motion_container = registry.motions;
 	float step_seconds = elapsed_ms / 1000.f;
+
+	//printf("elapsed_ms = %f\n", elapsed_ms);
 
 	// Update positions of all objects based on velocities
 	for(uint i = 0; i < motion_container.size(); i++)
@@ -100,7 +196,6 @@ void PhysicsSystem::step(float elapsed_ms)
 	}
 
 
-
 	auto& gravity_container = registry.gravity;
 
 	// Apply gravity to all entities with gravity component
@@ -116,43 +211,7 @@ void PhysicsSystem::step(float elapsed_ms)
 		motion.velocity += vec2(0.0f, gravity.force * step_seconds);
 	}
 
-
-
-	// Predict the collisions between all moving entities
-	for(uint i = 0; i < motion_container.components.size(); i++)
-	{
-		Motion& motion_i = motion_container.components[i];
-		Entity entity_i = motion_container.entities[i];
-
-		vec2 predicted_position_i = motion_i.position + (step_seconds * motion_i.velocity);
-		
-		// note starting j at i+1 to compare all (i,j) pairs only once (and to not compare with itself)
-		for(uint j = i+1; j < motion_container.components.size(); j++)
-		{
-			Motion& motion_j = motion_container.components[j];
-
-			vec2 predicted_position_j = motion_j.position + motion_j.velocity;
-
-			// Temporary update the positions to their predicted positions, we have to check for collisions the moment before they happen
-			// to determine how to handle the collision
-        	vec2 original_position_i = motion_i.position;
-        	vec2 original_position_j = motion_j.position;
-        
-        	motion_i.position = predicted_position_i;
-        	motion_j.position = predicted_position_j;
-
-			if (collides(motion_i, motion_j))
-			{
-				Entity entity_j = motion_container.entities[j];
-				// Create a collisions event
-				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
-				registry.collisions.emplace_with_duplicates(entity_i, entity_j);
-				registry.collisions.emplace_with_duplicates(entity_j, entity_i);
-			}
-
-			// Restore the original positions
-			motion_i.position = original_position_i;
-        	motion_j.position = original_position_j;
-		}
-	}
+	checkCollisionBetweenPlayersAndPlatforms(step_seconds);
+    checkCollisionBetweenPlayersAndPowerups();
+    checkCollisionBetweenPlayersAndBullets();
 }

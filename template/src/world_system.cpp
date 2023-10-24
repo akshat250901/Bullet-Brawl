@@ -275,17 +275,24 @@ Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
 
 // Compute collisions between entities
 void WorldSystem::handle_collisions() {
-	// Loop over all collisions detected by the physics system
-	auto& collisionsRegistry = registry.collisions;
 
-	// Flag to check if there are no player-platform collisions
+	handle_player_platform_collisions();
+	handle_player_powerup_collisions();
+	handle_player_bullet_collisions();
+
+}
+
+void WorldSystem::handle_player_platform_collisions() {
+	auto& playerPlatformCollisionsRegistry = registry.playerPlatformCollisions;
+    // Flag to check if there are no player-platform collisions
 	bool noPlayer1PlatformCollisions = true;
 	bool noPlayer2PlatformCollisions = true;
 
-	for (uint i = 0; i < collisionsRegistry.components.size(); i++) {
+	// Loop over all player platform collisions
+	for (uint i = 0; i < playerPlatformCollisionsRegistry.components.size(); i++) {
 		// The entity and its collider
-		Entity entity = collisionsRegistry.entities[i];
-		Entity entity_other = collisionsRegistry.components[i].other_entity;
+		Entity entity = playerPlatformCollisionsRegistry.entities[i];
+		Entity entity_other = playerPlatformCollisionsRegistry.components[i].other_entity;
 
 		// Player platform collisions
 		if (registry.players.has(entity) && registry.platforms.has(entity_other)) {
@@ -317,6 +324,34 @@ void WorldSystem::handle_collisions() {
 				}
 			}
 		}
+	}
+
+	Player& player_object = registry.players.get(player);
+
+	// if there are no player platform collisions, the player is not grounded
+	if (noPlayer1PlatformCollisions) {
+		player_object.is_grounded = false;
+	}
+
+	Player& player2_object = registry.players.get(player2);
+
+	// if there are no player platform collisions, the player 2 is not grounded
+	if (noPlayer2PlatformCollisions) {
+		player2_object.is_grounded = false;
+	}
+
+	// Remove all collisions from player-platform
+	registry.playerPlatformCollisions.clear();
+}
+
+void WorldSystem::handle_player_powerup_collisions() {
+	auto& playerPowerUpCollisionsRegistry = registry.playerPowerUpCollisions;
+    // Loop over all player powerup collisions
+	for (uint i = 0; i < playerPowerUpCollisionsRegistry.components.size(); i++) {
+
+		// The entity and its collider
+		Entity entity = playerPowerUpCollisionsRegistry.entities[i];
+		Entity entity_other = playerPowerUpCollisionsRegistry.components[i].other_entity;
 
 		// Player powerup collisions
 		if (registry.players.has(entity) && registry.powerUps.has(entity_other)) {
@@ -343,24 +378,33 @@ void WorldSystem::handle_collisions() {
 			registry.remove_all_components_of(entity_other);
 		}
 	}
+	// Remove all collisions from player-powerup
+	registry.playerPowerUpCollisions.clear();
+}
+
+void WorldSystem::handle_player_bullet_collisions() {
+	auto& playerBulletCollisionRegistry = registry.playerBulletCollisions;
+    // Loop over all player powerup collisions
+	for (uint i = 0; i < playerBulletCollisionRegistry.components.size(); i++) {
+
+		// The entity and its collider
+		Entity entity = playerBulletCollisionRegistry.entities[i];
+		Entity entity_other = playerBulletCollisionRegistry.components[i].other_entity;
+
+		// Player-bullet collisions
+		if (registry.players.has(entity) && registry.bullets.has(entity_other)) {
+			Player& player = registry.players.get(entity);
+			Motion& playerMotion = registry.motions.get(entity);
+
+			Motion& bullet_motion = registry.motions.get(entity_other);
 
 
-	Player& player_object = registry.players.get(player);
 
-	// if there are no player platform collisions, the player is not grounded
-	if (noPlayer1PlatformCollisions) {
-		player_object.is_grounded = false;
+			registry.remove_all_components_of(entity_other);
+		}
 	}
-
-	Player& player2_object = registry.players.get(player2);
-
-	// if there are no player platform collisions, the player 2 is not grounded
-	if (noPlayer2PlatformCollisions) {
-		player2_object.is_grounded = false;
-	}
-
-	// Remove all collisions from this simulation step
-	registry.collisions.clear();
+	// Remove all collisions from player-bullet
+	registry.playerBulletCollisions.clear();
 }
 
 

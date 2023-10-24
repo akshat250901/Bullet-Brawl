@@ -70,16 +70,21 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 
 Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 {
-	float bulletSpeed = 500.f; // Adjust the bullet's speed as needed
+	float bulletSpeed = 400.f; // Adjust the bullet's speed as needed
 	float initialUpwardVelocity = 500.f; // Adjust the initial upward velocity as needed
 	float angle = -45.f * M_PI/180;
-	auto entity = Entity();
 
+	auto entity = Entity();
 	Player& player_entity = registry.players.get(player);
+	Motion& player_motion = registry.motions.get(player);
 
 	// Setting initial motion values
 	Motion& motion = registry.motions.emplace(entity);
-	motion.position = pos; // Set the bullet's initial position
+	if (player_entity.facing_right) {
+		motion.position = {pos.x + (player_motion.scale.x / 2) + 25, pos.y};
+	} else {
+		motion.position = {pos.x - (player_motion.scale.x / 2) - 25, pos.y};
+	}
 	float vx = bulletSpeed * (player_entity.facing_right == 1 ? 1: -1);
 	float vy = 0;
 	if (isProjectile) {
@@ -93,6 +98,7 @@ Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 	motion.velocity.x = vx;
 	motion.velocity.y = vy;
 
+	motion.scale = {15,5};
 
 	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
 	registry.bullets.emplace(entity);
