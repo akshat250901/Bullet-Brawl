@@ -176,7 +176,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// check if players are out of window
 	if (playerMotion.position.y > window_height_px + 50) {
 		// Player death logic
-		playerMotion.position = vec2( 500, 200);
+		playerMotion.position = vec2(900, 300);
 		playerMotion.velocity = vec2(0, 0);
 
 
@@ -193,7 +193,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// check if players are out of window
 	if (playerMotion2.position.y > window_height_px) {
 		// Player death logic
-		playerMotion2.position = vec2(700, 200);
+		playerMotion2.position = vec2(300, 200);
 		playerMotion2.velocity = vec2(0, 0);
 
 		// Set timer to 0 for all power ups to stats are reset
@@ -279,9 +279,9 @@ void WorldSystem::restart_game() {
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundIsland(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
-
 	// Create players
-	spawn_player(-1);
+	player = spawn_player({ 900, 300 }, { 1.f, 0, 0 });
+	player2 = spawn_player({ 300, 200 }, { 0, 1.f, 0 });
 
 	// Create platforms
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
@@ -292,11 +292,11 @@ void WorldSystem::restart_game() {
 
 }
 
-void WorldSystem::spawn_player(int player_num) {
-	if (player_num == -1) {
-		player = createPlayer(renderer, { 500, 200 });
-		player2 = createPlayer(renderer, { 700, 200 });
-	}
+Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
+	auto player = createPlayer(renderer, player_location);
+	registry.players.get(player).color = player_color;
+
+	return player;
 }
 
 // Compute collisions between entities

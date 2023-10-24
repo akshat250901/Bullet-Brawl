@@ -4,7 +4,7 @@
 Entity createPlayer(RenderSystem* renderer, vec2 pos)
 {
 	auto entity = Entity();
-
+	
 	// Store a reference to the potentially re-used mesh object
 	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
 	registry.meshPtrs.emplace(entity, &mesh);
@@ -14,7 +14,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	motion.angle = 0.f;
 	motion.velocity = { 0.f, 0.f };
 	
-	motion.scale = vec2({ 30, 50 });
+	motion.scale = vec2({ 60, 60 });
 
 	// Add gravity component
 	Gravity& gravity = registry.gravity.emplace(entity);
@@ -24,7 +24,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	// Add animated sprite component
 	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
-	animated_sprite.frame_count_per_type = { {0, 8}, {1, 8}, {2, 8}, {3, 8} };
+	animated_sprite.frame_count_per_type = { {0, 6}, {1, 8}, {2, 2}, {3, 1} };
 
 	registry.players.emplace(entity);
 
@@ -33,7 +33,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLAYER_SPRITESHEET,
-		 EFFECT_ASSET_ID::ANIMATED,
+		 EFFECT_ASSET_ID::PLAYER,
 		 GEOMETRY_BUFFER_ID::ANIMATED_SPRITE });
 
 	return entity;

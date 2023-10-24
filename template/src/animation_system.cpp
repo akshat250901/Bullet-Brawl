@@ -2,11 +2,6 @@
 #include "animation_system.hpp"
 #include "world_init.hpp"
 
-void setAnimationFrame(int type, Player& player, AnimatedSprite& as) {
-	player.movement_state = type;
-	as.animation_type = type;
-}
-
 void AnimationSystem::step(float elapsed_ms_since_last_update)
 {
 	auto& player_container = registry.players;
@@ -18,21 +13,29 @@ void AnimationSystem::step(float elapsed_ms_since_last_update)
 		Motion& motion = registry.motions.get(entity_i);
 		if (registry.animatedSprite.has(entity_i)) {
 			AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity_i);
+
+			/*
+			* 0 = IDLE
+			* 1 = RUNNING
+			* 2 = JUMPING
+			* 3 = FALLING
+			*/
+
 			if (!player.is_grounded && (motion.velocity.y <= 0.f)) // jumping up
 			{
-				setAnimationFrame(2, player, animated_sprite);
+				animated_sprite.animation_type = 2;
 			}
 			else if (!player.is_grounded && (motion.velocity.y > 0.f)) // falling
 			{
-				setAnimationFrame(3, player, animated_sprite);
+				animated_sprite.animation_type = 3;
 			}
 			else if (player.is_running_left || player.is_running_right)
 			{
-				setAnimationFrame(1, player, animated_sprite);
+				animated_sprite.animation_type = 1;
 			}
 			else
 			{
-				setAnimationFrame(0, player, animated_sprite);
+				animated_sprite.animation_type = 0;
 			}
 			manageSpriteFrame(elapsed_ms_since_last_update, entity_i);
 		}

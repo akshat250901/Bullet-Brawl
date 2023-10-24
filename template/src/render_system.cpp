@@ -26,10 +26,6 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		transform.scale(motion.scale);
 	}
 
-
-	// !!! TODO A1: add rotation to the chain of transformations, mind the order
-	// of transformations
-
 	assert(registry.renderRequests.has(entity));
 	const RenderRequest &render_request = registry.renderRequests.get(entity);
 
@@ -51,7 +47,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	gl_has_errors();
 
 	// Input data location as in the vertex buffer
-	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED	|| render_request.used_effect == EFFECT_ASSET_ID::ANIMATED)
+	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED)
 	{
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
@@ -80,10 +76,6 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 		gl_has_errors();
 
-		if (render_request.used_effect == EFFECT_ASSET_ID::ANIMATED) {
-			drawAnimated(entity);
-		}
-
 	} else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED){
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		gl_has_errors();
@@ -106,6 +98,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
 		GLint glowColorLocation = glGetUniformLocation(program, "glowColor");
 		GLint glowIntensityLocation = glGetUniformLocation(program, "glowIntensity");
+		GLint playerColor = glGetUniformLocation(program, "chosenPlayerColor");
 
 		gl_has_errors();
 		assert(in_texcoord_loc >= 0);
@@ -132,6 +125,9 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
+
+		drawAnimated(entity);
+
 		gl_has_errors();
 
 		auto& powerUps = registry.playerStatModifiers.get(entity).powerUpStatModifiers;
@@ -154,6 +150,8 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			glowIntensity = 0.8f;
 		}
 
+		vec3 pc = registry.players.get(entity).color;
+		glUniform3f(playerColor, pc.x, pc.y, pc.z);
 		glUniform3f(glowColorLocation, glowColor.x, glowColor.y, glowColor.z);
     	glUniform1f(glowIntensityLocation, glowIntensity);
 
@@ -282,7 +280,7 @@ void RenderSystem::drawToScreen()
 
 void RenderSystem::drawAnimated(Entity entity) {
 	AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity);
-	GLuint textured_animation_program = effects[(GLuint)EFFECT_ASSET_ID::ANIMATED];
+	GLuint textured_animation_program = effects[(GLuint)EFFECT_ASSET_ID::PLAYER];
 	glUseProgram(textured_animation_program);
 
 	GLint frame_height_uloc = glGetUniformLocation(textured_animation_program, "sprite_height");

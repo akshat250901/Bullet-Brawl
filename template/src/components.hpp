@@ -9,15 +9,8 @@
 // Player component
 struct Player
 {
-	// For sprite
-	/*
-	* 0 = IDLE
-	* 1 = RUNNING
-	* 2 = JUMPING
-	* 3 = FALLING
-	*/
-	int movement_state = 0; 
-
+	// Player color
+	vec3 color = { 1, 1, 1};
 	// If player is colliding with a platmorm, they are grounded
 	bool is_grounded = false;
 	// Direction player is facing for sprite (default facing right)
@@ -73,7 +66,7 @@ struct AnimatedSprite {
 	float sprite_height = 0.25;
 	float sprite_width = 0.125;
 
-	float animation_speed_ms = 250;
+	float animation_speed_ms = 100;
 	float ms_since_last_update = 0;
 
 	int animation_type = 0;  // y axis - relates to player movement_state
@@ -231,8 +224,7 @@ enum class EFFECT_ASSET_ID {
 	PLAYER = PEBBLE + 1,
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
-	ANIMATED = WATER + 1,
-	BACKGROUND = ANIMATED + 1,
+	BACKGROUND = WATER + 1,
 	EFFECT_COUNT = BACKGROUND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
