@@ -24,7 +24,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	// Add animated sprite component
 	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
-	animated_sprite.frame_count_per_type = { {0, 6}, {1, 8}, {2, 2}, {3, 1} };
+	animated_sprite.frame_count_per_type = { {0, 8}, {1, 8}, {2, 2}, {3, 1} };
 
 	registry.players.emplace(entity);
 
