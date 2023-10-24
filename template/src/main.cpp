@@ -10,6 +10,8 @@
 #include "render_system.hpp"
 #include "world_system.hpp"
 #include "random_drops_system.hpp"
+#include "game_state_system.hpp"
+#include "main_menu_system.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -17,13 +19,15 @@ using Clock = std::chrono::high_resolution_clock;
 int main()
 {
 	// Global systems
+	GameStateSystem game_state_system;
+	MainMenuSystem main_menu_system;
 	WorldSystem world_system;
 	RenderSystem render_system;
 	PhysicsSystem physics_system;
 	RandomDropsSystem random_drops_system(&render_system);
 
 	// Initializing window
-	GLFWwindow* window = world_system.create_window();
+	GLFWwindow* window = game_state_system.create_window();
 	if (!window) {
 		// Time to read the error message
 		printf("Press any key to exit");
@@ -33,11 +37,11 @@ int main()
 
 	// initialize the main systems
 	render_system.init(window);
-	world_system.init(&render_system);
+	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 
 	// variable timestep loop
 	auto t = Clock::now();
-	while (!world_system.is_over()) {
+	while (!game_state_system.is_over()) {
 		// Processes system messages, if this wasn't present the window would become unresponsive
 		glfwPollEvents();
 
@@ -46,13 +50,26 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
+		
+		if (game_state_system.get_current_state() == 0) {
+			if (game_state_system.is_state_changed) {
+				main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
+				game_state_system.is_state_changed = false;
+			}
+		}
+		if (game_state_system.get_current_state() == 1) {
+			if (game_state_system.is_state_changed) {
+				world_system.init(&render_system, &game_state_system, window);
+				game_state_system.is_state_changed = false;
+			}
+			if (!world_system.paused) {
+				world_system.step(elapsed_ms);
+				physics_system.step(elapsed_ms);
+				random_drops_system.step(elapsed_ms);
 
-		world_system.step(elapsed_ms);
-		physics_system.step(elapsed_ms);
-		random_drops_system.step(elapsed_ms);
-
-		world_system.handle_collisions();
-
+				world_system.handle_collisions();
+			}
+		}
 		render_system.draw();
 	}
 

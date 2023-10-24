@@ -55,40 +55,10 @@ namespace {
 	}
 }
 
-// World initialization
-// Note, this has a lot of OpenGL specific things, could be moved to the renderer
-GLFWwindow* WorldSystem::create_window() {
-	///////////////////////////////////////
-	// Initialize GLFW
-	glfwSetErrorCallback(glfw_err_cb);
-	if (!glfwInit()) {
-		fprintf(stderr, "Failed to initialize GLFW");
-		return nullptr;
-	}
 
-	//-------------------------------------------------------------------------
-	// If you are on Linux or Windows, you can change these 2 numbers to 4 and 3 and
-	// enable the glDebugMessageCallback to have OpenGL catch your mistakes for you.
-	// GLFW / OGL Initialization
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-#if __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-	glfwWindowHint(GLFW_RESIZABLE, 0);
-
-	// Create the main window (for rendering, keyboard, and mouse input)
-	window = glfwCreateWindow(window_width_px, window_height_px, "Bullet Brawl", nullptr, nullptr);
-	if (window == nullptr) {
-		fprintf(stderr, "Failed to glfwCreateWindow");
-		return nullptr;
-	}
-
-	// Setting callbacks to member functions (that's why the redirect is needed)
-	// Input is handled using GLFW, for more info see
-	// http://www.glfw.org/docs/latest/input_guide.html
+GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window) {
+	this->window = window;
+	this->game_state_system = game_state_system;
 	glfwSetWindowUserPointer(window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
@@ -117,18 +87,16 @@ GLFWwindow* WorldSystem::create_window() {
 			audio_path("salmon_eat.wav").c_str());
 		return nullptr;
 	}
-
-	return window;
-}
-
-void WorldSystem::init(RenderSystem* renderer_arg) {
 	this->renderer = renderer_arg;
 	// Playing background music indefinitely
 	Mix_PlayMusic(background_music, -1);
 	fprintf(stderr, "Loaded music\n");
+	paused = false;
 
 	// Set all states to default
     restart_game();
+
+	return window;
 }
 
 // Update our game world
@@ -260,6 +228,12 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
+
+	upKey = false;
+	downKey = false;
+	rightKey = false;
+	leftKey = false;
+
 	printf("Restarting\n");
 
 	// Reset the game speed
@@ -389,207 +363,212 @@ void WorldSystem::handle_collisions() {
 	registry.collisions.clear();
 }
 
-// Should the game be over ?
-bool WorldSystem::is_over() const {
-	return bool(glfwWindowShouldClose(window));
-}
 
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
 
-	Player& player_object = registry.players.get(player);
-	Player& player_object_2 = registry.players.get(player2); 
+	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
+		// paused = !paused;
 
-	if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
-		Motion& player_motion = registry.motions.get(player);
-
-		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
-		Motion& bullet_motion = registry.motions.get(bullet);
-	}
-	else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_PRESS) {
-		Motion& player_motion = registry.motions.get(player);
-
-		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
-		Motion& bullet_motion = registry.motions.get(bullet);
-		player_object.is_shooting = true;
-	}else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
-		player_object.is_shooting = false;
+		game_state_system->change_game_state(0);
 	}
 
-	// Key handler for arrow keys
-	if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-		rightKey = true;
-	}
-	else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-		leftKey = true;
-	}
-	else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-		rightKey = false;
-	}
-	else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-		leftKey = false;
-	}
+	if (!paused) {
 
+		Player& player_object = registry.players.get(player);
+		Player& player_object_2 = registry.players.get(player2); 
 
+		if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
+			Motion& player_motion = registry.motions.get(player);
 
-	if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-		upKey = true;
-	}
-	else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-		downKey = true;
-	}
-	else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-		upKey = false;
-	}
-	else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-		downKey = false;
-	}
-
-	// Key handler for player 2 keys
-
-	if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-		Motion& player_motion = registry.motions.get(player2);
-
-		Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
-		Motion& bullet_motion = registry.motions.get(bullet);
-	}
-	else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-		Motion& player_motion = registry.motions.get(player2);
-
-		Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
-		Motion& bullet_motion = registry.motions.get(bullet);
-		player_object_2.is_shooting = true;
-	}
-	else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
-		player_object_2.is_shooting = false;
-	}
-
-	if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-		dRightKey = true;
-	}
-	else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-		aLeftKey = true;
-	}
-	else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-		dRightKey = false;
-	}
-	else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-		aLeftKey = false;
-	}
-
-	if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-		wUpKey = true;
-	}
-	else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-		sDownKey = true;
-	}
-	else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-		wUpKey = false;
-	}
-	else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-		sDownKey = false;
-	}
-
-
-	Motion& playerMotion = registry.motions.get(player);
-
-	//Handle inputs for left and right arrow keys
-	if (rightKey && !leftKey) {
-		player_object.is_running_right = true;
-		player_object.facing_right = true;
-	}
-	else if (!rightKey && leftKey) {
-		player_object.is_running_left = true;
-		player_object.facing_right = false;
-	}
-	else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
-		player_object.is_running_left = false;
-		player_object.is_running_right = false;
-	}
-
-	// Handle up arrow input for jumping
-	if (upKey) {
-		if (player_object.is_grounded) {
-			playerMotion.velocity.y = -player_object.jump_force;
-
+			Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
+			Motion& bullet_motion = registry.motions.get(bullet);
 		}
-		else if (player_object.jump_remaining > 0) {
-			playerMotion.velocity.y = -player_object.jump_force;
-			player_object.jump_remaining--;
+		else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_PRESS) {
+			Motion& player_motion = registry.motions.get(player);
+
+			Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
+			Motion& bullet_motion = registry.motions.get(bullet);
+			player_object.is_shooting = true;
+		}else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
+			player_object.is_shooting = false;
 		}
-	}
 
-	if (downKey) {
-		if (player_object.is_grounded) {
-			playerMotion.position.y += 1.0f;
+		// Key handler for arrow keys
+		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+			rightKey = true;
 		}
-	}
-
-
-	
-	
-
-	Player& player2_object = registry.players.get(player2);
-	Motion& playerMotion2 = registry.motions.get(player2);
-
-	//Handle inputs for left and right arrow keys
-	if (dRightKey && !aLeftKey) {
-		player2_object.is_running_right = true;
-		player2_object.facing_right = true;
-	}
-	else if (!dRightKey && aLeftKey) {
-		player2_object.is_running_left = true;
-		player2_object.facing_right = false;
-	}
-	else if ((!dRightKey && !aLeftKey) || (dRightKey && aLeftKey)) {
-		player2_object.is_running_left = false;
-		player2_object.is_running_right = false;
-	}
-
-	// Handle up arrow input for jumping
-	if (wUpKey) {
-		if (player2_object.is_grounded) {
-			playerMotion2.velocity.y = -player2_object.jump_force;
+		else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+			leftKey = true;
 		}
-		else if (player2_object.jump_remaining > 0) {
-			playerMotion2.velocity.y = -player2_object.jump_force;
-			player2_object.jump_remaining--;
+		else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+			rightKey = false;
 		}
-	}
-
-	if (sDownKey) {
-		if (player2_object.is_grounded) {
-			playerMotion2.position.y += 1.0f;
+		else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
+			leftKey = false;
 		}
-	}
-	
 
-	// Resetting game
-	if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
-		int w, h;
-		glfwGetWindowSize(window, &w, &h);
 
-		restart_game();
-	}
 
-	// Debugging
-	if (key == GLFW_KEY_Q) {
-		if (action == GLFW_RELEASE)
-			debugging.in_debug_mode = false;
-		else
-			debugging.in_debug_mode = true;
-	}
+		if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
+			upKey = true;
+		}
+		else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+			downKey = true;
+		}
+		else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
+			upKey = false;
+		}
+		else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
+			downKey = false;
+		}
 
-	// Control the current speed with `<` `>`
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA) {
-		current_speed -= 0.1f;
-		printf("Current speed = %f\n", current_speed);
+		// Key handler for player 2 keys
+
+		if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+			Motion& player_motion = registry.motions.get(player2);
+
+			Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
+			Motion& bullet_motion = registry.motions.get(bullet);
+		}
+		else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
+			Motion& player_motion = registry.motions.get(player2);
+
+			Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
+			Motion& bullet_motion = registry.motions.get(bullet);
+			player_object_2.is_shooting = true;
+		}
+		else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
+			player_object_2.is_shooting = false;
+		}
+
+		if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+			dRightKey = true;
+		}
+		else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+			aLeftKey = true;
+		}
+		else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+			dRightKey = false;
+		}
+		else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+			aLeftKey = false;
+		}
+
+		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+			wUpKey = true;
+		}
+		else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+			sDownKey = true;
+		}
+		else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+			wUpKey = false;
+		}
+		else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+			sDownKey = false;
+		}
+
+
+		Motion& playerMotion = registry.motions.get(player);
+
+		//Handle inputs for left and right arrow keys
+		if (rightKey && !leftKey) {
+			player_object.is_running_right = true;
+			player_object.facing_right = true;
+		}
+		else if (!rightKey && leftKey) {
+			player_object.is_running_left = true;
+			player_object.facing_right = false;
+		}
+		else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
+			player_object.is_running_left = false;
+			player_object.is_running_right = false;
+		}
+
+		// Handle up arrow input for jumping
+		if (upKey) {
+			if (player_object.is_grounded) {
+				playerMotion.velocity.y = -player_object.jump_force;
+
+			}
+			else if (player_object.jump_remaining > 0) {
+				playerMotion.velocity.y = -player_object.jump_force;
+				player_object.jump_remaining--;
+			}
+		}
+
+		if (downKey) {
+			if (player_object.is_grounded) {
+				playerMotion.position.y += 1.0f;
+			}
+		}
+
+
+		
+		
+
+		Player& player2_object = registry.players.get(player2);
+		Motion& playerMotion2 = registry.motions.get(player2);
+
+		//Handle inputs for left and right arrow keys
+		if (dRightKey && !aLeftKey) {
+			player2_object.is_running_right = true;
+			player2_object.facing_right = true;
+		}
+		else if (!dRightKey && aLeftKey) {
+			player2_object.is_running_left = true;
+			player2_object.facing_right = false;
+		}
+		else if ((!dRightKey && !aLeftKey) || (dRightKey && aLeftKey)) {
+			player2_object.is_running_left = false;
+			player2_object.is_running_right = false;
+		}
+
+		// Handle up arrow input for jumping
+		if (wUpKey) {
+			if (player2_object.is_grounded) {
+				playerMotion2.velocity.y = -player2_object.jump_force;
+			}
+			else if (player2_object.jump_remaining > 0) {
+				playerMotion2.velocity.y = -player2_object.jump_force;
+				player2_object.jump_remaining--;
+			}
+		}
+
+		if (sDownKey) {
+			if (player2_object.is_grounded) {
+				playerMotion2.position.y += 1.0f;
+			}
+		}
+		
+
+		// Resetting game
+		if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
+			int w, h;
+			glfwGetWindowSize(window, &w, &h);
+
+			restart_game();
+		}
+
+		// Debugging
+		if (key == GLFW_KEY_Q) {
+			if (action == GLFW_RELEASE)
+				debugging.in_debug_mode = false;
+			else
+				debugging.in_debug_mode = true;
+		}
+
+		// Control the current speed with `<` `>`
+		if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA) {
+			current_speed -= 0.1f;
+			printf("Current speed = %f\n", current_speed);
+		}
+		if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD) {
+			current_speed += 0.1f;
+			printf("Current speed = %f\n", current_speed);
+		}
+		current_speed = fmax(0.f, current_speed);	
 	}
-	if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_PERIOD) {
-		current_speed += 0.1f;
-		printf("Current speed = %f\n", current_speed);
-	}
-	current_speed = fmax(0.f, current_speed);
 
 }
 void WorldSystem::on_mouse_move(vec2 mouse_position) {
