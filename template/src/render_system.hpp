@@ -35,6 +35,10 @@ class RenderSystem {
 			textures_path("player.png"),
 			textures_path("player2.png"),
 			textures_path("player_spritesheet.png")
+			textures_path("background.png"),
+			textures_path("middleground.png"),
+			textures_path("foreground.png"),
+			textures_path("islandPlatform.png")
 	};
 
 	std::array<GLuint, effect_count> effects;
@@ -46,6 +50,7 @@ class RenderSystem {
 		shader_path("textured"),
 		shader_path("water"),
 		shader_path("animated")};
+		shader_path("background") };
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;

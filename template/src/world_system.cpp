@@ -235,6 +235,24 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	//parallax background
+	for (Entity backgroundEntity : registry.parallaxes.entities) {
+		ParallaxBackground& parallaxBackground = registry.parallaxes.get(backgroundEntity);
+		// Update the offset based on the speed and elapsed time.
+		if (parallaxBackground.scrollingSpeedBack != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedBack * (elapsed_ms_since_last_update / 1000);
+		}
+		else if (parallaxBackground.scrollingSpeedMiddle != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedMiddle * (elapsed_ms_since_last_update / 1000);
+		}
+		else if (parallaxBackground.scrollingSpeedFront != 0.0f) {
+			parallaxBackground.scrollingSpeed += parallaxBackground.scrollingSpeedFront * (elapsed_ms_since_last_update / 1000);
+		}
+		else {
+			parallaxBackground.scrollingSpeed = 0.0f;
+		}
+	}
+
 	return true;
 }
 
@@ -254,18 +272,23 @@ void WorldSystem::restart_game() {
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-	//change background color
-	createBackground(renderer, { 0.2f, 0.5f, 0.6f }, { 10,10 }, { 5000, 5000 });
+
+	//make background parallax
+	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
+	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundIsland(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+
 
 	// Create players
 	spawn_player(-1);
-	// registry.colors.insert(player, {1, 0.8f, 0.8f});
 
 	// Create platforms
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 400 }, { 500, 20 }); // bottom platform
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 600, 200 }, { 200, 20 }); // top platform
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 900, 300 }, { 200, 20 }); // top left
-	createPlatform(renderer, { 0.1f, 0.1f, 0.1f }, { 300, 300 }, { 200, 20 }); // top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Third Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // bottom platform
 
 }
 

@@ -27,7 +27,7 @@ struct Player
 	// Number of jumps available after the player is no longer grounded
 	int jump_remaining = 1;
 	// Jump force
-	float jump_force = 400.0f;
+	float jump_force = 430.0f;
 	// Running force
 	float running_force = 400.f;
 	// Running speed
@@ -89,7 +89,7 @@ struct Platform
 	bool collider_active_player2 = true;
 };
 
-// Platforms
+// Background
 struct Background
 {
 
@@ -112,6 +112,15 @@ struct Gravity
 struct Bullet
 {
 
+};
+
+// Background Parallax
+struct ParallaxBackground
+{
+	float scrollingSpeedBack = 0.0f;
+	float scrollingSpeedMiddle = 0.0f;
+	float scrollingSpeedFront= 0.0f;
+	float scrollingSpeed = 0.0f;
 };
 
 // All data relevant to the shape and motion of entities
@@ -208,7 +217,11 @@ enum class TEXTURE_ASSET_ID {
 	PLAYER = TURTLE + 1,
 	PLAYER2 = PLAYER + 1,
 	PLAYER_SPRITESHEET = PLAYER2 + 1,
-	TEXTURE_COUNT = PLAYER_SPRITESHEET + 1
+	BACKGROUND = PLAYER_SPRITESHEET + 1,
+	MIDDLEGROUND = BACKGROUND + 1,
+	FOREGROUND = MIDDLEGROUND + 1,
+	PLATFORM = FOREGROUND + 1,
+	TEXTURE_COUNT = PLATFORM + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -219,7 +232,8 @@ enum class EFFECT_ASSET_ID {
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
 	ANIMATED = WATER + 1,
-	EFFECT_COUNT = ANIMATED + 1
+	BACKGROUND = ANIMATED + 1,
+	EFFECT_COUNT = BACKGROUND + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 
