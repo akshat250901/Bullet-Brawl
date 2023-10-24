@@ -75,6 +75,10 @@ struct AnimatedSprite {
 	std::map<int, int> frame_count_per_type = {};
 };
 
+// struct Button {
+
+// };
+
 // Platforms
 struct Platform
 {
@@ -213,8 +217,9 @@ enum class TEXTURE_ASSET_ID {
 	BACKGROUND = PLAYER_SPRITESHEET + 1,
 	MIDDLEGROUND = BACKGROUND + 1,
 	FOREGROUND = MIDDLEGROUND + 1,
-	PLATFORM = FOREGROUND + 1,
-	TEXTURE_COUNT = PLATFORM + 1
+	MENUBACKGROUND = FOREGROUND + 1,
+	PLATFORM = MENUBACKGROUND + 1,
+	TEXTURE_COUNT = PLATFORM + 1,
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

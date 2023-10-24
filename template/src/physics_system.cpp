@@ -74,15 +74,19 @@ void PhysicsSystem::step(float elapsed_ms)
 		const float opposite_direction_force = 3.0;
 
 		if (motion.velocity.x != 0.0f) {
-			// Apply friction force to left if player just stops moving right
-			if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
-				motion.velocity.x -= motion.velocity.x * deceleration_force * step_seconds;
-			}
+			
+			// Only apply if player on ground
+			if (player.is_grounded) {
+				// Apply friction force to left if player just stops moving right
+				if ((!player.is_running_right) && (motion.velocity.x > 0.0f)) {
+					motion.velocity.x -= motion.velocity.x * deceleration_force * step_seconds;
+				}
 
-			// Apply friction force to right if player just stops moving left
-			if ((!player.is_running_left) && (motion.velocity.x < 0.0f)) {
-				motion.velocity.x -= motion.velocity.x * 5 * step_seconds;
-			}
+				// Apply friction force to right if player just stops moving left
+				if ((!player.is_running_left) && (motion.velocity.x < 0.0f)) {
+					motion.velocity.x -= motion.velocity.x * deceleration_force * step_seconds;
+				}
+			} 
 
 			// Apply more force to slow down if opposite arrow keys are pressed
 			if ((player.is_running_left) && (motion.velocity.x > 0.0f)) {
