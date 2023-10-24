@@ -9,6 +9,7 @@
 #include "physics_system.hpp"
 #include "render_system.hpp"
 #include "world_system.hpp"
+#include "animation_system.hpp"
 #include "random_drops_system.hpp"
 #include "game_state_system.hpp"
 #include "main_menu_system.hpp"
@@ -24,6 +25,7 @@ int main()
 	WorldSystem world_system;
 	RenderSystem render_system;
 	PhysicsSystem physics_system;
+	AnimationSystem animation_system;
 	RandomDropsSystem random_drops_system(&render_system);
 
 	// Initializing window
@@ -66,7 +68,7 @@ int main()
 				world_system.step(elapsed_ms);
 				physics_system.step(elapsed_ms);
 				random_drops_system.step(elapsed_ms);
-
+				animation_system.step(elapsed_ms);
 				world_system.handle_collisions();
 			}
 		}

@@ -8,6 +8,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 									const mat3 &projection)
 {
 	Motion &motion = registry.motions.get(entity);
+	
 	// Transformation code, see Rendering and Transformation in the template
 	// specification for more info Incrementally updates transformation matrix,
 	// thus ORDER IS IMPORTANT
@@ -24,10 +25,6 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	else {
 		transform.scale(motion.scale);
 	}
-
-
-	// !!! TODO A1: add rotation to the chain of transformations, mind the order
-	// of transformations
 
 	assert(registry.renderRequests.has(entity));
 	const RenderRequest &render_request = registry.renderRequests.get(entity);
@@ -78,6 +75,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 		gl_has_errors();
+
 	} else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED){
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		gl_has_errors();
@@ -100,6 +98,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
 		GLint glowColorLocation = glGetUniformLocation(program, "glowColor");
 		GLint glowIntensityLocation = glGetUniformLocation(program, "glowIntensity");
+		GLint playerColor = glGetUniformLocation(program, "chosenPlayerColor");
 
 		gl_has_errors();
 		assert(in_texcoord_loc >= 0);
@@ -126,6 +125,9 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
+
+		drawAnimated(entity);
+
 		gl_has_errors();
 
 		auto& powerUps = registry.playerStatModifiers.get(entity).powerUpStatModifiers;
@@ -148,6 +150,8 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			glowIntensity = 0.8f;
 		}
 
+		vec3 pc = registry.players.get(entity).color;
+		glUniform3f(playerColor, pc.x, pc.y, pc.z);
 		glUniform3f(glowColorLocation, glowColor.x, glowColor.y, glowColor.z);
     	glUniform1f(glowIntensityLocation, glowIntensity);
 
@@ -273,6 +277,26 @@ void RenderSystem::drawToScreen()
 				  // no offset from the bound index buffer
 	gl_has_errors();
 }
+
+void RenderSystem::drawAnimated(Entity entity) {
+	AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity);
+	GLuint textured_animation_program = effects[(GLuint)EFFECT_ASSET_ID::PLAYER];
+	glUseProgram(textured_animation_program);
+
+	GLint frame_height_uloc = glGetUniformLocation(textured_animation_program, "sprite_height");
+	glUniform1f(frame_height_uloc, animated_sprite.sprite_height);
+	GLint frame_width_uloc = glGetUniformLocation(textured_animation_program, "sprite_width");
+	glUniform1f(frame_width_uloc, animated_sprite.sprite_width);
+
+	GLint animation_frame_uloc = glGetUniformLocation(textured_animation_program, "animation_frame");
+	glUniform1f(animation_frame_uloc, (float)animated_sprite.animation_frame);
+
+	GLint animation_type_uloc = glGetUniformLocation(textured_animation_program, "animation_type");
+	glUniform1f(animation_type_uloc, (float)animated_sprite.animation_type);
+
+	gl_has_errors();
+}
+
 
 // Render our game world
 // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/

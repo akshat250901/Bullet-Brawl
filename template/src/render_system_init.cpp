@@ -163,32 +163,6 @@ void RenderSystem::initializeGlGeometryBuffers()
 	const std::vector<uint16_t> textured_indices = { 0, 3, 1, 1, 3, 2 };
 	bindVBOandIBO(GEOMETRY_BUFFER_ID::SPRITE, textured_vertices, textured_indices);
 
-	////////////////////////
-	// Initialize pebble
-	std::vector<ColoredVertex> pebble_vertices;
-	std::vector<uint16_t> pebble_indices;
-	constexpr float z = -0.1f;
-	constexpr int NUM_TRIANGLES = 62;
-
-	for (int i = 0; i < NUM_TRIANGLES; i++) {
-		const float t = float(i) * M_PI * 2.f / float(NUM_TRIANGLES - 1);
-		pebble_vertices.push_back({});
-		pebble_vertices.back().position = { 0.5 * cos(t), 0.5 * sin(t), z };
-		pebble_vertices.back().color = { 0.8, 0.8, 0.8 };
-	}
-	pebble_vertices.push_back({});
-	pebble_vertices.back().position = { 0, 0, 0 };
-	pebble_vertices.back().color = { 0.8, 0.8, 0.8 };
-	for (int i = 0; i < NUM_TRIANGLES; i++) {
-		pebble_indices.push_back((uint16_t)i);
-		pebble_indices.push_back((uint16_t)((i + 1) % NUM_TRIANGLES));
-		pebble_indices.push_back((uint16_t)NUM_TRIANGLES);
-	}
-	int geom_index = (int)GEOMETRY_BUFFER_ID::PEBBLE;
-	meshes[geom_index].vertices = pebble_vertices;
-	meshes[geom_index].vertex_indices = pebble_indices;
-	bindVBOandIBO(GEOMETRY_BUFFER_ID::PEBBLE, meshes[geom_index].vertices, meshes[geom_index].vertex_indices);
-
 	//////////////////////////////////
 	// Initialize debug line
 	std::vector<ColoredVertex> line_vertices;
@@ -208,7 +182,7 @@ void RenderSystem::initializeGlGeometryBuffers()
 	// Two triangles
 	line_indices = {0, 1, 3, 1, 2, 3};
 	
-	geom_index = (int)GEOMETRY_BUFFER_ID::DEBUG_LINE;
+	int geom_index = (int)GEOMETRY_BUFFER_ID::DEBUG_LINE;
 	meshes[geom_index].vertices = line_vertices;
 	meshes[geom_index].vertex_indices = line_indices;
 	bindVBOandIBO(GEOMETRY_BUFFER_ID::DEBUG_LINE, line_vertices, line_indices);
@@ -237,6 +211,25 @@ void RenderSystem::initializeGlGeometryBuffers()
 	meshes[geom_index].vertices = square_vertices;
 	meshes[geom_index].vertex_indices = square_indices;
 	bindVBOandIBO(GEOMETRY_BUFFER_ID::SQUARE, square_vertices, square_indices);
+
+	
+	// player animation buffer
+	std::vector<TexturedVertex> animation_vertices(4);
+	// Assumes max 8 frames per row and max 4 types per column
+	const float ANIM_FRAME_WIDTH = 0.125; // 1 / 8
+	const float ANIM_FRAME_HEIGHT = 0.25;  // 1 / 4
+	animation_vertices[0].position = { -1.f / 2, +1.f / 2, 0.f };
+	animation_vertices[1].position = { +1.f / 2, +1.f / 2, 0.f };
+	animation_vertices[2].position = { +1.f / 2, -1.f / 2, 0.f };
+	animation_vertices[3].position = { -1.f / 2, -1.f / 2, 0.f };
+	animation_vertices[3].texcoord = { 0, 0 };
+	animation_vertices[2].texcoord = { ANIM_FRAME_WIDTH, 0 };
+	animation_vertices[1].texcoord = { ANIM_FRAME_WIDTH, ANIM_FRAME_HEIGHT };
+	animation_vertices[0].texcoord = { 0, ANIM_FRAME_HEIGHT };
+
+	const std::vector<uint16_t> animation_indices = { 0, 3, 1, 1, 3, 2 };
+	bindVBOandIBO(GEOMETRY_BUFFER_ID::ANIMATED_SPRITE, animation_vertices, animation_indices);
+
 }
 
 RenderSystem::~RenderSystem()

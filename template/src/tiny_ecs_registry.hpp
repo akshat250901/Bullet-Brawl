@@ -21,14 +21,13 @@ public:
 	ComponentContainer<Mesh*> meshPtrs;
 	ComponentContainer<RenderRequest> renderRequests;
 	ComponentContainer<ScreenState> screenStates;
-	ComponentContainer<SoftShell> softShells;
-	ComponentContainer<HardShell> hardShells;
 	ComponentContainer<DebugComponent> debugComponents;
 	ComponentContainer<vec3> colors;
 	ComponentContainer<Platform> platforms;
 	ComponentContainer<Bullet> bullets;
 	ComponentContainer<PlayerStatModifier> playerStatModifiers;
 	ComponentContainer<PowerUp> powerUps;
+	ComponentContainer<AnimatedSprite> animatedSprite;
 	ComponentContainer<ParallaxBackground> parallaxes;
 	// ComponentContainer<Button> buttons;
 
@@ -46,14 +45,13 @@ public:
 		registry_list.push_back(&meshPtrs);
 		registry_list.push_back(&renderRequests);
 		registry_list.push_back(&screenStates);
-		registry_list.push_back(&softShells);
-		registry_list.push_back(&hardShells);
 		registry_list.push_back(&debugComponents);
 		registry_list.push_back(&colors);
 		registry_list.push_back(&platforms);
 		registry_list.push_back(&bullets);
 		registry_list.push_back(&playerStatModifiers);
 		registry_list.push_back(&powerUps);
+		registry_list.push_back(&animatedSprite);
 		registry_list.push_back(&parallaxes);
 		// registry_list.push_back(&buttons);
 	}

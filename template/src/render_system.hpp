@@ -34,6 +34,7 @@ class RenderSystem {
 			textures_path("turtle.png"),
 			textures_path("player.png"),
 			textures_path("player2.png"),
+			textures_path("player_spritesheet.png"),
 			textures_path("background.png"),
 			textures_path("middleground.png"),
 			textures_path("foreground.png"),
@@ -87,6 +88,7 @@ private:
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
+	void drawAnimated(Entity entity);
 
 	// Window handle
 	GLFWwindow* window;
