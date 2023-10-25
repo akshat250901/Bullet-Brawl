@@ -45,7 +45,7 @@ struct Controller
 	bool fireKey = false;
 	bool abilityKey = false;
 
-	float upKey_delay_timer_ms = 750.0f;
+	float upKey_delay_timer_ms = 350.0f;
 };
 
 // Player stat modifier struct for use in power ups and gun pick ups
