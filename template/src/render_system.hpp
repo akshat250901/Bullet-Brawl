@@ -39,7 +39,8 @@ class RenderSystem {
 			textures_path("middleground.png"),
 			textures_path("foreground.png"),
 			textures_path("menuBackground.png"),
-			textures_path("islandPlatform.png")
+			textures_path("islandPlatform.png"),
+			textures_path("islandPlatformTutorial.png")
 	};
 
 	std::array<GLuint, effect_count> effects;

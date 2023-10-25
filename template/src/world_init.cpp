@@ -145,7 +145,7 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 	return entity;
 }
 
-Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size)
+Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
 {
 	// Reserve en entity
 	auto entity = Entity();
@@ -161,11 +161,19 @@ Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	registry.renderRequests.insert(
+	if (game_state_system->get_current_state() == 1) {
+		registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLATFORM,
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
+	} else if (game_state_system->get_current_state() == 2) {
+		registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			EFFECT_ASSET_ID::BACKGROUND,
+			GEOMETRY_BUFFER_ID::SPRITE });
+	}
 
 	return entity;
 }
@@ -242,7 +250,7 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeedFront = 0.2f;
+	parallax.scrollingSpeedFront = 0.0f;
 
 	registry.renderRequests.insert(
 		entity,
