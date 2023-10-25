@@ -251,7 +251,7 @@ void WorldSystem::restart_game() {
 	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
 	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
-	createBackgroundIsland(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
 	// Create players
 	player = spawn_player({ 900, 300 }, { 1.f, 0, 0 });
@@ -411,9 +411,12 @@ void WorldSystem::handle_player_bullet_collisions() {
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
 
-	if (action == GLFW_PRESS && key == GLFW_KEY_ESCAPE) {
+	if (action == GLFW_RELEASE && key == GLFW_KEY_ESCAPE) {
 		// paused = !paused;
-
+		while (registry.bullets.entities.size() > 0)
+	    	registry.remove_all_components_of(registry.bullets.entities.back());
+		while (registry.powerUps.entities.size() > 0)
+	    	registry.remove_all_components_of(registry.powerUps.entities.back());
 		game_state_system->change_game_state(0);
 	}
 
@@ -471,47 +474,49 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		// Key handler for player 2 keys
 
-		if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-			Motion& player_motion = registry.motions.get(player2);
+		if (game_state_system->get_current_state() == 1) {
+			if (key == GLFW_KEY_G && action == GLFW_PRESS) {
+				Motion& player_motion = registry.motions.get(player2);
 
-			Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
-			Motion& bullet_motion = registry.motions.get(bullet);
-		}
-		else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-			Motion& player_motion = registry.motions.get(player2);
+				Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Motion& bullet_motion = registry.motions.get(bullet);
+			}
+			else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
+				Motion& player_motion = registry.motions.get(player2);
 
-			Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
-			Motion& bullet_motion = registry.motions.get(bullet);
-			player_object_2.is_shooting = true;
-		}
-		else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
-			player_object_2.is_shooting = false;
-		}
+				Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Motion& bullet_motion = registry.motions.get(bullet);
+				player_object_2.is_shooting = true;
+			}
+			else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
+				player_object_2.is_shooting = false;
+			}
 
-		if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-			player_2_controller.rightKey = true;
-		}
-		else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-			player_2_controller.leftKey = true;
-		}
-		else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-			player_2_controller.rightKey = false;
-		}
-		else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-			player_2_controller.leftKey = false;
-		}
+			if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+				player_2_controller.rightKey = true;
+			}
+			else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+				player_2_controller.leftKey = true;
+			}
+			else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+				player_2_controller.rightKey = false;
+			}
+			else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+				player_2_controller.leftKey = false;
+			}
 
-		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-			player_2_controller.upKey = true;
-		}
-		else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-			player_2_controller.downKey = true;
-		}
-		else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-			player_2_controller.upKey = false;
-		}
-		else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-			player_2_controller.downKey = false;
+			if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+				player_2_controller.upKey = true;
+			}
+			else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+				player_2_controller.downKey = true;
+			}
+			else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+				player_2_controller.upKey = false;
+			}
+			else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+				player_2_controller.downKey = false;
+			}
 		}
 
 		// Resetting game

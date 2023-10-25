@@ -14,12 +14,12 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
 	glfwSetWindowUserPointer(window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
 	// DEBUG CRASHES CAUSED BY MOUSE CLICKS
-	auto mouse_button_redirect = [](GLFWwindow* wnd, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_click();
-    }};
+	// auto mouse_button_redirect = [](GLFWwindow* wnd, int button, int action, int mods) {
+    // if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+    //     ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_click();
+    // }};
 	glfwSetKeyCallback(window, key_redirect);
-	glfwSetMouseButtonCallback(window, mouse_button_redirect);
+	// glfwSetMouseButtonCallback(window, mouse_button_redirect);
 
 	createMenuBackground(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
 
@@ -93,12 +93,13 @@ bool MainMenuSystem::is_point_inside_button(const MainMenuSystem::Button& button
 
 
 void MainMenuSystem::on_key(int key, int, int action, int mod) {
-    if (action == GLFW_PRESS) {
+    if (action == GLFW_RELEASE) {
 		if (key == GLFW_KEY_SPACE) {
 			game_state_system->change_game_state(1);
 		}
 		if (key == GLFW_KEY_TAB) {
 			// TODO: Add tutorial level
+			game_state_system->change_game_state(2);
 		}
 		if (key == GLFW_KEY_ESCAPE) {
 			game_state_system->is_quit = true;
