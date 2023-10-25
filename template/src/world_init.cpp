@@ -30,6 +30,8 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	registry.playerStatModifiers.emplace(entity);
 
+	registry.controllers.emplace(entity);
+
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLAYER_SPRITESHEET,

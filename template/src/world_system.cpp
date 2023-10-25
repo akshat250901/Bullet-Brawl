@@ -422,6 +422,9 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		Player& player_object = registry.players.get(player);
 		Player& player_object_2 = registry.players.get(player2); 
 
+		Controller& player_controller = registry.controllers.get(player);
+		Controller& player_2_controller = registry.controllers.get(player2);
+
 		if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
 			Motion& player_motion = registry.motions.get(player);
 
@@ -440,31 +443,30 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 		// Key handler for arrow keys
 		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-			rightKey = true;
+			player_controller.rightKey = true;
 		}
 		else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			leftKey = true;
+			player_controller.leftKey = true;
 		}
 		else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-			rightKey = false;
+			player_controller.rightKey = false;
 		}
 		else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-			leftKey = false;
+			player_controller.leftKey = false;
 		}
-
 
 
 		if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-			upKey = true;
+			player_controller.upKey = true;
 		}
 		else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-			downKey = true;
+			player_controller.downKey = true;
 		}
 		else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-			upKey = false;
+			player_controller.upKey = false;
 		}
 		else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-			downKey = false;
+			player_controller.downKey = false;
 		}
 
 		// Key handler for player 2 keys
@@ -487,104 +489,30 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		}
 
 		if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-			dRightKey = true;
+			player_2_controller.rightKey = true;
 		}
 		else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-			aLeftKey = true;
+			player_2_controller.leftKey = true;
 		}
 		else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-			dRightKey = false;
+			player_2_controller.rightKey = false;
 		}
 		else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-			aLeftKey = false;
+			player_2_controller.leftKey = false;
 		}
 
 		if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-			wUpKey = true;
+			player_2_controller.upKey = true;
 		}
 		else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-			sDownKey = true;
+			player_2_controller.downKey = true;
 		}
 		else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-			wUpKey = false;
+			player_2_controller.upKey = false;
 		}
 		else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-			sDownKey = false;
+			player_2_controller.downKey = false;
 		}
-
-
-		Motion& playerMotion = registry.motions.get(player);
-
-		//Handle inputs for left and right arrow keys
-		if (rightKey && !leftKey) {
-			player_object.is_running_right = true;
-			player_object.facing_right = true;
-		}
-		else if (!rightKey && leftKey) {
-			player_object.is_running_left = true;
-			player_object.facing_right = false;
-		}
-		else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {
-			player_object.is_running_left = false;
-			player_object.is_running_right = false;
-		}
-
-		// Handle up arrow input for jumping
-		if (upKey) {
-			if (player_object.is_grounded) {
-				playerMotion.velocity.y = -player_object.jump_force;
-
-			}
-			else if (player_object.jump_remaining > 0) {
-				playerMotion.velocity.y = -player_object.jump_force;
-				player_object.jump_remaining--;
-			}
-		}
-
-		if (downKey) {
-			if (player_object.is_grounded) {
-				playerMotion.position.y += 1.0f;
-			}
-		}
-
-
-		
-		
-
-		Player& player2_object = registry.players.get(player2);
-		Motion& playerMotion2 = registry.motions.get(player2);
-
-		//Handle inputs for left and right arrow keys
-		if (dRightKey && !aLeftKey) {
-			player2_object.is_running_right = true;
-			player2_object.facing_right = true;
-		}
-		else if (!dRightKey && aLeftKey) {
-			player2_object.is_running_left = true;
-			player2_object.facing_right = false;
-		}
-		else if ((!dRightKey && !aLeftKey) || (dRightKey && aLeftKey)) {
-			player2_object.is_running_left = false;
-			player2_object.is_running_right = false;
-		}
-
-		// Handle up arrow input for jumping
-		if (wUpKey) {
-			if (player2_object.is_grounded) {
-				playerMotion2.velocity.y = -player2_object.jump_force;
-			}
-			else if (player2_object.jump_remaining > 0) {
-				playerMotion2.velocity.y = -player2_object.jump_force;
-				player2_object.jump_remaining--;
-			}
-		}
-
-		if (sDownKey) {
-			if (player2_object.is_grounded) {
-				playerMotion2.position.y += 1.0f;
-			}
-		}
-		
 
 		// Resetting game
 		if (action == GLFW_RELEASE && key == GLFW_KEY_R) {

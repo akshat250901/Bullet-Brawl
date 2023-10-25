@@ -35,6 +35,19 @@ struct Player
 	float recoil_force = 2000.f;
 };
 
+struct Controller
+{
+	bool leftKey = false;
+	bool rightKey = false;
+	bool upKey = false;
+	bool downKey = false;
+
+	bool fireKey = false;
+	bool abilityKey = false;
+
+	float upKey_delay_timer_ms = 350.0f;
+};
+
 // Player stat modifier struct for use in power ups and gun pick ups
 struct StatModifier
 {
