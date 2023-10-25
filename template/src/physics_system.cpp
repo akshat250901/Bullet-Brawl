@@ -128,15 +128,9 @@ void PhysicsSystem::step(float elapsed_ms)
 		Motion& motion = motion_container.components[i];
 		Entity entity_i = motion_container.entities[i];
 
-		// Accelerate to change velocity if entity is player
+		// Accelerate to change velocity if entity is player // RECOIL WILL BE REFACTORED TO GUN SYSTEM
 		if(registry.players.has(entity_i)) {
 			Player& player = registry.players.get(entity_i);
-			if ((player.is_running_right) && (motion.velocity.x <= player.speed)) {
-				motion.velocity.x += player.running_force * step_seconds;
-			}
-			if ((player.is_running_left) && (motion.velocity.x >= -player.speed)) {
-				motion.velocity.x -= player.running_force * step_seconds;
-			}
 
 			// add a constant force for recoil, change later to add recoil force based on gun
 			if (player.is_shooting && !player.facing_right) {

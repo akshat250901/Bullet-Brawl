@@ -13,6 +13,7 @@
 #include "random_drops_system.hpp"
 #include "game_state_system.hpp"
 #include "main_menu_system.hpp"
+#include "movement_system.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -27,6 +28,7 @@ int main()
 	PhysicsSystem physics_system;
 	AnimationSystem animation_system;
 	RandomDropsSystem random_drops_system(&render_system);
+	MovementSystem movement_system;
 
 	// Initializing window
 	GLFWwindow* window = game_state_system.create_window();
@@ -65,6 +67,7 @@ int main()
 				game_state_system.is_state_changed = false;
 			}
 			if (!world_system.paused) {
+				movement_system.step(elapsed_ms);
 				world_system.step(elapsed_ms);
 				physics_system.step(elapsed_ms);
 				random_drops_system.step(elapsed_ms);
