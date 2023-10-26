@@ -22,7 +22,7 @@ Entity createLine(vec2 position, vec2 size);
 // a pebble
 Entity createPebble(vec2 pos, vec2 size);
 // a bullet
-Entity createBullet(bool isProjectile, vec2 pos, Entity& player);
+Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player);
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
 //Island

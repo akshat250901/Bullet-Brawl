@@ -2,6 +2,11 @@
 #include "physics_system.hpp"
 #include "world_init.hpp"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <vector>
+
 // Checks if the two rectangles intersect
 bool collides(const Motion& motion1, const Motion& motion2)
 {
@@ -102,8 +107,11 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
 		{
 			Entity entity_j = bullets_container.entities[j];
 			Motion& motion_j = motion_container.get(entity_j);
+			Bullet& bullet = registry.bullets.get(entity_j);
+			
 
-			if (collides(motion_i, motion_j))
+			const Mesh* bullet_mesh = registry.meshPtrs.get(entity_j);
+			if (bullet.shooter != entity_i && collides(motion_j, motion_i))
 			{
 				// Create a collisions event
 				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity

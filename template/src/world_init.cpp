@@ -70,7 +70,7 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	return entity;
 }
 
-Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
+Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player)
 {
 	float bulletSpeed = 400.f; // Adjust the bullet's speed as needed
 	float initialUpwardVelocity = 500.f; // Adjust the initial upward velocity as needed
@@ -80,12 +80,16 @@ Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 	Player& player_entity = registry.players.get(player);
 	Motion& player_motion = registry.motions.get(player);
 
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::BULLET);
+	registry.meshPtrs.emplace(entity, &mesh);
+
 	// Setting initial motion values
 	Motion& motion = registry.motions.emplace(entity);
 	if (player_entity.facing_right) {
-		motion.position = {pos.x + (player_motion.scale.x / 2) + 25, pos.y};
+		motion.position = {pos.x, pos.y};
 	} else {
-		motion.position = {pos.x - (player_motion.scale.x / 2) - 25, pos.y};
+		motion.position = {pos.x, pos.y};
 	}
 	float vx = bulletSpeed * (player_entity.facing_right == 1 ? 1: -1);
 	float vy = 0;
@@ -100,20 +104,27 @@ Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
 	motion.velocity.x = vx;
 	motion.velocity.y = vy;
 
-	motion.scale = {15,5};
+	motion.scale = {50,10};
 
 	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
-	registry.bullets.emplace(entity);
+	registry.bullets.emplace(entity, player);
 	if (isProjectile)
 	{
+		motion.scale = { 30,20 };
 		registry.gravity.emplace(entity);
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+				EFFECT_ASSET_ID::COLOURED,
+				GEOMETRY_BUFFER_ID::PROJECTILE });
+		return entity;
 	}
 
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
 			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+			GEOMETRY_BUFFER_ID::BULLET });
 
 	return entity;
 }

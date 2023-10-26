@@ -110,8 +110,8 @@ void MainMenuSystem::on_key(int key, int, int action, int mod) {
 void MainMenuSystem::on_click() {
 	// (vec2)mouse_position; // dummy to avoid compiler warning
 
-	double x, y;
-	glfwGetCursorPos(window, &x, &y);
+	/*double x, y;
+	glfwGetCursorPos(window, &x, &y);*/
 
 	// DEBUG CRASHES CAUSED BY MOUSE CLICKS
 
