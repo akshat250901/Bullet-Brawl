@@ -134,13 +134,20 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 	
 	motion.scale = scale;
 
+	// Add animated sprite component
+	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
+	animated_sprite.frame_count_per_type = { {0, 6}, {1, 6}, {2, 6}, {3, 6} };
+	animated_sprite.animation_type = 0;
+	animated_sprite.animation_speed_ms = 150;
+
 	registry.colors.insert(entity, color);
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+		{ TEXTURE_ASSET_ID::POWERUP_SPRITESHEET,
+			EFFECT_ASSET_ID::ANIMATED,
+			GEOMETRY_BUFFER_ID::ANIMATED_SPRITE });
+
 
 	return entity;
 }

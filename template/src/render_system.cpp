@@ -47,7 +47,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	gl_has_errors();
 
 	// Input data location as in the vertex buffer
-	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED)
+	if (render_request.used_effect == EFFECT_ASSET_ID::TEXTURED || render_request.used_effect == EFFECT_ASSET_ID::ANIMATED)
 	{
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		GLint in_texcoord_loc = glGetAttribLocation(program, "in_texcoord");
@@ -74,6 +74,11 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			texture_gl_handles[(GLuint)registry.renderRequests.get(entity).used_texture];
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
+
+		if (render_request.used_effect == EFFECT_ASSET_ID::ANIMATED) {
+			drawAnimated(entity, EFFECT_ASSET_ID::ANIMATED);
+		}
+
 		gl_has_errors();
 
 	} else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED){
@@ -126,7 +131,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		glBindTexture(GL_TEXTURE_2D, texture_id);
 
-		drawAnimated(entity);
+		drawAnimated(entity, EFFECT_ASSET_ID::PLAYER);
 
 		gl_has_errors();
 
@@ -278,9 +283,9 @@ void RenderSystem::drawToScreen()
 	gl_has_errors();
 }
 
-void RenderSystem::drawAnimated(Entity entity) {
+void RenderSystem::drawAnimated(Entity entity, EFFECT_ASSET_ID asset_id) {
 	AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity);
-	GLuint textured_animation_program = effects[(GLuint)EFFECT_ASSET_ID::PLAYER];
+	GLuint textured_animation_program = effects[(GLuint)asset_id];
 	glUseProgram(textured_animation_program);
 
 	GLint frame_height_uloc = glGetUniformLocation(textured_animation_program, "sprite_height");

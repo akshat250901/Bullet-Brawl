@@ -6,6 +6,7 @@ void AnimationSystem::step(float elapsed_ms_since_last_update)
 {
 	auto& player_container = registry.players;
 
+	// player sprites
 	for (uint i = 0; i < player_container.size(); i++)
 	{
 		Entity entity_i = player_container.entities[i];
@@ -40,6 +41,34 @@ void AnimationSystem::step(float elapsed_ms_since_last_update)
 			manageSpriteFrame(elapsed_ms_since_last_update, entity_i);
 		}
 	}
+
+	auto& powerup_container = registry.powerUps;
+	// powerup sprites
+	for (uint i = 0; i < powerup_container.size(); i++)
+	{
+		Entity entity_i = powerup_container.entities[i];
+		PowerUp& powerup = registry.powerUps.get(entity_i);
+
+		if (registry.animatedSprite.has(entity_i)) {
+			AnimatedSprite& animated_sprite = registry.animatedSprite.get(entity_i);
+			if (powerup.statModifier.name == "Triple Jump") {
+				animated_sprite.animation_type = 0;
+			}
+			else if (powerup.statModifier.name == "Speed Boost") {
+				animated_sprite.animation_type = 1;
+			}
+			else if (powerup.statModifier.name == "Super Jump") {
+				animated_sprite.animation_type = 2;
+			}
+			else
+			{
+				// shouldnt exist
+			}
+			manageSpriteFrame(elapsed_ms_since_last_update, entity_i);
+		}
+		
+	}
+
 }
 
 void AnimationSystem::manageSpriteFrame(float elapsed_ms_since_last_update, Entity entity) {
