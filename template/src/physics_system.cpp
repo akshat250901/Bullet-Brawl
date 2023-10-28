@@ -1,6 +1,7 @@
-// internal
+﻿// internal
 #include "physics_system.hpp"
 #include "world_init.hpp"
+#include <algorithm> // Include the algorithm header
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -24,6 +25,74 @@ bool collides(const Motion& motion1, const Motion& motion2)
         }
     }
     return false; // The rectangles don't intersect
+}
+
+bool doLineSegmentIntersect(const glm::vec2& p1, const glm::vec2& q1, const glm::vec2& p2, const glm::vec2& q2) {
+	glm::vec2 r = q1 - p1;
+	glm::vec2 s = q2 - p2;
+
+	float rxs = r.x * s.y - r.y * s.x;
+	glm::vec2 qp = p2 - p1;
+
+	float t = (qp.x * s.y - qp.y * s.x) / rxs;
+	float u = (qp.x * r.y - qp.y * r.x) / rxs;
+
+	if (rxs == 0 && glm::dot(qp, r) == 0) {
+		// Lines are collinear
+		float t0 = glm::dot(qp, r) / glm::dot(r, r);
+		float t1 = t0 + glm::dot(s, r) / glm::dot(r, r);
+		if ((t0 >= 0 && t0 <= 1) || (t1 >= 0 && t1 <= 1) || (t0 < 0 && t1 > 1) || (t0 > 1 && t1 < 0))
+			return true;
+	}
+
+	return (t >= 0 && t <= 1 && u >= 0 && u <= 1);
+}
+
+bool lineMeshCollision(const glm::vec2& lineStart, const glm::vec2& lineEnd, const std::vector<glm::vec2>& polygon, const Motion& motion) {
+	// Transform the line using its start and end points
+	glm::mat4 lineTransform = glm::mat4(1.0);
+	lineTransform = glm::translate(lineTransform, glm::vec3(lineStart, 0.0));
+
+	glm::vec2 transformedLineEnd = vec2(std::max(lineEnd.x, lineStart.x), std::min(lineEnd.y, lineStart.y));
+	glm::vec2 transformedLineEnd_ = vec2(std::min(lineEnd.x, lineStart.x), std::max(lineEnd.y, lineStart.y));
+
+	// Transform the polygon using its motion
+	glm::mat4 polygonTransform = glm::mat4(1.0);
+	polygonTransform = glm::translate(polygonTransform, glm::vec3(motion.position, 0.0));
+	polygonTransform = glm::scale(polygonTransform, glm::vec3(motion.scale, 1.0));
+
+	std::vector<glm::vec2> transformedPolygon;
+	for (const auto& vertex : polygon) {
+		transformedPolygon.push_back(glm::vec2(polygonTransform * glm::vec4(vertex, 0, 1)));
+	}
+
+	// Check for collision with each edge of the transformed polygon
+	for (size_t i = 0; i < transformedPolygon.size(); ++i) {
+		size_t nextIndex = (i + 1) % transformedPolygon.size();
+		if (doLineSegmentIntersect(lineStart, transformedLineEnd, transformedPolygon[i], transformedPolygon[nextIndex]) || 
+			doLineSegmentIntersect(lineStart, transformedLineEnd_, transformedPolygon[i], transformedPolygon[nextIndex])) {
+			return true; // Intersection found
+		}
+	}
+
+	return false; // No intersection with any edge
+}
+
+bool meshIntersectsMotion(const Mesh* mesh, Motion& bullet_motion, const Motion& object_motion) {
+	// Iterate through each triangle defined by the vertex indices of the mesh
+	for (size_t i = 0; i < mesh->vertex_indices.size(); i += 3) {
+		// Get the vertices of the current triangle
+		glm::vec2 vertex1 = glm::vec2(mesh->vertices[mesh->vertex_indices[i]].position.x, mesh->vertices[mesh->vertex_indices[i]].position.y);
+		glm::vec2 vertex2 = glm::vec2(mesh->vertices[mesh->vertex_indices[i + 1]].position.x, mesh->vertices[mesh->vertex_indices[i + 1]].position.y);
+		glm::vec2 vertex3 = glm::vec2(mesh->vertices[mesh->vertex_indices[i + 2]].position.x, mesh->vertices[mesh->vertex_indices[i + 2]].position.y);
+
+		// Check if the transformed line segment intersects with the current triangle
+		if (lineMeshCollision(object_motion.position - object_motion.scale / 2.0f, object_motion.position + object_motion.scale / 2.0f, { vertex1, vertex2, vertex3 }, bullet_motion)) {
+			return true; // Collision detected with this triangle
+		}
+	}
+
+	return false; // No collision detected with any triangle
 }
 
 void PhysicsSystem::checkCollisionBetweenPlayersAndPlatforms(float step_seconds) {
@@ -111,7 +180,7 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
 			
 
 			const Mesh* bullet_mesh = registry.meshPtrs.get(entity_j);
-			if (bullet.shooter != entity_i && collides(motion_j, motion_i))
+			if (bullet.shooter != entity_i && meshIntersectsMotion(bullet_mesh, motion_j, motion_i))
 			{
 				// Create a collisions event
 				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
