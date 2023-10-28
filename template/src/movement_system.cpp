@@ -2,7 +2,8 @@
 #include "movement_system.hpp"
 #include "world_init.hpp"
 
-const float JUMP_DELAY_MS = 350.0f;
+
+const float JUMP_DELAY_MS = 300.0f;
 
 void MovementSystem::step(float elapsed_ms)
 {
@@ -26,10 +27,12 @@ void MovementSystem::step(float elapsed_ms)
         //Handle inputs for left and right arrow keys
 		if (rightKey && !leftKey) {
 			player_i.is_running_right = true;
+			player_i.is_running_left = false;
 			player_i.facing_right = true;
 		}
 		else if (!rightKey && leftKey) {
 			player_i.is_running_left = true;
+			player_i.is_running_right = false;
 			player_i.facing_right = false;
 		}
 		else if ((!rightKey && !leftKey) || (rightKey && leftKey)) {

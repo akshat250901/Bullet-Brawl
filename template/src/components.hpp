@@ -55,6 +55,19 @@ struct Controller
 	float upKey_delay_timer_ms = 350.0f;
 };
 
+struct Controller
+{
+	bool leftKey = false;
+	bool rightKey = false;
+	bool upKey = false;
+	bool downKey = false;
+
+	bool fireKey = false;
+	bool abilityKey = false;
+
+	float upKey_delay_timer_ms = 300.0f;
+};
+
 // Player stat modifier struct for use in power ups and gun pick ups
 struct StatModifier
 {
@@ -254,12 +267,14 @@ enum class TEXTURE_ASSET_ID {
 	PLAYER = GREEN_HEALTH + 1,
 	PLAYER2 = PLAYER + 1,
 	PLAYER_SPRITESHEET = PLAYER2 + 1,
-	BACKGROUND = PLAYER_SPRITESHEET + 1,
+	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
+	BACKGROUND = POWERUP_SPRITESHEET + 1,
 	MIDDLEGROUND = BACKGROUND + 1,
 	FOREGROUND = MIDDLEGROUND + 1,
 	MENUBACKGROUND = FOREGROUND + 1,
 	PLATFORM = MENUBACKGROUND + 1,
-	TEXTURE_COUNT = PLATFORM + 1,
+	TUTORIALPLATFORM = PLATFORM + 1,
+	TEXTURE_COUNT = TUTORIALPLATFORM + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -270,7 +285,8 @@ enum class EFFECT_ASSET_ID {
 	TEXTURED = PLAYER + 1,
 	WATER = TEXTURED + 1,
 	BACKGROUND = WATER + 1,
-	EFFECT_COUNT = BACKGROUND + 1
+	ANIMATED = BACKGROUND + 1,
+	EFFECT_COUNT = ANIMATED + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 

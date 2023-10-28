@@ -172,7 +172,9 @@ void PhysicsSystem::step(float elapsed_ms)
 		const float opposite_direction_force = 3.0;
 
 		if (motion.velocity.x != 0.0f) {
-			
+
+			int originalSign = (motion.velocity.x > 0.0f) ? 1 : (motion.velocity.x < 0.0f) ? -1 : 0; // Determine the original direction (+1 or -1)
+
 			// Only apply if player on ground
 			if (player.is_grounded) {
 				// Apply friction force to left if player just stops moving right
@@ -194,7 +196,14 @@ void PhysicsSystem::step(float elapsed_ms)
 			if ((player.is_running_right) && (motion.velocity.x < 0.0f)) {
 				motion.velocity.x -= motion.velocity.x * opposite_direction_force * step_seconds;
 			}
+
+			// Ensure that the velocity doesn't change direction
+			int newSign = (motion.velocity.x > 0.0f) ? 1 : (motion.velocity.x < 0.0f) ? -1 : 0;
+			if (newSign != originalSign && newSign != 0) {
+				motion.velocity.x = 0.0f; // Set velocity to zero if it changes direction
+			}
 		}
+
 	}
 
 

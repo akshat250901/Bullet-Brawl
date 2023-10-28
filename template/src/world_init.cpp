@@ -32,6 +32,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	registry.controllers.emplace(entity);
 
+
 	for (int i = 0; i < healths; i++) {
 		float start_x = 50.f;
 		TEXTURE_ASSET_ID health = TEXTURE_ASSET_ID::RED_HEALTH;
@@ -176,18 +177,25 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 
 	motion.scale = scale;
 
+	// Add animated sprite component
+	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
+	animated_sprite.frame_count_per_type = { {0, 6}, {1, 6}, {2, 6}, {3, 6} };
+	animated_sprite.animation_type = 0;
+	animated_sprite.animation_speed_ms = 150;
+
 	registry.colors.insert(entity, color);
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+		{ TEXTURE_ASSET_ID::POWERUP_SPRITESHEET,
+			EFFECT_ASSET_ID::ANIMATED,
+			GEOMETRY_BUFFER_ID::ANIMATED_SPRITE });
+
 
 	return entity;
 }
 
-Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size)
+Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
 {
 	// Reserve en entity
 	auto entity = Entity();
@@ -203,11 +211,19 @@ Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size)
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	registry.renderRequests.insert(
+	if (game_state_system->get_current_state() == 1) {
+		registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLATFORM,
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
+	} else if (game_state_system->get_current_state() == 2) {
+		registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			EFFECT_ASSET_ID::BACKGROUND,
+			GEOMETRY_BUFFER_ID::SPRITE });
+	}
 
 	return entity;
 }
@@ -284,7 +300,7 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeedFront = 0.2f;
+	parallax.scrollingSpeedFront = 0.0f;
 
 	registry.renderRequests.insert(
 		entity,

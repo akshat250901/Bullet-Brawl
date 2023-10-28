@@ -35,9 +35,9 @@ private:
     };
 
     std::unordered_map<std::string, vec3> powerUpsNamesToColor = {
-        {"Triple Jump", {255.0f, 0.0f, 0.0f}},
-        {"Speed Boost", {0.0f, 255.0f, 0.0f}},
-        {"Super Jump", {0.0f, 0.0f, 255.0f}}
+        {"Triple Jump", {1.0f, 0.5f, 0.5f}},
+        {"Speed Boost", {0.5f, 1.0f, 0.5f}},
+        {"Super Jump", {0.5f, 0.5f, 1.0f}}
 };
 
     std::unordered_map<std::string, StatModifier> powerUpsNamesToStatModifier = {

@@ -5,7 +5,7 @@
 // Drop timing
 const size_t MAX_POWERUPS = 5;
 const float POWERUP_DELAY_MS = 10000;
-const float POWERUP_SIZE = 20.f;
+const float POWERUP_SIZE = 50.f;
 
 RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     : next_powerup_spawn(POWERUP_DELAY_MS)

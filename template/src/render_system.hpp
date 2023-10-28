@@ -36,11 +36,13 @@ class RenderSystem {
 			textures_path("player.png"),
 			textures_path("player2.png"),
 			textures_path("player_spritesheet.png"),
+			textures_path("powerup_spritesheet.png"),
 			textures_path("background.png"),
 			textures_path("middleground.png"),
 			textures_path("foreground.png"),
 			textures_path("menuBackground.png"),
 			textures_path("islandPlatform.png"),
+			textures_path("islandPlatformTutorial.png")
 	};
 
 	std::array<GLuint, effect_count> effects;
@@ -51,7 +53,9 @@ class RenderSystem {
 		shader_path("player"),
 		shader_path("textured"),
 		shader_path("water"),
-		shader_path("background") };
+		shader_path("background"),
+		shader_path("animated"),
+	};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
 	std::array<GLuint, geometry_count> index_buffers;
@@ -89,7 +93,7 @@ private:
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
-	void drawAnimated(Entity entity);
+	void drawAnimated(Entity entity, EFFECT_ASSET_ID asset_id);
 
 	// Window handle
 	GLFWwindow* window;

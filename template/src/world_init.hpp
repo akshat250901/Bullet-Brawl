@@ -3,6 +3,7 @@
 #include "common.hpp"
 #include "tiny_ecs.hpp"
 #include "render_system.hpp"
+#include "game_state_system.hpp"
 
 // These are ahrd coded to the dimensions of the entity texture
 const float FISH_BB_WIDTH = 0.4f * 296.f;
@@ -26,7 +27,7 @@ Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity&
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
 //Island
-Entity createBackgroundIsland(RenderSystem* renderer, vec2 position, vec2 size);
+Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
 // a background back layer
 Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size);
 // a background middle layer
