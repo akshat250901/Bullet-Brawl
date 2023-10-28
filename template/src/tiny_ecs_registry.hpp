@@ -35,6 +35,7 @@ public:
 	ComponentContainer<AnimatedSprite> animatedSprite;
 	ComponentContainer<ParallaxBackground> parallaxes;
 	ComponentContainer<Controller> controllers;
+	ComponentContainer<Health> healths;
 	// ComponentContainer<Button> buttons;
 
 	// constructor that adds all containers for looping over them
@@ -59,6 +60,7 @@ public:
 		registry_list.push_back(&animatedSprite);
 		registry_list.push_back(&parallaxes);
 		registry_list.push_back(&controllers);
+		registry_list.push_back(&healths);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);

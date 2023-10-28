@@ -15,7 +15,8 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	
 	Transform transform;
 	transform.translate(motion.position);
-	
+	transform.rotate(motion.angle);
+
 	// flip player
 	if (registry.players.has(entity)) {
 		Player& player = registry.players.get(entity); 
