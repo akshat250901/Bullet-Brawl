@@ -52,19 +52,6 @@ struct Controller
 	bool fireKey = false;
 	bool abilityKey = false;
 
-	float upKey_delay_timer_ms = 350.0f;
-};
-
-struct Controller
-{
-	bool leftKey = false;
-	bool rightKey = false;
-	bool upKey = false;
-	bool downKey = false;
-
-	bool fireKey = false;
-	bool abilityKey = false;
-
 	float upKey_delay_timer_ms = 300.0f;
 };
 
