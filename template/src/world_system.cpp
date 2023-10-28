@@ -450,9 +450,6 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		Controller& player_controller = registry.controllers.get(player);
 		Controller& player_2_controller = registry.controllers.get(player2);
 
-		Controller& player_controller = registry.controllers.get(player);
-		Controller& player_2_controller = registry.controllers.get(player2);
-
 		if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
 			Motion& player_motion = registry.motions.get(player);
 
@@ -504,13 +501,13 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 			if (key == GLFW_KEY_G && action == GLFW_PRESS) {
 				Motion& player_motion = registry.motions.get(player2);
 
-				Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player2);
 				Motion& bullet_motion = registry.motions.get(bullet);
 			}
 			else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
 				Motion& player_motion = registry.motions.get(player2);
 
-				Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player2);
 				Motion& bullet_motion = registry.motions.get(bullet);
 				player_object_2.is_shooting = true;
 			}
