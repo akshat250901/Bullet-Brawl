@@ -271,7 +271,6 @@ void WorldSystem::restart_game() {
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
 	auto player = createPlayer(renderer, player_location);
 	registry.players.get(player).color = player_color;
-	registry.players.get(player).healths = healths;
 
 	return player;
 }
@@ -406,21 +405,6 @@ void WorldSystem::handle_player_bullet_collisions() {
 			std::uniform_int_distribution<int> distribution_y(50, 400);
 			playerMotion.position = vec2(distribution(rng), distribution_y(rng));
 			playerMotion.velocity = vec2(0, 0);
-			auto health_container = registry.healths;
-			Entity to_remove;
-			for (int i = 0; i < health_container.components.size(); i++) {
-				Health health_entity = health_container.components[i];
-				if (health_entity.player == entity) {					
-					registry.renderRequests.remove(health_container.entities[i]);
-					registry.healths.remove(health_container.entities[i]);
-					hit_player.healths = hit_player.healths - 1;
-					if (hit_player.healths == 0) {
-						// TODO: Add a screen to show which player won
-						restart_game();
-					}
-					break;
-				}
-			}
 
 			registry.remove_all_components_of(entity_other);
 		}

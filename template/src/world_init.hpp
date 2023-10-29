@@ -10,7 +10,6 @@ const float FISH_BB_WIDTH = 0.4f * 296.f;
 const float FISH_BB_HEIGHT = 0.4f * 165.f;
 const float TURTLE_BB_WIDTH = 0.4f * 300.f;
 const float TURTLE_BB_HEIGHT = 0.4f * 202.f;
-const int healths = 3;
 // the player
 Entity createPlayer(RenderSystem* renderer, vec2 pos);
 Entity createPlayer2(RenderSystem* renderer, vec2 pos);

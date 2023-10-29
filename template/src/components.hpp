@@ -39,7 +39,6 @@ struct Player
 	bool is_shooting = false;
 	// recoil force
 	float recoil_force = 2000.f;
-	int healths;
 };
 
 struct Controller
@@ -249,9 +248,7 @@ struct Mesh
  */
 
 enum class TEXTURE_ASSET_ID {
-	RED_HEALTH = 0,
-	GREEN_HEALTH = RED_HEALTH + 1,
-	PLAYER = GREEN_HEALTH + 1,
+	PLAYER = 0,
 	PLAYER2 = PLAYER + 1,
 	PLAYER_SPRITESHEET = PLAYER2 + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
