@@ -134,6 +134,11 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 	
 	motion.scale = scale;
 
+	Interpolation& interpolation = registry.interpolation.emplace(entity);
+	interpolation.startPosition = pos;
+	interpolation.endPosition = { pos.x + 100, pos.y };
+	interpolation.currentTime = 0;
+
 	// Add animated sprite component
 	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
 	animated_sprite.frame_count_per_type = { {0, 6}, {1, 6}, {2, 6}, {3, 6} };

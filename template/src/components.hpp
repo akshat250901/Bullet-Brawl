@@ -74,6 +74,13 @@ struct PowerUp
 	StatModifier statModifier;
 };
 
+struct Interpolation
+{
+	vec2 startPosition;
+	vec2 endPosition;
+	float currentTime = 0;  // Current time elapsed since the start of the movement
+};
+
 // Component for sprite sheet
 struct AnimatedSprite {
 	float sprite_height = 0.25;

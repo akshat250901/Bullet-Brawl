@@ -57,3 +57,25 @@ void RandomDropsSystem::step(float elapsed_ms_since_last_update)
         powerUp.statModifier = statModifier;
     }
 }
+
+void RandomDropsSystem::handleInterpolation(float elapsed_ms) {
+            for (Entity entity : registry.powerUps.entities) {
+                if (registry.interpolation.has(entity) && registry.motions.has(entity))
+                {
+                    Interpolation& interpolation = registry.interpolation.get(entity);
+                    Motion& motion = registry.motions.get(entity);
+
+                    interpolation.currentTime += elapsed_ms;
+                    float frequency = 0.002f;  // Adjust this to change the speed
+                    float t = std::sin(interpolation.currentTime * frequency);
+
+                    // Map t from [-1, 1] to [0, 1]
+                    t = (t + 1.0f) / 2.0f;
+
+                    motion.position.x = interpolation.startPosition.x + t * (interpolation.endPosition.x - interpolation.startPosition.x);
+                    motion.position.y = interpolation.startPosition.y + t * (interpolation.endPosition.y - interpolation.startPosition.y);
+                }
+            
+            }
+}
+
