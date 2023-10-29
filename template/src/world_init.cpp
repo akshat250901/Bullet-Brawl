@@ -257,7 +257,7 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeedFront = 0.0f;
+	parallax.scrollingSpeedFront = 0.3f;
 
 	registry.renderRequests.insert(
 		entity,
