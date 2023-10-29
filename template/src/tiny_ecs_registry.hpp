@@ -32,6 +32,7 @@ public:
 	ComponentContainer<Bullet> bullets;
 	ComponentContainer<PlayerStatModifier> playerStatModifiers;
 	ComponentContainer<PowerUp> powerUps;
+	ComponentContainer<Interpolation> interpolation;
 	ComponentContainer<AnimatedSprite> animatedSprite;
 	ComponentContainer<ParallaxBackground> parallaxes;
 	ComponentContainer<Controller> controllers;
@@ -66,6 +67,7 @@ public:
 		registry_list.push_back(&playerBulletCollisions);
 
 		// registry_list.push_back(&buttons);
+		registry_list.push_back(&interpolation);
 	}
 
 	void clear_all_components() {
