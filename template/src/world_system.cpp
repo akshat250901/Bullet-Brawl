@@ -401,10 +401,7 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 			Motion& bullet_motion = registry.motions.get(entity_other);
 
-			std::uniform_int_distribution<int> distribution(300, 900);
-			std::uniform_int_distribution<int> distribution_y(50, 400);
-			playerMotion.position = vec2(distribution(rng), distribution_y(rng));
-			playerMotion.velocity = vec2(0, 0);
+			playerMotion.velocity.x = bullet_motion.velocity.x / 1.25;
 
 			registry.remove_all_components_of(entity_other);
 		}

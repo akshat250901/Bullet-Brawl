@@ -80,7 +80,7 @@ std::tuple<float, float> calculateProjectileVelocity(float bulletSpeed, float an
 
 Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player)
 {
-	float bulletSpeed = 600.f;
+	float bulletSpeed = 750.f;
 	float initialUpwardVelocity = 50.f;
 	float angle = -60.f * M_PI / 180;
 
@@ -108,8 +108,8 @@ Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity&
 	motion.velocity.x = vx;
 	motion.velocity.y = vy;
 
-	motion.scale = { 50, 10 };
-	motion.position = { pos.x, pos.y };
+	motion.scale = { 20, 10 };
+	motion.position = { player_entity.facing_right == 1 ? pos.x + player_motion.scale.x / 2 : pos.x - player_motion.scale.x / 2 , pos.y };
 
 	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
 	registry.bullets.emplace(entity, player);
@@ -117,6 +117,7 @@ Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity&
 	if (isProjectile)
 	{
 		motion.scale = { 30, 20 };
+		motion.position = { pos.x , pos.y - player_motion.scale.y / 2 - 20 };
 		registry.gravity.emplace(entity);
 		registry.renderRequests.insert(
 			entity,
