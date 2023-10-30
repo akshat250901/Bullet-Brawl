@@ -7,10 +7,6 @@
 #include <vector>
 #include <random>
 
-#define SDL_MAIN_HANDLED
-#include <SDL.h>
-#include <SDL_mixer.h>
-
 #include "render_system.hpp"
 #include "game_state_system.hpp"
 
@@ -71,11 +67,6 @@ private:
 	bool sDownKey;
 	bool aLeftKey;
 	bool dRightKey;
-
-	// music references
-	Mix_Music* background_music;
-	Mix_Chunk* salmon_dead_sound;
-	Mix_Chunk* salmon_eat_sound;
 
 	// C++ random number generator
 	std::default_random_engine rng;

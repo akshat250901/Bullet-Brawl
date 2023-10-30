@@ -60,8 +60,7 @@ int main()
 				main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 				game_state_system.is_state_changed = false;
 			}
-		}
-		if (game_state_system.get_current_state() == 1 || 2) {
+		} else if (game_state_system.get_current_state() == 1 || 2) {
 			if (game_state_system.is_state_changed) {
 				world_system.init(&render_system, &game_state_system, window);
 				game_state_system.is_state_changed = false;

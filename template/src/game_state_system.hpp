@@ -3,6 +3,10 @@
 // internal
 #include "common.hpp"
 
+#define SDL_MAIN_HANDLED
+#include <SDL.h>
+#include <SDL_mixer.h>
+
 class GameStateSystem 
 {
 public:
@@ -29,5 +33,10 @@ public:
 
 private:
     int currentState;
+
+    // music references
+	Mix_Music* background_music;
+	Mix_Chunk* salmon_dead_sound;
+	Mix_Chunk* salmon_eat_sound;
      
 };

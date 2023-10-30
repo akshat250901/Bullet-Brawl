@@ -50,6 +50,32 @@ GLFWwindow* GameStateSystem::create_window() {
 		fprintf(stderr, "Failed to glfwCreateWindow");
 		return nullptr;
 	}
+	
+	//////////////////////////////////////
+	// Loading music and sounds with SDL
+	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+		fprintf(stderr, "Failed to initialize SDL Audio");
+		return nullptr;
+	}
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+		fprintf(stderr, "Failed to open audio device");
+		return nullptr;
+	}
+
+	background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
+	salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
+	salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav").c_str());
+
+	if (background_music == nullptr || salmon_dead_sound == nullptr || salmon_eat_sound == nullptr) {
+		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
+			audio_path("music.wav").c_str(),
+			audio_path("salmon_dead.wav").c_str(),
+			audio_path("salmon_eat.wav").c_str());
+		return nullptr;
+	}
+	// Playing background music indefinitely
+	Mix_PlayMusic(background_music, -1);
+	fprintf(stderr, "Loaded music\n");
 
 	return window;
 };
@@ -61,5 +87,14 @@ bool GameStateSystem::is_over() const {
 
 
 GameStateSystem::~GameStateSystem() {
+	// Destroy music components
+	if (background_music != nullptr)
+		Mix_FreeMusic(background_music);
+	if (salmon_dead_sound != nullptr)
+		Mix_FreeChunk(salmon_dead_sound);
+	if (salmon_eat_sound != nullptr)
+		Mix_FreeChunk(salmon_eat_sound);
+	Mix_CloseAudio();
+	
     glfwDestroyWindow(window);
 };

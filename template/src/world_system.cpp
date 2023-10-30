@@ -32,14 +32,6 @@ WorldSystem::WorldSystem()
 }
 
 WorldSystem::~WorldSystem() {
-	// Destroy music components
-	if (background_music != nullptr)
-		Mix_FreeMusic(background_music);
-	if (salmon_dead_sound != nullptr)
-		Mix_FreeChunk(salmon_dead_sound);
-	if (salmon_eat_sound != nullptr)
-		Mix_FreeChunk(salmon_eat_sound);
-	Mix_CloseAudio();
 
 	// Destroy all created components
 	registry.clear_all_components();
@@ -58,39 +50,13 @@ namespace {
 
 GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window) {
 	this->window = window;
+	this->renderer = renderer_arg;
 	this->game_state_system = game_state_system;
 	glfwSetWindowUserPointer(window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
 	glfwSetKeyCallback(window, key_redirect);
 	glfwSetCursorPosCallback(window, cursor_pos_redirect);
-
-	//////////////////////////////////////
-	// Loading music and sounds with SDL
-	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-		fprintf(stderr, "Failed to initialize SDL Audio");
-		return nullptr;
-	}
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
-		fprintf(stderr, "Failed to open audio device");
-		return nullptr;
-	}
-
-	background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
-	salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
-	salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav").c_str());
-
-	if (background_music == nullptr || salmon_dead_sound == nullptr || salmon_eat_sound == nullptr) {
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("music.wav").c_str(),
-			audio_path("salmon_dead.wav").c_str(),
-			audio_path("salmon_eat.wav").c_str());
-		return nullptr;
-	}
-	this->renderer = renderer_arg;
-	// Playing background music indefinitely
-	Mix_PlayMusic(background_music, -1);
-	fprintf(stderr, "Loaded music\n");
 	paused = false;
 
 	// Set all states to default
@@ -149,19 +115,21 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		playerMotion.position = vec2(900, 300);
 		playerMotion.velocity = vec2(0, 0);
 
-		Player& hit_player = registry.players.get(player);
-		auto health_container = registry.lives;
-		for (int i = 0; i < health_container.components.size(); i++) {
-			Life health_entity = health_container.components[i];
-			if (health_entity.player == player) {
-				registry.renderRequests.remove(health_container.entities[i]);
-				registry.lives.remove(health_container.entities[i]);
-				hit_player.lives = hit_player.lives - 1;
-				if (hit_player.lives == 0) {
-					// TODO: Add a screen to show which player won
-					restart_game();
+		if (game_state_system->get_current_state() == 1) {
+			Player& hit_player = registry.players.get(player);
+			auto health_container = registry.lives;
+			for (int i = 0; i < health_container.components.size(); i++) {
+				Life health_entity = health_container.components[i];
+				if (health_entity.player == player) {
+					registry.renderRequests.remove(health_container.entities[i]);
+					registry.lives.remove(health_container.entities[i]);
+					hit_player.lives = hit_player.lives - 1;
+					if (hit_player.lives == 0) {
+						// TODO: Add a screen to show which player won
+						restart_game();
+					}
+					break;
 				}
-				break;
 			}
 		}
 
@@ -301,7 +269,7 @@ void WorldSystem::restart_game() {
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
-	auto player = createPlayer(renderer, player_location);
+	auto player = createPlayer(renderer, game_state_system, player_location);
 	registry.players.get(player).color = player_color;
 	registry.players.get(player).lives = 5;
 

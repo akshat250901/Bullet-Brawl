@@ -11,7 +11,7 @@ const float FISH_BB_HEIGHT = 0.4f * 165.f;
 const float TURTLE_BB_WIDTH = 0.4f * 300.f;
 const float TURTLE_BB_HEIGHT = 0.4f * 202.f;
 // the player
-Entity createPlayer(RenderSystem* renderer, vec2 pos);
+Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 pos);
 Entity createPlayer2(RenderSystem* renderer, vec2 pos);
 // the platform
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size);
