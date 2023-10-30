@@ -6,6 +6,12 @@
 #include <map>
 
 
+struct Health
+{
+	Entity player; 
+	Health(Entity& player) { this->player = player; };
+};
+
 // Player component
 struct Player
 {
@@ -128,7 +134,9 @@ struct Gravity
 // Bullet
 struct Bullet
 {
-
+	// Note, the first object is stored in the ECS container.entities
+	Entity shooter; // the second object involved in the collision
+	Bullet(Entity& shooter) { this->shooter = shooter; };
 };
 
 // Background Parallax
@@ -147,6 +155,9 @@ struct Motion {
 	vec2 velocity = { 0.f, 0.f };
 	vec2 scale = { 10.f, 10.f };
 };
+
+
+
 
 // Stucture to store collision information
 struct PlayerPlatformCollision
@@ -244,9 +255,7 @@ struct Mesh
  */
 
 enum class TEXTURE_ASSET_ID {
-	FISH = 0,
-	TURTLE = FISH + 1,
-	PLAYER = TURTLE + 1,
+	PLAYER = 0,
 	PLAYER2 = PLAYER + 1,
 	PLAYER_SPRITESHEET = PLAYER2 + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
@@ -273,14 +282,15 @@ enum class EFFECT_ASSET_ID {
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 
 enum class GEOMETRY_BUFFER_ID {
-	SALMON = 0,
-	SPRITE = SALMON + 1,
+	BULLET = 0,
+	SPRITE = BULLET + 1,
 	PEBBLE = SPRITE + 1,
 	DEBUG_LINE = PEBBLE + 1,
 	SCREEN_TRIANGLE = DEBUG_LINE + 1,
 	SQUARE = SCREEN_TRIANGLE + 1,
 	ANIMATED_SPRITE = SQUARE + 1,
-	GEOMETRY_COUNT = ANIMATED_SPRITE + 1
+	PROJECTILE = ANIMATED_SPRITE + 1,
+	GEOMETRY_COUNT = PROJECTILE + 1
 };
 const int geometry_count = (int)GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
 

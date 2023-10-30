@@ -50,7 +50,7 @@ WorldSystem::~WorldSystem() {
 
 // Debugging
 namespace {
-	void glfw_err_cb(int error, const char *desc) {
+	void glfw_err_cb(int error, const char* desc) {
 		fprintf(stderr, "%d: %s", error, desc);
 	}
 }
@@ -94,7 +94,7 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 	paused = false;
 
 	// Set all states to default
-    restart_game();
+	restart_game();
 
 	return window;
 }
@@ -103,7 +103,7 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
-	    registry.remove_all_components_of(registry.debugComponents.entities.back());
+		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
 	// Removing out of screen entities
 	auto& motion_container = registry.motions;
@@ -113,7 +113,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// (the containers exchange the last element with the current)
 	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
 		Motion& motion = motion_container.components[i];
-		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px || 
+		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
 			motion.position.y + abs(motion.scale.y) < 0.f || motion.position.y + abs(motion.scale.y) > window_height_px) {
 			if (!registry.players.has(motion_container.entities[i]) && registry.bullets.has(motion_container.entities[i])) // removing only bullets
 				registry.remove_all_components_of(motion_container.entities[i]);
@@ -130,13 +130,15 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 		if ((playerMotion.position.y + playerMotion.scale.y / 2.0f) <= (platformMotion.position.y - platformMotion.scale.y / 2.0f)) {
 			platform.collider_active_player1 = true;
-		} else {
+		}
+		else {
 			platform.collider_active_player1 = false;
 		}
 
 		if ((playerMotion2.position.y + playerMotion2.scale.y / 2.0f) <= (platformMotion.position.y - platformMotion.scale.y / 2.0f)) {
 			platform.collider_active_player2 = true;
-		} else {
+		}
+		else {
 			platform.collider_active_player2 = false;
 		}
 	}
@@ -151,9 +153,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Set timer to 0 for all power ups to stats are reset
 
 		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player);
-		
+
 		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-    		kv.second.timer_ms = 0;
+			kv.second.timer_ms = 0;
 		}
 
 	}
@@ -167,14 +169,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Set timer to 0 for all power ups to stats are reset
 
 		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player2);
-		
+
 		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-    		kv.second.timer_ms = 0;
+			kv.second.timer_ms = 0;
 		}
 	}
 
 	// Decrement timers in the PlayerStatModifier
-	for (Entity playerEntity: registry.players.entities) {
+	for (Entity playerEntity : registry.players.entities) {
 		PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(playerEntity);
 
 		auto& powerUpMap = playerStatModifier.powerUpStatModifiers;
@@ -194,7 +196,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 					currPlayer.speed /= statModifier.max_speed_modifier;
 
 					it = powerUpMap.erase(it);
-					
+
 					continue;
 				}
 			}
@@ -242,7 +244,7 @@ void WorldSystem::restart_game() {
 	// Remove all entities that we created
 	// All that have a motion, we could also iterate over all fish, turtles, ... but that would be more cumbersome
 	while (registry.motions.entities.size() > 0)
-	    registry.remove_all_components_of(registry.motions.entities.back());
+		registry.remove_all_components_of(registry.motions.entities.back());
 
 	// Debugging for memory/component leaks
 	registry.list_all_components();
@@ -254,8 +256,8 @@ void WorldSystem::restart_game() {
 	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
 	// Create players
-	player = spawn_player({ 900, 300 }, { 1.f, 0, 0 });
-	player2 = spawn_player({ 300, 200 }, { 0, 1.f, 0 });
+	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 });
+	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 });
 
 	// Create platforms
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
@@ -284,7 +286,7 @@ void WorldSystem::handle_collisions() {
 
 void WorldSystem::handle_player_platform_collisions() {
 	auto& playerPlatformCollisionsRegistry = registry.playerPlatformCollisions;
-    // Flag to check if there are no player-platform collisions
+	// Flag to check if there are no player-platform collisions
 	bool noPlayer1PlatformCollisions = true;
 	bool noPlayer2PlatformCollisions = true;
 
@@ -296,7 +298,7 @@ void WorldSystem::handle_player_platform_collisions() {
 
 		// Player platform collisions
 		if (registry.players.has(entity) && registry.platforms.has(entity_other)) {
-			
+
 			Motion& playerMotion = registry.motions.get(entity);
 			Motion& platformMotion = registry.motions.get(entity_other);
 			Platform& platform = registry.platforms.get(entity_other);
@@ -346,7 +348,7 @@ void WorldSystem::handle_player_platform_collisions() {
 
 void WorldSystem::handle_player_powerup_collisions() {
 	auto& playerPowerUpCollisionsRegistry = registry.playerPowerUpCollisions;
-    // Loop over all player powerup collisions
+	// Loop over all player powerup collisions
 	for (uint i = 0; i < playerPowerUpCollisionsRegistry.components.size(); i++) {
 
 		// The entity and its collider
@@ -365,7 +367,8 @@ void WorldSystem::handle_player_powerup_collisions() {
 				//if player has powerup, reset the timer of the powerup
 				StatModifier& modifier = playerStatModifier.powerUpStatModifiers.at(statModifier.name);
 				modifier.timer_ms = 5000;
-			} else { 
+			}
+			else {
 				// if player does not have power up, modify players stats and add to powerup map
 				playerStatModifier.powerUpStatModifiers[statModifier.name] = statModifier;
 
@@ -384,7 +387,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 void WorldSystem::handle_player_bullet_collisions() {
 	auto& playerBulletCollisionRegistry = registry.playerBulletCollisions;
-    // Loop over all player powerup collisions
+	// Loop over all player powerup collisions
 	for (uint i = 0; i < playerBulletCollisionRegistry.components.size(); i++) {
 
 		// The entity and its collider
@@ -393,12 +396,15 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 		// Player-bullet collisions
 		if (registry.players.has(entity) && registry.bullets.has(entity_other)) {
-			Player& player = registry.players.get(entity);
+			Player& hit_player = registry.players.get(entity);
 			Motion& playerMotion = registry.motions.get(entity);
 
 			Motion& bullet_motion = registry.motions.get(entity_other);
 
-
+			std::uniform_int_distribution<int> distribution(300, 900);
+			std::uniform_int_distribution<int> distribution_y(50, 400);
+			playerMotion.position = vec2(distribution(rng), distribution_y(rng));
+			playerMotion.velocity = vec2(0, 0);
 
 			registry.remove_all_components_of(entity_other);
 		}
@@ -423,7 +429,7 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	if (!paused) {
 
 		Player& player_object = registry.players.get(player);
-		Player& player_object_2 = registry.players.get(player2); 
+		Player& player_object_2 = registry.players.get(player2);
 
 		Controller& player_controller = registry.controllers.get(player);
 		Controller& player_2_controller = registry.controllers.get(player2);
@@ -431,16 +437,17 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 		if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
 			Motion& player_motion = registry.motions.get(player);
 
-			Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player);
+			Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player);
 			Motion& bullet_motion = registry.motions.get(bullet);
 		}
 		else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_PRESS) {
 			Motion& player_motion = registry.motions.get(player);
 
-			Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player);
+			Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player);
 			Motion& bullet_motion = registry.motions.get(bullet);
 			player_object.is_shooting = true;
-		}else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
+		}
+		else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
 			player_object.is_shooting = false;
 		}
 
@@ -478,13 +485,13 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 			if (key == GLFW_KEY_G && action == GLFW_PRESS) {
 				Motion& player_motion = registry.motions.get(player2);
 
-				Entity bullet = createBullet(true, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player2);
 				Motion& bullet_motion = registry.motions.get(bullet);
 			}
 			else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
 				Motion& player_motion = registry.motions.get(player2);
 
-				Entity bullet = createBullet(false, vec2(player_motion.position.x, player_motion.position.y), player2);
+				Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player2);
 				Motion& bullet_motion = registry.motions.get(bullet);
 				player_object_2.is_shooting = true;
 			}
@@ -544,7 +551,7 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 			current_speed += 0.1f;
 			printf("Current speed = %f\n", current_speed);
 		}
-		current_speed = fmax(0.f, current_speed);	
+		current_speed = fmax(0.f, current_speed);
 	}
 
 }
