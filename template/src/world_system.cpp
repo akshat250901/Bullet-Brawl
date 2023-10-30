@@ -149,6 +149,22 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		playerMotion.position = vec2(900, 300);
 		playerMotion.velocity = vec2(0, 0);
 
+		Player& hit_player = registry.players.get(player);
+		auto health_container = registry.lives;
+		for (int i = 0; i < health_container.components.size(); i++) {
+			Life health_entity = health_container.components[i];
+			if (health_entity.player == player) {
+				registry.renderRequests.remove(health_container.entities[i]);
+				registry.lives.remove(health_container.entities[i]);
+				hit_player.lives = hit_player.lives - 1;
+				if (hit_player.lives == 0) {
+					// TODO: Add a screen to show which player won
+					restart_game();
+				}
+				break;
+			}
+		}
+
 
 		// Set timer to 0 for all power ups to stats are reset
 
@@ -165,6 +181,22 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Player death logic
 		playerMotion2.position = vec2(300, 200);
 		playerMotion2.velocity = vec2(0, 0);
+
+		Player& hit_player = registry.players.get(player2);
+		auto health_container = registry.lives;
+		for (int i = 0; i < health_container.components.size(); i++) {
+			Life health_entity = health_container.components[i];
+			if (health_entity.player == player2) {
+				registry.renderRequests.remove(health_container.entities[i]);
+				registry.lives.remove(health_container.entities[i]);
+				hit_player.lives = hit_player.lives - 1;
+				if (hit_player.lives == 0) {
+					// TODO: Add a screen to show which player won
+					restart_game();
+				}
+				break;
+			}
+		}
 
 		// Set timer to 0 for all power ups to stats are reset
 
@@ -271,6 +303,7 @@ void WorldSystem::restart_game() {
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
 	auto player = createPlayer(renderer, player_location);
 	registry.players.get(player).color = player_color;
+	registry.players.get(player).lives = 5;
 
 	return player;
 }

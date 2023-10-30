@@ -32,6 +32,27 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 
 	registry.controllers.emplace(entity);
 
+	for (int i = 0; i < 5; i++) {
+		float start_x = 50.f;
+		TEXTURE_ASSET_ID health = TEXTURE_ASSET_ID::RED_HEALTH;
+		if (registry.players.size() > 1) {
+			start_x = 900;
+			health = TEXTURE_ASSET_ID::GREEN_HEALTH;
+		}
+		auto health_entity = Entity();
+		registry.lives.emplace(health_entity, entity);
+		auto& health_motion = registry.motions.emplace(health_entity);
+		health_motion.angle = 0;
+		health_motion.velocity = { 0.f, 0.f };
+		health_motion.position = { start_x + i * 60.f, 50.f };
+		health_motion.scale = { 50.f, 50.f };
+		registry.renderRequests.insert(
+			health_entity,
+			{ health,
+			 EFFECT_ASSET_ID::TEXTURED,
+			 GEOMETRY_BUFFER_ID::SPRITE });
+	}
+
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLAYER_SPRITESHEET,

@@ -36,7 +36,7 @@ public:
 	ComponentContainer<AnimatedSprite> animatedSprite;
 	ComponentContainer<ParallaxBackground> parallaxes;
 	ComponentContainer<Controller> controllers;
-	ComponentContainer<Health> healths;
+	ComponentContainer<Life> lives;
 
 	// ComponentContainer<Button> buttons;
 
@@ -62,7 +62,7 @@ public:
 		registry_list.push_back(&animatedSprite);
 		registry_list.push_back(&parallaxes);
 		registry_list.push_back(&controllers);
-		registry_list.push_back(&healths);
+		registry_list.push_back(&lives);
 
 
 		// Collisions

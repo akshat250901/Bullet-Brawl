@@ -6,10 +6,10 @@
 #include <map>
 
 
-struct Health
+struct Life
 {
 	Entity player; 
-	Health(Entity& player) { this->player = player; };
+	Life(Entity& player) { this->player = player; };
 };
 
 // Player component
@@ -39,6 +39,8 @@ struct Player
 	bool is_shooting = false;
 	// recoil force
 	float recoil_force = 2000.f;
+	//lives
+	int lives;
 };
 
 struct Controller
@@ -255,7 +257,9 @@ struct Mesh
  */
 
 enum class TEXTURE_ASSET_ID {
-	PLAYER = 0,
+	RED_HEALTH = 0,
+	GREEN_HEALTH = RED_HEALTH + 1,
+	PLAYER = GREEN_HEALTH + 1,
 	PLAYER2 = PLAYER + 1,
 	PLAYER_SPRITESHEET = PLAYER2 + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
