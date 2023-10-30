@@ -24,14 +24,13 @@ class RenderSystem {
 	// Associated id with .obj path
 	const std::vector < std::pair<GEOMETRY_BUFFER_ID, std::string>> mesh_paths =
 	{
-		  std::pair<GEOMETRY_BUFFER_ID, std::string>(GEOMETRY_BUFFER_ID::SALMON, mesh_path("salmon.obj"))
-		  // specify meshes of other assets here
+		  std::pair<GEOMETRY_BUFFER_ID, std::string>(GEOMETRY_BUFFER_ID::BULLET, mesh_path("bullet.obj")),
+		  std::pair<GEOMETRY_BUFFER_ID, std::string>(GEOMETRY_BUFFER_ID::PROJECTILE, mesh_path("projectile.obj"))
+		// specify meshes of other assets here
 	};
 
 	// Make sure these paths remain in sync with the associated enumerators.
 	const std::array<std::string, texture_count> texture_paths = {
-			textures_path("fish.png"),
-			textures_path("turtle.png"),
 			textures_path("player.png"),
 			textures_path("player2.png"),
 			textures_path("player_spritesheet.png"),

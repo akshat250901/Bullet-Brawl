@@ -4,7 +4,7 @@
 Entity createPlayer(RenderSystem* renderer, vec2 pos)
 {
 	auto entity = Entity();
-	
+
 	// Store a reference to the potentially re-used mesh object
 	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
 	registry.meshPtrs.emplace(entity, &mesh);
@@ -13,7 +13,7 @@ Entity createPlayer(RenderSystem* renderer, vec2 pos)
 	motion.position = pos;
 	motion.angle = 0.f;
 	motion.velocity = { 0.f, 0.f };
-	
+
 	motion.scale = vec2({ 60, 60 });
 
 	// Add gravity component
@@ -70,57 +70,79 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	return entity;
 }
 
-Entity createBullet(bool isProjectile, vec2 pos, Entity& player)
+// Function to calculate vx and vy for projectiles
+std::tuple<float, float> calculateProjectileVelocity(float bulletSpeed, float angle, int facingRight, vec2 playerVelocity, float initialUpwardVelocity)
 {
-	float bulletSpeed = 400.f; // Adjust the bullet's speed as needed
-	float initialUpwardVelocity = 500.f; // Adjust the initial upward velocity as needed
-	float angle = -45.f * M_PI/180;
+	float vx = (bulletSpeed * cos(angle) + abs(playerVelocity.x) * 2.f) * (facingRight == 1 ? 1 : -1);
+	float vy = 2.f * bulletSpeed * sin(angle) + initialUpwardVelocity + abs(playerVelocity.x);
+	return std::make_tuple(vx, vy);
+}
+
+Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player)
+{
+	float bulletSpeed = 750.f;
+	float initialUpwardVelocity = 50.f;
+	float angle = -60.f * M_PI / 180;
 
 	auto entity = Entity();
 	Player& player_entity = registry.players.get(player);
 	Motion& player_motion = registry.motions.get(player);
 
-	// Setting initial motion values
-	Motion& motion = registry.motions.emplace(entity);
-	if (player_entity.facing_right) {
-		motion.position = {pos.x + (player_motion.scale.x / 2) + 25, pos.y};
-	} else {
-		motion.position = {pos.x - (player_motion.scale.x / 2) - 25, pos.y};
-	}
-	float vx = bulletSpeed * (player_entity.facing_right == 1 ? 1: -1);
-	float vy = 0;
-	if (isProjectile) {
-		// Calculate the initial velocity components
-		 vx = bulletSpeed * cos(angle) * (player_entity.facing_right == 1 ? 1 : -1);
-		 vy = 2.f * bulletSpeed * sin(angle) + initialUpwardVelocity;
-	}
-	
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::BULLET);
+	registry.meshPtrs.emplace(entity, &mesh);
 
-	// Apply the initial upward velocity
+	Motion& motion = registry.motions.emplace(entity);
+
+	// Calculate vx and vy based on whether it's a projectile
+	float vx, vy;
+	if (isProjectile) {
+		bulletSpeed = 400.f;
+		std::tie(vx, vy) = calculateProjectileVelocity(bulletSpeed, angle, player_entity.facing_right, player_motion.velocity, initialUpwardVelocity);
+	}
+	else {
+		vx = bulletSpeed * (player_entity.facing_right == 1 ? 1 : -1);
+		vy = 0;
+	}
+
 	motion.velocity.x = vx;
 	motion.velocity.y = vy;
 
-	motion.scale = {15,5};
+	motion.scale = { 20, 10 };
+	motion.position = { player_entity.facing_right == 1 ? pos.x + player_motion.scale.x / 2 : pos.x - player_motion.scale.x / 2 , pos.y };
 
 	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
-	registry.bullets.emplace(entity);
+	registry.bullets.emplace(entity, player);
+
 	if (isProjectile)
 	{
+		motion.scale = { 30, 20 };
+		motion.position = { pos.x , pos.y - player_motion.scale.y / 2 - 20 };
 		registry.gravity.emplace(entity);
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no texture is needed
+				EFFECT_ASSET_ID::COLOURED,
+				GEOMETRY_BUFFER_ID::PROJECTILE });
+		return entity;
+	}
+
+	if (player_entity.facing_right) {
+		motion.angle = -180 * M_PI / 180;
 	}
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no texture is needed
 			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+			GEOMETRY_BUFFER_ID::BULLET });
 
 	return entity;
 }
 
-Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 color) 
+Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 color)
 {
-    auto entity = Entity();
+	auto entity = Entity();
 
 	// Store a reference to the potentially re-used mesh object
 	Mesh& mesh = renderSystem->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
@@ -131,8 +153,13 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 	motion.position = pos;
 	motion.angle = 0.f;
 	motion.velocity = { 0.f, 0.f };
-	
+
 	motion.scale = scale;
+
+	Interpolation& interpolation = registry.interpolation.emplace(entity);
+	interpolation.startPosition = pos;
+	interpolation.endPosition = { pos.x + 100, pos.y };
+	interpolation.currentTime = 0;
 
 	// Add animated sprite component
 	AnimatedSprite& animated_sprite = registry.animatedSprite.emplace(entity);
@@ -257,7 +284,7 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	parallax.scrollingSpeedFront = 0.0f;
+	parallax.scrollingSpeedFront = 0.3f;
 
 	registry.renderRequests.insert(
 		entity,

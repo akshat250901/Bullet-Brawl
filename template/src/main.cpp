@@ -73,6 +73,7 @@ int main()
 				random_drops_system.step(elapsed_ms);
 				animation_system.step(elapsed_ms);
 				world_system.handle_collisions();
+				random_drops_system.handleInterpolation(elapsed_ms);
 			}
 		}
 		render_system.draw();

@@ -10,7 +10,6 @@ const float FISH_BB_WIDTH = 0.4f * 296.f;
 const float FISH_BB_HEIGHT = 0.4f * 165.f;
 const float TURTLE_BB_WIDTH = 0.4f * 300.f;
 const float TURTLE_BB_HEIGHT = 0.4f * 202.f;
-
 // the player
 Entity createPlayer(RenderSystem* renderer, vec2 pos);
 Entity createPlayer2(RenderSystem* renderer, vec2 pos);
@@ -23,7 +22,7 @@ Entity createLine(vec2 position, vec2 size);
 // a pebble
 Entity createPebble(vec2 pos, vec2 size);
 // a bullet
-Entity createBullet(bool isProjectile, vec2 pos, Entity& player);
+Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player);
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
 //Island

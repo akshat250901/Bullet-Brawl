@@ -16,6 +16,8 @@ class RandomDropsSystem
 public:
 	void step(float elapsed_ms);
 
+    void handleInterpolation(float elapsed_ms);
+
 	RandomDropsSystem(RenderSystem* renderer);
 
 private:
