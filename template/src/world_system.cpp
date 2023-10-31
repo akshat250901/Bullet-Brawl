@@ -256,8 +256,25 @@ void WorldSystem::restart_game() {
 	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
 	// Create players
-	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 });
-	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 });
+	Keybinds player2_keys{
+		GLFW_KEY_W,
+		GLFW_KEY_S,
+		GLFW_KEY_A,
+		GLFW_KEY_D,
+		GLFW_KEY_H,
+		GLFW_KEY_G
+	};
+	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
+	Keybinds player1_keys{
+		GLFW_KEY_UP,
+		GLFW_KEY_DOWN,
+		GLFW_KEY_LEFT,
+		GLFW_KEY_RIGHT,
+		GLFW_KEY_APOSTROPHE,
+		GLFW_KEY_SEMICOLON
+	};
+	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
+
 
 	// Create platforms
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
@@ -266,13 +283,17 @@ void WorldSystem::restart_game() {
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Third Top
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // bottom platform
 
+	
+	// Link sounds
+	player_shoot_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
+
 }
 
-Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color) {
+Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
 	auto player = createPlayer(renderer, game_state_system, player_location);
 	registry.players.get(player).color = player_color;
 	registry.players.get(player).lives = 5;
-
+	registry.players.get(player).keybinds = keybinds;
 	return player;
 }
 
@@ -411,6 +432,61 @@ void WorldSystem::handle_player_bullet_collisions() {
 	registry.playerBulletCollisions.clear();
 }
 
+void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
+{
+
+	Player& player_object = registry.players.get(player_to_handle);
+
+	Controller& player_controller = registry.controllers.get(player_to_handle);
+
+	// Key handler for arrow keys
+	if (key == player_object.keybinds.right && action == GLFW_PRESS) {
+		player_controller.rightKey = true;
+	}
+	else if (key == player_object.keybinds.left && action == GLFW_PRESS) {
+		player_controller.leftKey = true;
+	}
+	else if (key == player_object.keybinds.right && action == GLFW_RELEASE) {
+		player_controller.rightKey = false;
+	}
+	else if (key == player_object.keybinds.left && action == GLFW_RELEASE) {
+		player_controller.leftKey = false;
+	}
+
+
+	if (key == player_object.keybinds.up && action == GLFW_PRESS) {
+		player_controller.upKey = true;
+	}
+	else if (key == player_object.keybinds.down && action == GLFW_PRESS) {
+		player_controller.downKey = true;
+	}
+	else if (key == player_object.keybinds.up && action == GLFW_RELEASE) {
+		player_controller.upKey = false;
+	}
+	else if (key == player_object.keybinds.down && action == GLFW_RELEASE) {
+		player_controller.downKey = false;
+	}
+
+
+	if (key == player_object.keybinds.projectile && action == GLFW_PRESS) {
+		play_shoot_sound();
+		Motion& player_motion = registry.motions.get(player_to_handle);
+
+		Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
+		Motion& bullet_motion = registry.motions.get(bullet);
+	}
+	else if (key == player_object.keybinds.bullet && action == GLFW_PRESS) {
+		play_shoot_sound();
+		Motion& player_motion = registry.motions.get(player_to_handle);
+
+		Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
+		Motion& bullet_motion = registry.motions.get(bullet);
+		player_object.is_shooting = true;
+	}
+	else if (key == player_object.keybinds.bullet && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
+		player_object.is_shooting = false;
+	}
+}
 
 // On key callback
 void WorldSystem::on_key(int key, int, int action, int mod) {
@@ -426,102 +502,9 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 	if (!paused) {
 
-		Player& player_object = registry.players.get(player);
-		Player& player_object_2 = registry.players.get(player2);
-
-		Controller& player_controller = registry.controllers.get(player);
-		Controller& player_2_controller = registry.controllers.get(player2);
-
-		if (key == GLFW_KEY_SEMICOLON && action == GLFW_PRESS) {
-			Motion& player_motion = registry.motions.get(player);
-
-			Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player);
-			Motion& bullet_motion = registry.motions.get(bullet);
-		}
-		else if (key == GLFW_KEY_APOSTROPHE && action == GLFW_PRESS) {
-			Motion& player_motion = registry.motions.get(player);
-
-			Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player);
-			Motion& bullet_motion = registry.motions.get(bullet);
-			player_object.is_shooting = true;
-		}
-		else if (key == GLFW_KEY_APOSTROPHE && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
-			player_object.is_shooting = false;
-		}
-
-		// Key handler for arrow keys
-		if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-			player_controller.rightKey = true;
-		}
-		else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-			player_controller.leftKey = true;
-		}
-		else if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
-			player_controller.rightKey = false;
-		}
-		else if (key == GLFW_KEY_LEFT && action == GLFW_RELEASE) {
-			player_controller.leftKey = false;
-		}
-
-
-		if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-			player_controller.upKey = true;
-		}
-		else if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-			player_controller.downKey = true;
-		}
-		else if (key == GLFW_KEY_UP && action == GLFW_RELEASE) {
-			player_controller.upKey = false;
-		}
-		else if (key == GLFW_KEY_DOWN && action == GLFW_RELEASE) {
-			player_controller.downKey = false;
-		}
-
-		// Key handler for player 2 keys
-
+		handle_player(key, action, player);
 		if (game_state_system->get_current_state() == 1) {
-			if (key == GLFW_KEY_G && action == GLFW_PRESS) {
-				Motion& player_motion = registry.motions.get(player2);
-
-				Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player2);
-				Motion& bullet_motion = registry.motions.get(bullet);
-			}
-			else if (key == GLFW_KEY_H && action == GLFW_PRESS) {
-				Motion& player_motion = registry.motions.get(player2);
-
-				Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player2);
-				Motion& bullet_motion = registry.motions.get(bullet);
-				player_object_2.is_shooting = true;
-			}
-			else if (key == GLFW_KEY_H && (action == GLFW_RELEASE || GLFW_REPEAT)) {
-				player_object_2.is_shooting = false;
-			}
-
-			if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-				player_2_controller.rightKey = true;
-			}
-			else if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-				player_2_controller.leftKey = true;
-			}
-			else if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-				player_2_controller.rightKey = false;
-			}
-			else if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-				player_2_controller.leftKey = false;
-			}
-
-			if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-				player_2_controller.upKey = true;
-			}
-			else if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-				player_2_controller.downKey = true;
-			}
-			else if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-				player_2_controller.upKey = false;
-			}
-			else if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-				player_2_controller.downKey = false;
-			}
+			handle_player(key, action, player2);
 		}
 
 		// Resetting game
@@ -554,11 +537,10 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 
 }
 void WorldSystem::on_mouse_move(vec2 mouse_position) {
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	// TODO A1: HANDLE SALMON ROTATION HERE
-	// xpos and ypos are relative to the top-left of the window, the salmon's
-	// default facing direction is (1, 0)
-	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 	(vec2)mouse_position; // dummy to avoid compiler warning
+}
+
+
+void WorldSystem::play_shoot_sound() {
+	/*Mix_PlayChannel(-1, player_shoot_sound, 1);*/
 }
