@@ -80,7 +80,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
 		Motion& motion = motion_container.components[i];
 		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
-			motion.position.y + abs(motion.scale.y) < 0.f || motion.position.y + abs(motion.scale.y) > window_height_px) {
+			motion.position.y + abs(motion.scale.y) > window_height_px) {
 			if (!registry.players.has(motion_container.entities[i]) && registry.bullets.has(motion_container.entities[i])) // removing only bullets
 				registry.remove_all_components_of(motion_container.entities[i]);
 		}
