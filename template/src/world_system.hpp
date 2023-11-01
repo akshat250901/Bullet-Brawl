@@ -30,6 +30,7 @@ public:
 	// Input callback functions
 	void on_key(int key, int, int action, int mod);
 	void on_mouse_move(vec2 pos);
+	void handle_player(int key, int action, Entity player_to_handle);
 
 	bool paused;
 
@@ -46,7 +47,7 @@ private:
 	unsigned int points;
 
 	// Spawns players
-	Entity spawn_player(vec2 player_location, vec3 player_color);
+	Entity spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds);
 
 	// Game state
 	RenderSystem* renderer;
@@ -76,4 +77,9 @@ private:
 	void handle_player_platform_collisions();
     void handle_player_powerup_collisions();
     void handle_player_bullet_collisions();
+
+	// Sounds
+	void play_shoot_sound();
+
+	Mix_Chunk* player_shoot_sound;
 };

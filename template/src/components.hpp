@@ -12,11 +12,24 @@ struct Life
 	Life(Entity& player) { this->player = player; };
 };
 
+struct Keybinds
+{
+	int up = 0;
+	int down = 0;
+	int left = 0;
+	int right = 0;
+
+	int bullet = 0;
+	int projectile = 0;
+};
+
 // Player component
 struct Player
 {
 	// Player color
 	vec3 color = { 1, 1, 1};
+	// Player Keybinds
+	Keybinds keybinds;
 	// If player is colliding with a platmorm, they are grounded
 	bool is_grounded = false;
 	// Direction player is facing for sprite (default facing right)
@@ -55,6 +68,8 @@ struct Controller
 
 	float upKey_delay_timer_ms = 300.0f;
 };
+
+
 
 // Player stat modifier struct for use in power ups and gun pick ups
 struct StatModifier
