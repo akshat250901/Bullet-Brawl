@@ -48,10 +48,6 @@ struct Player
 	bool is_running_left = false; 
 	// True if player is running right
 	bool is_running_right = false;
-	// True if the player is shooting
-	bool is_shooting = false;
-	// recoil force
-	float recoil_force = 2000.f;
 	//lives
 	int lives;
 };
@@ -68,8 +64,6 @@ struct Controller
 
 	float upKey_delay_timer_ms = 300.0f;
 };
-
-
 
 // Player stat modifier struct for use in power ups and gun pick ups
 struct StatModifier
@@ -95,6 +89,48 @@ struct PlayerStatModifier
 struct PowerUp
 {
 	StatModifier statModifier;
+};
+
+// Struct for gun and default values are the starting pistol
+struct Gun 
+{
+	std::string name = "Default pistol";
+
+	Entity gunOwner;
+
+	StatModifier statModifier;
+
+	float fireRateMs = 300.0f;
+	float fireRateTimerMs = 0.0f;
+
+	float bulletVelocity = 750.0f;
+	float knockback = 500.0f; // This is added to players x velocity
+	bool hasNormalDropOff = true;
+	float distanceStrengthModifier = 1;
+
+	float recoil = 30.0f;
+
+	bool isHitScan = false;
+	float hitScanRange = 0.0f; //number of pixels
+
+	bool currentlyReloading = false;
+	float reloadMs = 1000.0f;
+	float reloadTimerMs = reloadMs;
+
+	bool hasInfiniteAmmo = false;
+	int magazineSize = 10; // Max capacity of magazine
+	int magazineAmmo = 10; // Current ammo in magazine
+	int reserveAmmo = magazineSize * 2;
+
+	vec2 gunSize = {20.0f, 10.0f};
+};
+
+struct NonInteractable {
+
+};
+
+struct GunMysteryBox {
+	Gun randomGun;
 };
 
 struct Interpolation
@@ -151,9 +187,14 @@ struct Gravity
 // Bullet
 struct Bullet
 {
-	// Note, the first object is stored in the ECS container.entities
-	Entity shooter; // the second object involved in the collision
-	Bullet(Entity& shooter) { this->shooter = shooter; };
+	float originalXPosition = 0.0f;
+
+	bool hasNormalDropOff = true;
+	float distanceStrengthModifier = 1; // if normal drop off, lower value less penalty, if non normal drop off then lower value more penalty
+
+	float knockback = 0.0f;
+	
+	Entity shooter; // owner of bullet
 };
 
 // Background Parallax
@@ -197,6 +238,14 @@ struct PlayerBulletCollision
 	// Note, the first object is stored in the ECS container.entities
 	Entity other_entity; // the second object involved in the collision
 	PlayerBulletCollision(Entity& other_entity) { this->other_entity = other_entity; };
+};
+
+// Stucture to store collision information
+struct PlayerMysteryBoxCollision
+{
+	// Note, the first object is stored in the ECS container.entities
+	Entity other_entity; // the second object involved in the collision
+	PlayerMysteryBoxCollision(Entity& other_entity) { this->other_entity = other_entity; };
 };
 
 // Data structure for toggling debug mode

@@ -77,6 +77,7 @@ private:
 	void handle_player_platform_collisions();
     void handle_player_powerup_collisions();
     void handle_player_bullet_collisions();
+	void handle_player_mystery_box_collisions();
 
 	// Sounds
 	void play_shoot_sound();

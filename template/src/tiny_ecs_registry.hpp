@@ -21,6 +21,7 @@ public:
 	ComponentContainer<PlayerPlatformCollision> playerPlatformCollisions;
 	ComponentContainer<PlayerPlatformCollision> playerPowerUpCollisions;
 	ComponentContainer<PlayerBulletCollision> playerBulletCollisions;
+	ComponentContainer<PlayerMysteryBoxCollision> playerMysteryBoxCollisions;
 
 	ComponentContainer<Player> players;
 	ComponentContainer<Mesh*> meshPtrs;
@@ -37,6 +38,9 @@ public:
 	ComponentContainer<ParallaxBackground> parallaxes;
 	ComponentContainer<Controller> controllers;
 	ComponentContainer<Life> lives;
+	ComponentContainer<Gun> guns;
+	ComponentContainer<GunMysteryBox> gunMysteryBoxes;
+	ComponentContainer<NonInteractable> nonInteractables;
 
 	// ComponentContainer<Button> buttons;
 
@@ -63,12 +67,16 @@ public:
 		registry_list.push_back(&parallaxes);
 		registry_list.push_back(&controllers);
 		registry_list.push_back(&lives);
+		registry_list.push_back(&guns);
+		registry_list.push_back(&gunMysteryBoxes);
+		registry_list.push_back(&nonInteractables);
 
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
 		registry_list.push_back(&playerPowerUpCollisions);
 		registry_list.push_back(&playerBulletCollisions);
+		registry_list.push_back(&playerMysteryBoxCollisions);
 
 		// registry_list.push_back(&buttons);
 		registry_list.push_back(&interpolation);

@@ -22,9 +22,15 @@ Entity createLine(vec2 position, vec2 size);
 // a pebble
 Entity createPebble(vec2 pos, vec2 size);
 // a bullet
-Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player);
+Entity createBullet(RenderSystem* renderer, Entity gunEntity);
+// a projectile
+Entity createProjectile(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player);
 // a powerup
 Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 ColoredVertex);
+// a gun mystery box
+Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale);
+// create a gun
+Entity createGun(RenderSystem* renderSystem, vec2 scale);
 //Island
 Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
 // a background back layer

@@ -192,12 +192,40 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
 }
 
 
+void PhysicsSystem::checkCollisionBetweenPlayersAndMysteryBoxes() {
+    auto& motion_container = registry.motions;
+    auto& players_container = registry.players;
+    auto& mystery_box_container = registry.gunMysteryBoxes;
+
+    // Check for collisions between players and mystery boxes
+	for(uint i = 0; i < players_container.components.size(); i++)
+	{
+		Entity entity_i = players_container.entities[i];
+		Motion& motion_i = motion_container.get(entity_i);
+		
+		// compare all players to all mystery boxes
+		for(uint j = 0; j < mystery_box_container.components.size(); j++)
+		{
+			Entity entity_j = mystery_box_container.entities[j];
+			Motion& motion_j = motion_container.get(entity_j);
+
+			if (collides(motion_i, motion_j))
+			{
+				// Create a collisions event
+				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+				registry.playerMysteryBoxCollisions.emplace_with_duplicates(entity_i, entity_j);
+				registry.playerMysteryBoxCollisions.emplace_with_duplicates(entity_j, entity_i);
+			}
+		}
+	}
+}
+
+
+
 void PhysicsSystem::step(float elapsed_ms)
 {
 	auto& motion_container = registry.motions;
 	float step_seconds = elapsed_ms / 1000.f;
-
-	//printf("elapsed_ms = %f\n", elapsed_ms);
 
 	// Update positions of all objects based on velocities
 	for(uint i = 0; i < motion_container.size(); i++)
@@ -205,20 +233,18 @@ void PhysicsSystem::step(float elapsed_ms)
 		Motion& motion = motion_container.components[i];
 		Entity entity_i = motion_container.entities[i];
 
-		// Accelerate to change velocity if entity is player // RECOIL WILL BE REFACTORED TO GUN SYSTEM
-		if(registry.players.has(entity_i)) {
-			Player& player = registry.players.get(entity_i);
+		// // Accelerate to change velocity if entity is player // RECOIL WILL BE REFACTORED TO GUN SYSTEM
+		// if(registry.players.has(entity_i)) {
+		// 	Player& player = registry.players.get(entity_i);
 
-			// add a constant force for recoil, change later to add recoil force based on gun
-			if (player.is_shooting && !player.facing_right) {
-				motion.velocity.x += player.recoil_force * step_seconds;
-				player.is_shooting = false;
-			}
-			if (player.is_shooting && player.facing_right) {
-				motion.velocity.x -= player.recoil_force * step_seconds;
-				player.is_shooting = false;
-			}
-		}
+		// 	// add a constant force for recoil, change later to add recoil force based on gun
+		// 	if (player.is_shooting && !player.facing_right) {
+		// 		motion.velocity.x += player.recoil_force * step_seconds;
+		// 	}
+		// 	if (player.is_shooting && player.facing_right) {
+		// 		motion.velocity.x -= player.recoil_force * step_seconds;
+		// 	}
+		// }
 
 		motion.position += step_seconds * motion.velocity;
 	}
@@ -304,4 +330,5 @@ void PhysicsSystem::step(float elapsed_ms)
 	checkCollisionBetweenPlayersAndPlatforms(step_seconds);
     checkCollisionBetweenPlayersAndPowerups();
     checkCollisionBetweenPlayersAndBullets();
+	checkCollisionBetweenPlayersAndMysteryBoxes();
 }

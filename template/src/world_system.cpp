@@ -7,6 +7,8 @@
 #include <sstream>
 
 #include "physics_system.hpp"
+#include "stat_util.cpp"
+#include "create_gun_util.cpp"
 
 // Game configuration
 const size_t MAX_TURTLES = 15;
@@ -81,8 +83,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		Motion& motion = motion_container.components[i];
 		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
 			motion.position.y + abs(motion.scale.y) > window_height_px) {
-			if (!registry.players.has(motion_container.entities[i]) && registry.bullets.has(motion_container.entities[i])) // removing only bullets
+			if (!registry.players.has(motion_container.entities[i]) && (registry.bullets.has(motion_container.entities[i]) || registry.nonInteractables.has(motion_container.entities[i]))) {
 				registry.remove_all_components_of(motion_container.entities[i]);
+			}
 		}
 	}
 
@@ -114,6 +117,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Player death logic
 		playerMotion.position = vec2(900, 300);
 		playerMotion.velocity = vec2(0, 0);
+
+		CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
 
 		if (game_state_system->get_current_state() == 1) {
 			Player& hit_player = registry.players.get(player);
@@ -149,6 +154,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		// Player death logic
 		playerMotion2.position = vec2(300, 200);
 		playerMotion2.velocity = vec2(0, 0);
+
+		CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
 
 		Player& hit_player = registry.players.get(player2);
 		auto health_container = registry.lives;
@@ -190,10 +197,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				if (statModifier.timer_ms <= 0) {
 					Player& currPlayer = registry.players.get(playerEntity);
 
-					currPlayer.max_jumps -= statModifier.extra_jumps;
-					currPlayer.jump_force /= statModifier.jump_force_modifier;
-					currPlayer.running_force /= statModifier.running_force_modifier;
-					currPlayer.speed /= statModifier.max_speed_modifier;
+					StatUtil::remove_stat_modifier(currPlayer, statModifier);
 
 					it = powerUpMap.erase(it);
 
@@ -261,8 +265,8 @@ void WorldSystem::restart_game() {
 		GLFW_KEY_S,
 		GLFW_KEY_A,
 		GLFW_KEY_D,
+		GLFW_KEY_G,
 		GLFW_KEY_H,
-		GLFW_KEY_G
 	};
 	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 	Keybinds player1_keys{
@@ -270,23 +274,26 @@ void WorldSystem::restart_game() {
 		GLFW_KEY_DOWN,
 		GLFW_KEY_LEFT,
 		GLFW_KEY_RIGHT,
+		GLFW_KEY_SEMICOLON,
 		GLFW_KEY_APOSTROPHE,
-		GLFW_KEY_SEMICOLON
 	};
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
 
+	// Add default pistols for players
+
+	CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
+	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
 
 	// Create platforms
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Third Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // bottom platform
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third 
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Fourth
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // Bottom
 
 	
 	// Link sounds
 	player_shoot_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
-
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
@@ -303,7 +310,7 @@ void WorldSystem::handle_collisions() {
 	handle_player_platform_collisions();
 	handle_player_powerup_collisions();
 	handle_player_bullet_collisions();
-
+	handle_player_mystery_box_collisions();
 }
 
 void WorldSystem::handle_player_platform_collisions() {
@@ -394,10 +401,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 				// if player does not have power up, modify players stats and add to powerup map
 				playerStatModifier.powerUpStatModifiers[statModifier.name] = statModifier;
 
-				player.max_jumps += statModifier.extra_jumps;
-				player.jump_force *= statModifier.jump_force_modifier;
-				player.running_force *= statModifier.running_force_modifier;
-				player.speed *= statModifier.max_speed_modifier;
+				StatUtil::apply_stat_modifier(player, statModifier);
 			}
 
 			registry.remove_all_components_of(entity_other);
@@ -409,7 +413,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 void WorldSystem::handle_player_bullet_collisions() {
 	auto& playerBulletCollisionRegistry = registry.playerBulletCollisions;
-	// Loop over all player powerup collisions
+	// Loop over all player bullet collisions
 	for (uint i = 0; i < playerBulletCollisionRegistry.components.size(); i++) {
 
 		// The entity and its collider
@@ -422,14 +426,84 @@ void WorldSystem::handle_player_bullet_collisions() {
 			Motion& playerMotion = registry.motions.get(entity);
 
 			Motion& bullet_motion = registry.motions.get(entity_other);
+			Bullet& bullet = registry.bullets.get(entity_other);
 
-			playerMotion.velocity.x = bullet_motion.velocity.x / 1.25;
+			// TODO compute drop off and apply the knockback based on stats stored in the bullet
+
+			float distanceTravelled = abs(bullet_motion.position.x - bullet.originalXPosition);
+
+			if (bullet.hasNormalDropOff) {
+				float dropOffPenalty = distanceTravelled * 0.5 * bullet.distanceStrengthModifier;
+
+				if (dropOffPenalty >= bullet.knockback) {
+					dropOffPenalty = bullet.knockback;
+				}
+
+				float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
+
+				printf("KNOCKBACK: %f\n", knockbackWithDropOff);
+
+				playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+			}
+
 
 			registry.remove_all_components_of(entity_other);
 		}
 	}
 	// Remove all collisions from player-bullet
 	registry.playerBulletCollisions.clear();
+}
+
+void WorldSystem::handle_player_mystery_box_collisions() {
+	auto& playerMysteryBoxCollisionRegistry = registry.playerMysteryBoxCollisions;
+	// Loop over all player mystery box collisions
+	for (uint i = 0; i < playerMysteryBoxCollisionRegistry.components.size(); i++) {
+
+		// The entity and its collider
+		Entity entity = playerMysteryBoxCollisionRegistry.entities[i];
+		Entity entity_other = playerMysteryBoxCollisionRegistry.components[i].other_entity;
+
+		// Player-mystery box collisions
+		if (registry.players.has(entity) && registry.gunMysteryBoxes.has(entity_other)) {
+			Player& hit_player = registry.players.get(entity);
+			Motion& playerMotion = registry.motions.get(entity);
+			
+			GunMysteryBox& mystery_box = registry.gunMysteryBoxes.get(entity_other);
+			Gun& randomGun = mystery_box.randomGun;
+
+			// Iterate over all elements in guns to find gun owned by current player
+			auto& gun_container = registry.guns;
+			for (uint i = 0; i < gun_container.components.size(); i++) {
+				Gun& gun_i = gun_container.components[i];
+				Entity entity_i = gun_container.entities[i];
+
+				Entity gun_owner = gun_i.gunOwner;
+
+				if (gun_owner != entity) {
+					continue;
+				}
+
+				// Remove old stat modifier and apply new ones
+				StatModifier oldStatModifier = gun_i.statModifier;
+				StatUtil::remove_stat_modifier(hit_player, oldStatModifier);
+
+				// Remove old gun
+				registry.remove_all_components_of(entity_i);
+
+				// Give new gun to player
+				StatModifier newStatModifier = randomGun.statModifier;
+				StatUtil::apply_stat_modifier(hit_player, newStatModifier);
+
+				Entity newGunEntity = createGun(renderer, randomGun.gunSize);
+				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
+				newGunComponent.gunOwner = entity;
+			}
+
+			registry.remove_all_components_of(entity_other);
+		}
+	}
+	// Remove all collisions from player-mystery box
+	registry.playerMysteryBoxCollisions.clear();
 }
 
 void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
@@ -472,19 +546,14 @@ void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 		play_shoot_sound();
 		Motion& player_motion = registry.motions.get(player_to_handle);
 
-		Entity bullet = createBullet(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
-		Motion& bullet_motion = registry.motions.get(bullet);
+		createProjectile(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
 	}
 	else if (key == player_object.keybinds.bullet && action == GLFW_PRESS) {
 		play_shoot_sound();
-		Motion& player_motion = registry.motions.get(player_to_handle);
-
-		Entity bullet = createBullet(renderer, false, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
-		Motion& bullet_motion = registry.motions.get(bullet);
-		player_object.is_shooting = true;
+		player_controller.fireKey = true;
 	}
-	else if (key == player_object.keybinds.bullet && (action == GLFW_RELEASE || action == GLFW_REPEAT)) {
-		player_object.is_shooting = false;
+	else if (key == player_object.keybinds.bullet && action == GLFW_RELEASE) {
+		player_controller.fireKey = false;
 	}
 }
 

@@ -14,6 +14,7 @@ private:
 void checkCollisionBetweenPlayersAndPlatforms(float step_seconds);
 void checkCollisionBetweenPlayersAndPowerups();
 void checkCollisionBetweenPlayersAndBullets();
+void checkCollisionBetweenPlayersAndMysteryBoxes();
 
 public:
 	void step(float elapsed_ms);

@@ -25,11 +25,14 @@ private:
     // Game state
     RenderSystem* renderer;
     float next_powerup_spawn;
+    float next_mystery_box_spawn;
 
     // C++ random number generator
 	std::default_random_engine rng;
     std::uniform_real_distribution<float> uniform_dist;
 	std::uniform_int_distribution<int> uniform_dist_int; // number between 0..1
+
+    vec2 getRandomPositionOnPlatform();
 
     // Define a list of power-ups
     std::vector<std::string> powerUpsNames = {
@@ -40,7 +43,7 @@ private:
         {"Triple Jump", {1.0f, 0.5f, 0.5f}},
         {"Speed Boost", {0.5f, 1.0f, 0.5f}},
         {"Super Jump", {0.5f, 0.5f, 1.0f}}
-};
+    };
 
     std::unordered_map<std::string, StatModifier> powerUpsNamesToStatModifier = {
         {"Triple Jump", StatModifier{
@@ -71,5 +74,9 @@ private:
                             1.0f               
                         }}
     };
+
+
+    std::vector<Gun> guns;
+
 
 };

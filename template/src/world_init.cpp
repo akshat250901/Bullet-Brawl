@@ -102,7 +102,56 @@ std::tuple<float, float> calculateProjectileVelocity(float bulletSpeed, float an
 	return std::make_tuple(vx, vy);
 }
 
-Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player)
+// COMMENT OUT THIS AND CREATE NEW CREATE BULLET AND CREATE PROJECTILE IF NEEDED
+// CREATE BULLET SHOULD TAKE GUN COMPONENT
+
+Entity createBullet(RenderSystem* renderer, Entity gunEntity) {
+	Motion& gunMotion = registry.motions.get(gunEntity);
+	Gun& gunComponent = registry.guns.get(gunEntity);
+	Entity gunOwner = gunComponent.gunOwner;
+	Player& player = registry.players.get(gunOwner);
+
+	auto entity = Entity();
+
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::BULLET);
+ 	registry.meshPtrs.emplace(entity, &mesh);
+
+ 	Motion& bulletMotion = registry.motions.emplace(entity);
+
+	bulletMotion.velocity.x = gunComponent.bulletVelocity * (player.facing_right == 1 ? 1 : -1);
+	bulletMotion.scale = { 20, 10 }; // CAN ADD BULLET SIZE MODIFIER INTO GUN LATER
+	if (player.facing_right) {
+		bulletMotion.angle = -180 * M_PI / 180;
+	}
+
+	// Spawn bullet at the start of the gun barrel
+	vec2 posGun = gunMotion.position;
+	vec2 gunSize = gunMotion.scale;
+	float bulletSpawnXPos = player.facing_right == 1 ? posGun.x + gunSize.x / 2 : posGun.x - gunSize.x / 2;
+ 	bulletMotion.position = { bulletSpawnXPos, posGun.y };
+
+	// Set color of bullet
+	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
+
+	// Set bullet stats
+	Bullet& bullet = registry.bullets.emplace(entity);
+ 	bullet.shooter = gunOwner;
+	bullet.originalXPosition = bulletSpawnXPos;
+	bullet.hasNormalDropOff = gunComponent.hasNormalDropOff;
+	bullet.distanceStrengthModifier = gunComponent.distanceStrengthModifier;
+	bullet.knockback = gunComponent.knockback;
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no texture is needed
+			EFFECT_ASSET_ID::COLOURED,
+			GEOMETRY_BUFFER_ID::BULLET });
+
+	return entity;
+}
+
+
+Entity createProjectile(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity& player)
 {
 	float bulletSpeed = 750.f;
 	float initialUpwardVelocity = 50.f;
@@ -136,7 +185,9 @@ Entity createBullet(RenderSystem* renderer, bool isProjectile, vec2 pos, Entity&
 	motion.position = { player_entity.facing_right == 1 ? pos.x + player_motion.scale.x / 2 : pos.x - player_motion.scale.x / 2 , pos.y };
 
 	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
-	registry.bullets.emplace(entity, player);
+	
+	Bullet& bullet = registry.bullets.emplace(entity);
+	bullet.shooter = player;
 
 	if (isProjectile)
 	{
@@ -199,6 +250,57 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 colo
 			EFFECT_ASSET_ID::ANIMATED,
 			GEOMETRY_BUFFER_ID::ANIMATED_SPRITE });
 
+
+	return entity;
+}
+
+Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale)
+{
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderSystem->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial motion values
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = pos;
+	motion.angle = 0.f;
+	motion.velocity = { 0.f, 0.f };
+
+	motion.scale = scale;
+
+	registry.colors.insert(entity, {0.0f, 255.0f, 0.0f});
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+			EFFECT_ASSET_ID::COLOURED,
+			GEOMETRY_BUFFER_ID::SQUARE });
+
+	return entity;
+}
+
+Entity createGun(RenderSystem* renderSystem, vec2 scale)
+{
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderSystem->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial motion values
+	Motion& motion = registry.motions.emplace(entity);
+	motion.scale = scale;
+	motion.velocity = { 0.f, 0.f };
+
+	registry.colors.insert(entity, {255.0f, 0.0f, 0.0f});
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+			EFFECT_ASSET_ID::COLOURED,
+			GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
 }
