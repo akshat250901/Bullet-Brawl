@@ -74,7 +74,7 @@ GLFWwindow* GameStateSystem::create_window() {
 		return nullptr;
 	}
 	// Playing background music indefinitely
-	Mix_PlayMusic(background_music, -1);
+	//Mix_PlayMusic(background_music, -1);
 	fprintf(stderr, "Loaded music\n");
 
 	return window;

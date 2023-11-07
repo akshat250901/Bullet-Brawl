@@ -50,10 +50,11 @@ namespace {
 }
 
 
-GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window) {
+GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system) {
 	this->window = window;
 	this->renderer = renderer_arg;
 	this->game_state_system = game_state_system;
+	this->sound_system = sound_system;
 	glfwSetWindowUserPointer(window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
@@ -259,17 +260,7 @@ void WorldSystem::restart_game() {
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 
-	// Create players
 	Keybinds player2_keys{
-		GLFW_KEY_W,
-		GLFW_KEY_S,
-		GLFW_KEY_A,
-		GLFW_KEY_D,
-		GLFW_KEY_G,
-		GLFW_KEY_H,
-	};
-	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
-	Keybinds player1_keys{
 		GLFW_KEY_UP,
 		GLFW_KEY_DOWN,
 		GLFW_KEY_LEFT,
@@ -277,7 +268,16 @@ void WorldSystem::restart_game() {
 		GLFW_KEY_SEMICOLON,
 		GLFW_KEY_APOSTROPHE,
 	};
+	Keybinds player1_keys{
+	GLFW_KEY_W,
+	GLFW_KEY_S,
+	GLFW_KEY_A,
+	GLFW_KEY_D,
+	GLFW_KEY_G,
+	GLFW_KEY_H,
+	};
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
+	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 
 	// Add default pistols for players
 
@@ -290,10 +290,6 @@ void WorldSystem::restart_game() {
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third 
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Fourth
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // Bottom
-
-	
-	// Link sounds
-	player_shoot_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
@@ -392,6 +388,8 @@ void WorldSystem::handle_player_powerup_collisions() {
 			PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(entity);
 			StatModifier& statModifier = powerUp.statModifier;
 
+			sound_system->play_pickup_sound(1);
+
 			if (playerStatModifier.powerUpStatModifiers.find(statModifier.name) != playerStatModifier.powerUpStatModifiers.end()) {
 				//if player has powerup, reset the timer of the powerup
 				StatModifier& modifier = playerStatModifier.powerUpStatModifiers.at(statModifier.name);
@@ -441,6 +439,8 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 				float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
 
+				sound_system->play_hit_sound();
+
 				printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
 
 				playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
@@ -478,6 +478,8 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 			
 			GunMysteryBox& mystery_box = registry.gunMysteryBoxes.get(entity_other);
 			Gun& randomGun = mystery_box.randomGun;
+
+			sound_system->play_pickup_sound(0);
 
 			// Iterate over all elements in guns to find gun owned by current player
 			auto& gun_container = registry.guns;
@@ -551,13 +553,10 @@ void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 
 
 	if (key == player_object.keybinds.projectile && action == GLFW_PRESS) {
-		play_shoot_sound();
 		Motion& player_motion = registry.motions.get(player_to_handle);
-
 		createProjectile(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
 	}
 	else if (key == player_object.keybinds.bullet && action == GLFW_PRESS) {
-		play_shoot_sound();
 		player_controller.fireKey = true;
 	}
 	else if (key == player_object.keybinds.bullet && action == GLFW_RELEASE) {
@@ -618,6 +617,3 @@ void WorldSystem::on_mouse_move(vec2 mouse_position) {
 }
 
 
-void WorldSystem::play_shoot_sound() {
-	/*Mix_PlayChannel(-1, player_shoot_sound, 1);*/
-}

@@ -9,7 +9,7 @@ const float POWERUP_SIZE = 50.f;
 
 const size_t MAX_MYSTERY_BOX = 1;
 const float MYSTERY_BOX_DELAY_MS = 1000.0f;
-const float MYSTERY_BOX_SIZE = 30.0f;
+const float MYSTERY_BOX_SIZE = 40.0f;
 
 RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     : next_powerup_spawn(POWERUP_DELAY_MS)

@@ -1,4 +1,5 @@
 #include "gun_system.hpp"
+#include "sound_system.hpp"
 #include "world_init.hpp"
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
@@ -27,9 +28,8 @@ void GunSystem::animateRecoil(Gun& gun_i, Motion& gun_motion, const Player& play
     gun_motion.position.x += directionMultiplier * recoilOffset;
 }
 
-GunSystem::GunSystem(RenderSystem* renderSystem) 
-    : renderer(renderSystem) {
-
+GunSystem::GunSystem(RenderSystem* renderSystem, SoundSystem* sound_system)
+    : renderer(renderSystem), sound_system(sound_system) {
 }
 
 void GunSystem::step(float elapsed_ms_since_last_update) 
@@ -120,6 +120,7 @@ void GunSystem::step(float elapsed_ms_since_last_update)
 
         Entity bullet = createBullet(renderer, entity_i);
 
+        sound_system->play_shoot_sound(gun_i.name);
         if (gun_i.magazineAmmo > 0) { 
             continue;
         }
@@ -128,6 +129,8 @@ void GunSystem::step(float elapsed_ms_since_last_update)
             // start reload
             gun_i.currentlyReloading = true;
             gun_i.reloadTimerMs = gun_i.reloadMs;
+            printf("RELOADING??\n");
+            sound_system->play_reload_sound(gun_i.name);
             continue;
         }
 

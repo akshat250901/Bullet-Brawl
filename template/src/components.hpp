@@ -123,7 +123,7 @@ struct Gun
 	int magazineAmmo = 10; // Current ammo in magazine
 	int reserveAmmo = magazineSize * 2;
 
-	vec2 gunSize = {20.0f, 10.0f};
+	vec2 gunSize = {10.0f, 10.0f};
 };
 
 struct NonInteractable {
@@ -154,10 +154,6 @@ struct AnimatedSprite {
 
 	std::map<int, int> frame_count_per_type = {};
 };
-
-// struct Button {
-
-// };
 
 // Platforms
 struct Platform
@@ -324,9 +320,7 @@ struct Mesh
 enum class TEXTURE_ASSET_ID {
 	RED_HEALTH = 0,
 	GREEN_HEALTH = RED_HEALTH + 1,
-	PLAYER = GREEN_HEALTH + 1,
-	PLAYER2 = PLAYER + 1,
-	PLAYER_SPRITESHEET = PLAYER2 + 1,
+	PLAYER_SPRITESHEET = GREEN_HEALTH + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
 	BACKGROUND = POWERUP_SPRITESHEET + 1,
 	MIDDLEGROUND = BACKGROUND + 1,
@@ -334,7 +328,10 @@ enum class TEXTURE_ASSET_ID {
 	MENUBACKGROUND = FOREGROUND + 1,
 	PLATFORM = MENUBACKGROUND + 1,
 	TUTORIALPLATFORM = PLATFORM + 1,
-	TEXTURE_COUNT = TUTORIALPLATFORM + 1
+	PISTOL = TUTORIALPLATFORM + 1,
+	SMG = PISTOL + 1,
+	WEAPON_BOX = SMG + 1,
+	TEXTURE_COUNT = WEAPON_BOX + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

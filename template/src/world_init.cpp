@@ -270,13 +270,13 @@ Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale)
 
 	motion.scale = scale;
 
-	registry.colors.insert(entity, {0.0f, 255.0f, 0.0f});
+	/*registry.colors.insert(entity, {0.0f, 255.0f, 0.0f});*/
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+		{ TEXTURE_ASSET_ID::WEAPON_BOX,
+			EFFECT_ASSET_ID::TEXTURED,
+			GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
 }

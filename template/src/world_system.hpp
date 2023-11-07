@@ -9,6 +9,7 @@
 
 #include "render_system.hpp"
 #include "game_state_system.hpp"
+#include "sound_system.hpp"
 
 // Container for all our entities and game logic. Individual rendering / update is
 // deferred to the relative update() methods
@@ -19,7 +20,7 @@ public:
 	~WorldSystem();
 	
 	// starts the game
-	GLFWwindow* init(RenderSystem* renderer, GameStateSystem* game_state_system, GLFWwindow* window);
+	GLFWwindow* init(RenderSystem* renderer, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system);
 
 	// Steps the game ahead by ms milliseconds
 	bool step(float elapsed_ms);
@@ -37,7 +38,7 @@ public:
 private:
 	// OpenGL window handle
 	GLFWwindow* window;
-
+	SoundSystem* sound_system;
 	GameStateSystem* game_state_system;
 
 	// restart level
@@ -79,8 +80,4 @@ private:
     void handle_player_bullet_collisions();
 	void handle_player_mystery_box_collisions();
 
-	// Sounds
-	void play_shoot_sound();
-
-	Mix_Chunk* player_shoot_sound;
 };

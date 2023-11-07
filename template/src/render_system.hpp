@@ -33,8 +33,6 @@ class RenderSystem {
 	const std::array<std::string, texture_count> texture_paths = {
 			textures_path("red_health.png"),
 			textures_path("green_health.png"),
-			textures_path("player.png"),
-			textures_path("player2.png"),
 			textures_path("player_spritesheet.png"),
 			textures_path("powerup_spritesheet.png"),
 			textures_path("background.png"),
@@ -42,7 +40,10 @@ class RenderSystem {
 			textures_path("foreground.png"),
 			textures_path("menuBackground.png"),
 			textures_path("islandPlatform.png"),
-			textures_path("islandPlatformTutorial.png")
+			textures_path("islandPlatformTutorial.png"),
+			textures_path("pistol.png"),
+			textures_path("smg.png"),
+			textures_path("weapon_box.png")
 	};
 
 	std::array<GLuint, effect_count> effects;

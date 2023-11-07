@@ -15,6 +15,7 @@
 #include "main_menu_system.hpp"
 #include "movement_system.hpp"
 #include "gun_system.hpp"
+#include "sound_system.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -30,7 +31,8 @@ int main()
 	AnimationSystem animation_system;
 	RandomDropsSystem random_drops_system(&render_system);
 	MovementSystem movement_system;
-	GunSystem gun_system(&render_system);
+	SoundSystem sound_system;
+	GunSystem gun_system(&render_system, &sound_system);
 
 	// Initializing window
 	GLFWwindow* window = game_state_system.create_window();
@@ -42,6 +44,7 @@ int main()
 	}
 
 	// initialize the main systems
+	sound_system.init_sounds();
 	render_system.init(window);
 	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 
@@ -64,7 +67,7 @@ int main()
 			}
 		} else if (game_state_system.get_current_state() == 1 || 2) {
 			if (game_state_system.is_state_changed) {
-				world_system.init(&render_system, &game_state_system, window);
+				world_system.init(&render_system, &game_state_system, window, &sound_system);
 				game_state_system.is_state_changed = false;
 			}
 			if (!world_system.paused) {
@@ -74,6 +77,7 @@ int main()
 				physics_system.step(elapsed_ms);
 				random_drops_system.step(elapsed_ms);
 				animation_system.step(elapsed_ms);
+				sound_system.step(elapsed_ms);
 				world_system.handle_collisions();
 				random_drops_system.handleInterpolation(elapsed_ms);
 			}
