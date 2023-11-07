@@ -6,6 +6,7 @@
 // stlib
 #include <vector>
 #include <random>
+#include <string>
 
 #include "render_system.hpp"
 #include "game_state_system.hpp"

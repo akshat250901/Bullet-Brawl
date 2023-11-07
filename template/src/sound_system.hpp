@@ -19,6 +19,7 @@ public:
 	Mix_Chunk* pistol_shoot_sound;
 	Mix_Chunk* smg_shoot_sound;
 	Mix_Chunk* ar_shoot_sound;
+	Mix_Chunk* sniper_shoot_sound;
 
 	Mix_Chunk* player_reload_sound;
 	Mix_Chunk* weapon_pickup_sound;

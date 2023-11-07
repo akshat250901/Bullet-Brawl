@@ -12,18 +12,29 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	// Transformation code, see Rendering and Transformation in the template
 	// specification for more info Incrementally updates transformation matrix,
 	// thus ORDER IS IMPORTANT
-	
+
 	Transform transform;
 	transform.translate(motion.position);
 	transform.rotate(motion.angle);
 
+	vec2 flipScale = { -motion.scale.x ,motion.scale.y };
+
 	// flip player
 	if (registry.players.has(entity)) {
 		Player& player = registry.players.get(entity); 
-		vec2 flipScale = { -motion.scale.x ,motion.scale.y };
+		
 		transform.scale(player.facing_right ? motion.scale : flipScale);
 	}
-	else {
+	else if (registry.guns.has(entity)) 
+	{
+		Gun& gun_i = registry.guns.get(entity);
+		Entity owner = gun_i.gunOwner;
+		Player& player = registry.players.get(owner);
+
+		transform.scale(player.facing_right ? motion.scale : flipScale);
+	}
+	else 
+	{
 		transform.scale(motion.scale);
 	}
 

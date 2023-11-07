@@ -43,6 +43,8 @@ class RenderSystem {
 			textures_path("islandPlatformTutorial.png"),
 			textures_path("pistol.png"),
 			textures_path("smg.png"),
+			textures_path("ar.png"),
+			textures_path("sniper.png"),
 			textures_path("weapon_box.png")
 	};
 

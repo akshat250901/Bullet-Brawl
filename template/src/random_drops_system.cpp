@@ -47,7 +47,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     submachineGun.magazineSize = 30;
     submachineGun.magazineAmmo = 30;
     submachineGun.reserveAmmo = submachineGun.magazineSize * 2;
-    submachineGun.gunSize = {30,10};
+    submachineGun.gunSize = {60,30};
 
     guns.push_back(submachineGun);
 
@@ -82,7 +82,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     assaultRifle.magazineAmmo = 20;
     assaultRifle.reserveAmmo = assaultRifle.magazineSize * 2;
 
-    assaultRifle.gunSize = {50,10};
+    assaultRifle.gunSize = {80,40};
 
     guns.push_back(assaultRifle);
 
@@ -118,7 +118,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     sniperRifle.magazineAmmo = 4;
     sniperRifle.reserveAmmo = sniperRifle.magazineSize * 2;
 
-    sniperRifle.gunSize = {70,10};
+    sniperRifle.gunSize = {120,30};
 
     guns.push_back(sniperRifle);
 
