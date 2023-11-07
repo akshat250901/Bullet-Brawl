@@ -281,7 +281,7 @@ Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale)
 	return entity;
 }
 
-Entity createGun(RenderSystem* renderSystem, vec2 scale)
+Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 {
 	auto entity = Entity();
 
@@ -294,13 +294,37 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale)
 	motion.scale = scale;
 	motion.velocity = { 0.f, 0.f };
 
-	registry.colors.insert(entity, {255.0f, 0.0f, 0.0f});
+	if (gun_name == "Submachine Gun") {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::SMG,
+				EFFECT_ASSET_ID::TEXTURED,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (gun_name == "Assault Rifle") {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::AR,
+				EFFECT_ASSET_ID::TEXTURED,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (gun_name == "Sniper Rifle") {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::SNIPER,
+				EFFECT_ASSET_ID::TEXTURED,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else {
+		// default case should be pistol
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::PISTOL,
+				EFFECT_ASSET_ID::TEXTURED,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
 
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
-			EFFECT_ASSET_ID::COLOURED,
-			GEOMETRY_BUFFER_ID::SQUARE });
+
 
 	return entity;
 }

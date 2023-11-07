@@ -501,7 +501,7 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 				StatModifier newStatModifier = randomGun.statModifier;
 				StatUtil::apply_stat_modifier(hit_player, newStatModifier);
 
-				Entity newGunEntity = createGun(renderer, randomGun.gunSize);
+				Entity newGunEntity = createGun(renderer, randomGun.gunSize, randomGun.name);
 				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
 				newGunComponent.gunOwner = entity;
 			}
