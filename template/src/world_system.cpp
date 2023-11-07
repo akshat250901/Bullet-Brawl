@@ -255,10 +255,10 @@ void WorldSystem::restart_game() {
 	registry.list_all_components();
 
 	// ISLAND MAP
-	createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
+	//createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
 
 	////JUNGLE MAP
-	//createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
+	createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
 
 	//SPACE MAP
 	//createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
