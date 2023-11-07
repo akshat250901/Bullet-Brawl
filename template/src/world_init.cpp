@@ -84,12 +84,12 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = size;
 	registry.platforms.emplace(entity);
-	//registry.colors.insert(entity, color);
-	// registry.renderRequests.insert(
-	// 	entity,
-	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-	// 		EFFECT_ASSET_ID::COLOURED,
-	// 		GEOMETRY_BUFFER_ID::SQUARE });
+	registry.colors.insert(entity, color);
+	 registry.renderRequests.insert(
+	 	entity,
+	 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
+	 		EFFECT_ASSET_ID::COLOURED,
+	 		GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
 }
@@ -532,8 +532,9 @@ void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 240, 190 }, { 300, 10 }); // Top left
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 160 }, { 530, 10 }); // Top right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 550, 305 }, { 960, 10 }); // long boi
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1005, 420 }, { 340, 10 }); // middle
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 779, 525 }, { 598, 10 }); // below middle
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1005, 420 }, { 340, 10 }); // middle right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 330, 420 }, { 300, 10 }); // middle left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 779, 525 }, { 598, 10 }); // below middle right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 426, 650 }, { 596, 10 }); // bottom left
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 970, 660 }, { 250, 10 }); // bottom right
 }
