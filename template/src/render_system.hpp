@@ -43,7 +43,9 @@ class RenderSystem {
 			textures_path("islandPlatformTutorial.png"),
 			textures_path("pistol.png"),
 			textures_path("smg.png"),
-			textures_path("weapon_box.png")
+			textures_path("weapon_box.png"),
+			textures_path("JUNGLEMAP.png"),
+			textures_path("SPACEMAP.png")
 	};
 
 	std::array<GLuint, effect_count> effects;

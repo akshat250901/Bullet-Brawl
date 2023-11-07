@@ -254,11 +254,15 @@ void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
-	//make background parallax
-	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
-	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
-	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	// ISLAND MAP
+	createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
+
+	////JUNGLE MAP
+	//createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
+
+	//SPACE MAP
+	//createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
+
 
 	Keybinds player2_keys{
 		GLFW_KEY_UP,
@@ -283,13 +287,6 @@ void WorldSystem::restart_game() {
 
 	CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
 	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
-
-	// Create platforms
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third 
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Fourth
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // Bottom
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
