@@ -441,9 +441,17 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 				float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
 
-				printf("KNOCKBACK: %f\n", knockbackWithDropOff);
+				printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
 
 				playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+			} else {
+				float distanceBonus = distanceTravelled * bullet.distanceStrengthModifier;
+
+				float knockbackWithBonus = bullet.knockback + distanceBonus;
+
+				printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus);
+
+				playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1); 
 			}
 
 

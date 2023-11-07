@@ -8,7 +8,7 @@ const float POWERUP_DELAY_MS = 10000.0f;
 const float POWERUP_SIZE = 50.f;
 
 const size_t MAX_MYSTERY_BOX = 1;
-const float MYSTERY_BOX_DELAY_MS = 3000.0f;
+const float MYSTERY_BOX_DELAY_MS = 1000.0f;
 const float MYSTERY_BOX_SIZE = 30.0f;
 
 RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
@@ -85,6 +85,43 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     assaultRifle.gunSize = {50,10};
 
     guns.push_back(assaultRifle);
+
+
+    // Sniper rifle
+    Gun sniperRifle;
+    StatModifier sniperRifleStatModifier = StatModifier{
+                            "Sniper Rifle Stat",
+                            false,              
+                            0,              
+                            0,                 
+                            1.0f,              
+                            0.75f,              
+                            0.75f               
+                        };
+
+
+    sniperRifle.name = "Sniper Rifle";
+    sniperRifle.statModifier = sniperRifleStatModifier;
+    sniperRifle.fireRateMs = 750.0f;
+    
+    sniperRifle.knockback = 500.0f;
+    sniperRifle.bulletVelocity = 1600.0f;
+    sniperRifle.distanceStrengthModifier = 3.0f;
+    sniperRifle.hasNormalDropOff = false;
+
+    sniperRifle.recoil = 150.0f;
+    sniperRifle.recoilAnimationModifier = 0.8f;
+
+    sniperRifle.reloadMs = 5000.0f;
+    
+    sniperRifle.magazineSize = 4;
+    sniperRifle.magazineAmmo = 4;
+    sniperRifle.reserveAmmo = sniperRifle.magazineSize * 2;
+
+    sniperRifle.gunSize = {70,10};
+
+    guns.push_back(sniperRifle);
+
 }
 
 void RandomDropsSystem::step(float elapsed_ms_since_last_update)

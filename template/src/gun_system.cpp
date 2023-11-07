@@ -3,6 +3,30 @@
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
 
+void GunSystem::animateRecoil(Gun& gun_i, Motion& gun_motion, const Player& player_component) {
+    float fireRateOriginalModified = gun_i.fireRateMs - (gun_i.fireRateMs * gun_i.recoilAnimationModifier);
+    float fireRateTimerCurrentModified = gun_i.fireRateTimerMs - (gun_i.fireRateMs * gun_i.recoilAnimationModifier);
+
+    float fireRateGunAnimate = fireRateOriginalModified / 2;
+    float fireRateTimerAnimate = fireRateTimerCurrentModified;
+
+    float maxAngleKick = (M_PI / 15);
+    float maxRecoil = 5.0f;
+
+    float radiansPerTimeMs = (maxAngleKick / fireRateGunAnimate);
+    float distancePerTimeMs = (maxRecoil / fireRateGunAnimate);
+    float timeRemaining = fireRateTimerAnimate - fireRateGunAnimate;
+
+    // Calculate the recoil offsets
+    float radiansOffset = timeRemaining > 0 ? (-radiansPerTimeMs * timeRemaining) + maxAngleKick : (radiansPerTimeMs * fireRateTimerAnimate);
+    float recoilOffset = timeRemaining > 0 ? (-distancePerTimeMs * timeRemaining) + maxRecoil : (distancePerTimeMs * timeRemaining);
+
+    // Apply the recoil depending on the direction the player is facing
+    int directionMultiplier = player_component.facing_right ? -1 : 1;
+    gun_motion.angle += directionMultiplier * radiansOffset;
+    gun_motion.position.x += directionMultiplier * recoilOffset;
+}
+
 GunSystem::GunSystem(RenderSystem* renderSystem) 
     : renderer(renderSystem) {
 
@@ -20,7 +44,7 @@ void GunSystem::step(float elapsed_ms_since_last_update)
         Controller& controller = registry.controllers.get(owner);
         Motion& motion_player = registry.motions.get(owner);
         Player& player_component = registry.players.get(owner);
-        
+
         if (player_component.facing_right) {
             gun_motion.position.x = motion_player.position.x + motion_player.scale.x / 2 - 5;
             gun_motion.position.y = motion_player.position.y;
@@ -28,14 +52,23 @@ void GunSystem::step(float elapsed_ms_since_last_update)
             gun_motion.position.x = motion_player.position.x - motion_player.scale.x / 2 + 5;
             gun_motion.position.y = motion_player.position.y;
         }
+        // set angle to 0
+        gun_motion.angle = 0.0f;
         
 
         bool fireKey = controller.fireKey;
+
+        gun_i.fireRateTimerMs -= elapsed_ms_since_last_update;
 
         if (gun_i.currentlyReloading) {
             gun_i.reloadTimerMs -= elapsed_ms_since_last_update;
 
             if (gun_i.reloadTimerMs > 0) {
+                if (gun_i.fireRateTimerMs - (gun_i.fireRateMs * gun_i.recoilAnimationModifier) < 0) {
+                    continue;
+                }
+
+                animateRecoil(gun_i, gun_motion, player_component);
                 continue;
             } 
 
@@ -55,10 +88,16 @@ void GunSystem::step(float elapsed_ms_since_last_update)
             }
         }
 
-        gun_i.fireRateTimerMs -= elapsed_ms_since_last_update;
-
         // If on this line then not reloading
         if (gun_i.fireRateTimerMs > 0) {
+            // handle recoil animation HERE
+            
+            // Gun recoil animation finishes at half the fire rate of the gun
+            if (gun_i.fireRateTimerMs - (gun_i.fireRateMs * gun_i.recoilAnimationModifier) < 0) {
+                continue;
+            }
+
+            animateRecoil(gun_i, gun_motion, player_component);
             continue;
         }
 

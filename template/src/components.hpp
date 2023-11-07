@@ -109,6 +109,7 @@ struct Gun
 	float distanceStrengthModifier = 1;
 
 	float recoil = 30.0f;
+	float recoilAnimationModifier = 0.5f; // Faster animation as this value gets closer to 1
 
 	bool isHitScan = false;
 	float hitScanRange = 0.0f; //number of pixels

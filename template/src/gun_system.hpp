@@ -12,6 +12,8 @@ class GunSystem
 private:
     RenderSystem* renderer;
 
+	void animateRecoil(Gun& gun, Motion& gun_motion, const Player& player_component);
+
 public:
 	void step(float elapsed_ms);
 
