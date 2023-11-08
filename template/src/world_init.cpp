@@ -564,13 +564,13 @@ void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 {
 	createBackgroundJungle(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 240, 190 }, { 300, 10 }); // Top left
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 160 }, { 530, 10 }); // Top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 830, 210 }, { 530, 10 }); // Top right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 550, 305 }, { 960, 10 }); // long boi
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1005, 420 }, { 340, 10 }); // middle right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 330, 420 }, { 300, 10 }); // middle left
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 779, 525 }, { 598, 10 }); // below middle right
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 426, 650 }, { 596, 10 }); // bottom left
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 970, 660 }, { 250, 10 }); // bottom right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 426, 630 }, { 596, 10 }); // bottom left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 970, 630 }, { 250, 10 }); // bottom right
 }
 
 void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
