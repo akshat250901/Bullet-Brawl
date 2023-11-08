@@ -258,10 +258,13 @@ void WorldSystem::restart_game() {
 	//createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
 
 	////JUNGLE MAP
-	createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
+	 createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
 
 	//SPACE MAP
 	//createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
+
+	//TEMPLE map
+	//createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
 
 
 	Keybinds player2_keys{

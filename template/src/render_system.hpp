@@ -47,7 +47,8 @@ class RenderSystem {
 			textures_path("sniper.png"),
 			textures_path("weapon_box.png"),
 			textures_path("JUNGLEMAP.png"),
-			textures_path("SPACEMAP.png")
+			textures_path("SPACEMAP.png"),
+			textures_path("TEMPLEMAP.png")
 	};
 
 	std::array<GLuint, effect_count> effects;

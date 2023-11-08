@@ -32,4 +32,5 @@ void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
 // render space map
 void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
-
+// render temple map
+void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
