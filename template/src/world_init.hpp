@@ -24,12 +24,13 @@ Entity createPowerup(RenderSystem* renderSystem, vec2 pos, vec2 scale, vec3 Colo
 Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale);
 // create a gun
 Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun);
-//Island
-Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
-// a background back layer
-Entity createBackgroundBack(RenderSystem* renderer, vec2 position, vec2 size);
-// a background middle layer
-Entity createBackgroundMiddle(RenderSystem* renderer, vec2 position, vec2 size);
-// a background
-Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 size);
-
+// render space map
+Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
+// render island map
+void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
+// render jungle map
+void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
+// render space map
+void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
+// render temple map
+void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);

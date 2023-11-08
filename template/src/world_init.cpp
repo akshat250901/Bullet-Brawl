@@ -444,3 +444,154 @@ Entity createBackgroundForeground(RenderSystem* renderer, vec2 position, vec2 si
 
 	return entity;
 }
+
+Entity createBackgroundJungle(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	if (game_state_system->get_current_state() == 1) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::JUNGLEMAP,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (game_state_system->get_current_state() == 2) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+
+	return entity;
+}
+
+Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	if (game_state_system->get_current_state() == 1) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::SPACEMAP,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (game_state_system->get_current_state() == 2) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+
+	return entity;
+}
+
+Entity createBackgroundTemple(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	if (game_state_system->get_current_state() == 1) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TEMPLEMAP,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (game_state_system->get_current_state() == 2) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+				EFFECT_ASSET_ID::BACKGROUND,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
+
+	return entity;
+}
+
+void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundBack(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
+	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
+	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third 
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Fourth
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // Bottom
+}
+
+void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundJungle(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 240, 190 }, { 300, 10 }); // Top left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 830, 210 }, { 530, 10 }); // Top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 550, 305 }, { 960, 10 }); // long boi
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1005, 420 }, { 340, 10 }); // middle right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 330, 420 }, { 300, 10 }); // middle left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 779, 525 }, { 598, 10 }); // below middle right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 426, 630 }, { 596, 10 }); // bottom left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 970, 630 }, { 250, 10 }); // bottom right
+}
+
+void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundSpace(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 365, 265 }, { 300, 10 }); // Top left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 940, 285 }, { 270, 10 }); // Top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 635, 418 }, { 740, 10 }); // middle
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 248, 534 }, { 280, 10 }); // level 3 left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 910, 534 }, { 260, 10 }); // level 3 right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 396, 642 }, { 255, 10 }); // level 4 left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 810, 650 }, { 230, 10 }); // level 4 right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 740 }, { 230, 10 }); // bottom
+}
+
+void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundTemple(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 270 }, { 360, 1 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 385 }, { 900, 1 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 505 }, { 380, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
+}
