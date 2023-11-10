@@ -104,7 +104,7 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 	PopupIndicator& popup = registry.popupIndicator.get(entity);
 	Motion& popup_motion = registry.motions.emplace(entity);
 
-	popup_motion.scale = { 60, 30 };
+	popup_motion.scale = { 150, 50 };
 	popup.player = player;
 
 	TEXTURE_ASSET_ID texture_id;
@@ -113,25 +113,22 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 	std::cout << "popup type: \n" << popup_type;
 
 	if (popup_type == "Submachine Gun") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::SMG_PICKUP;
 	}
 	else if (popup_type == "Assault Rifle") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::AR_PICKUP;
 	}
 	else if (popup_type == "Sniper Rifle") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::SNIPER_PICKUP;
 	}
 	else if (popup_type == "Triple Jump") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::TRIPLEJUMP;
 	}
 	else if (popup_type == "Speed Boost") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::SPEEDBOOST;
 	}
 	else if (popup_type == "Super Jump") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
-	}
-	else if (popup_type == "Reload") {
-		texture_id = TEXTURE_ASSET_ID::TEXT;
+		texture_id = TEXTURE_ASSET_ID::SUPERJUMP;
 	}
 	else {
 		// not a valid popup_type

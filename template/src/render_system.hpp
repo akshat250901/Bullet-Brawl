@@ -49,7 +49,12 @@ class RenderSystem {
 			textures_path("JUNGLEMAP.png"),
 			textures_path("SPACEMAP.png"),
 			textures_path("TEMPLEMAP.png"),
-			textures_path("text.png")
+			textures_path("popup_text/speedboost.png"),
+			textures_path("popup_text/superjump.png"),
+			textures_path("popup_text/triplejump.png"),
+			textures_path("popup_text/smg.png"),
+			textures_path("popup_text/ar.png"),
+			textures_path("popup_text/sniper.png")
 	};
 
 	std::array<GLuint, effect_count> effects;
