@@ -11,7 +11,6 @@ class ECSRegistry
 
 public:
 	// Manually created list of all components this game has
-	// TODO: A1 add a LightUp component
 	ComponentContainer<Friction> friction;
 	ComponentContainer<Gravity> gravity;
 	ComponentContainer<DeathTimer> deathTimers;
@@ -42,6 +41,7 @@ public:
 	ComponentContainer<GunMysteryBox> gunMysteryBoxes;
 	ComponentContainer<NonInteractable> nonInteractables;
 
+	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
 
 	// constructor that adds all containers for looping over them
@@ -70,7 +70,7 @@ public:
 		registry_list.push_back(&guns);
 		registry_list.push_back(&gunMysteryBoxes);
 		registry_list.push_back(&nonInteractables);
-
+		registry_list.push_back(&popupIndicator);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
