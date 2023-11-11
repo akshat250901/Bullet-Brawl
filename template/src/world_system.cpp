@@ -210,6 +210,31 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	// deal with popups
+	for (Entity popup_entity : registry.popupIndicator.entities) {
+		PopupIndicator& popup = registry.popupIndicator.get(popup_entity);
+		Motion& popup_motion = registry.motions.get(popup_entity);
+
+		Player& player = registry.players.get(popup.player);
+		Motion& player_motion = registry.motions.get(popup.player);
+
+		if (popup.timer > 0) {
+			popup.timer -= elapsed_ms_since_last_update;
+			printf("%f \n",(1000 - popup.timer));
+
+			if (popup.timer < 800.f) {
+				popup_motion.position = { player_motion.position.x , (player_motion.position.y - 30) - (1000 - popup.timer) / 10 };
+			}
+			else {
+				popup_motion.position = { player_motion.position.x , player_motion.position.y - 50 };
+			}
+		}
+		else {
+			registry.popupIndicator.remove(popup_entity);
+			registry.motions.remove(popup_entity);
+		}
+	}
+
 	//parallax background
 	for (Entity backgroundEntity : registry.parallaxes.entities) {
 		ParallaxBackground& parallaxBackground = registry.parallaxes.get(backgroundEntity);
@@ -389,6 +414,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 			StatModifier& statModifier = powerUp.statModifier;
 
 			sound_system->play_pickup_sound(1);
+			createPopupIndicator(renderer, powerUp.statModifier.name, entity);
 
 			if (playerStatModifier.powerUpStatModifiers.find(statModifier.name) != playerStatModifier.powerUpStatModifiers.end()) {
 				//if player has powerup, reset the timer of the powerup
@@ -480,6 +506,7 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 			Gun& randomGun = mystery_box.randomGun;
 
 			sound_system->play_pickup_sound(0);
+			createPopupIndicator(renderer ,randomGun.name, entity);
 
 			// Iterate over all elements in guns to find gun owned by current player
 			auto& gun_container = registry.guns;

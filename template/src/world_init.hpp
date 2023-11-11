@@ -14,6 +14,8 @@ const float TURTLE_BB_HEIGHT = 0.4f * 202.f;
 Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 pos);
 // the platform
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size);
+// visual indicator for player
+Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Entity& player);
 // a bullet
 Entity createBullet(RenderSystem* renderer, Entity gunEntity);
 // a projectile

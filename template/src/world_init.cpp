@@ -1,5 +1,7 @@
 #include "world_init.hpp"
 #include "tiny_ecs_registry.hpp"
+#include <string>
+#include <iostream>
 
 Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 pos)
 {
@@ -84,12 +86,63 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	// Setting initial values, scale is negative to make it face the opposite way
 	motion.scale = size;
 	registry.platforms.emplace(entity);
-	//registry.colors.insert(entity, color);
-	// registry.renderRequests.insert(
-	// 	entity,
-	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no txture is needed
-	// 		EFFECT_ASSET_ID::COLOURED,
-	// 		GEOMETRY_BUFFER_ID::SQUARE });
+
+	return entity;
+}
+
+Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Entity& player)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial values, scale is negative to make it face the opposite way
+	registry.popupIndicator.emplace(entity);
+	PopupIndicator& popup = registry.popupIndicator.get(entity);
+	Motion& popup_motion = registry.motions.emplace(entity);
+
+	popup_motion.scale = { 150, 50 };
+	popup.player = player;
+
+	TEXTURE_ASSET_ID texture_id;
+
+	popup.type = popup_type;
+	std::cout << "popup type: \n" << popup_type;
+
+	if (popup_type == "Submachine Gun") {
+		texture_id = TEXTURE_ASSET_ID::SMG_PICKUP;
+	}
+	else if (popup_type == "Assault Rifle") {
+		texture_id = TEXTURE_ASSET_ID::AR_PICKUP;
+	}
+	else if (popup_type == "Sniper Rifle") {
+		texture_id = TEXTURE_ASSET_ID::SNIPER_PICKUP;
+	}
+	else if (popup_type == "Triple Jump") {
+		texture_id = TEXTURE_ASSET_ID::TRIPLEJUMP;
+	}
+	else if (popup_type == "Speed Boost") {
+		texture_id = TEXTURE_ASSET_ID::SPEEDBOOST;
+	}
+	else if (popup_type == "Super Jump") {
+		texture_id = TEXTURE_ASSET_ID::SUPERJUMP;
+	}
+	else {
+		// not a valid popup_type
+		// should technically throw error but in the case of the game 
+		// its fine to just not render anything
+
+		return entity;
+	}
+
+	registry.renderRequests.insert(
+		entity,
+		{ texture_id, // TEXTURE_COUNT indicates that no texture is needed
+			EFFECT_ASSET_ID::TEXTURED,
+			GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
 }

@@ -52,6 +52,13 @@ struct Player
 	int lives;
 };
 
+struct PopupIndicator
+{
+	std::string type = "Default pistol";
+	Entity player;
+	float timer = 1000.f; // in ms
+};
+
 struct Controller
 {
 	bool leftKey = false;
@@ -336,7 +343,13 @@ enum class TEXTURE_ASSET_ID {
 	JUNGLEMAP = WEAPON_BOX + 1,
 	SPACEMAP = JUNGLEMAP + 1,
 	TEMPLEMAP = SPACEMAP + 1,
-	TEXTURE_COUNT = TEMPLEMAP + 1
+	SPEEDBOOST = TEMPLEMAP + 1,
+	SUPERJUMP = SPEEDBOOST + 1,
+	TRIPLEJUMP = SUPERJUMP + 1,
+	SMG_PICKUP = TRIPLEJUMP + 1,
+	AR_PICKUP = SMG_PICKUP + 1,
+	SNIPER_PICKUP = AR_PICKUP + 1,
+	TEXTURE_COUNT = SNIPER_PICKUP + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
