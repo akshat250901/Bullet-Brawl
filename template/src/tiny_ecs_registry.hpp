@@ -40,6 +40,7 @@ public:
 	ComponentContainer<Gun> guns;
 	ComponentContainer<GunMysteryBox> gunMysteryBoxes;
 	ComponentContainer<NonInteractable> nonInteractables;
+	ComponentContainer<MuzzleFlash> muzzleFlashes;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -71,6 +72,7 @@ public:
 		registry_list.push_back(&gunMysteryBoxes);
 		registry_list.push_back(&nonInteractables);
 		registry_list.push_back(&popupIndicator);
+		registry_list.push_back(&muzzleFlashes);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);

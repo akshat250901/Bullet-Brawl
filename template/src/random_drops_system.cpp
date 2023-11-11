@@ -26,8 +26,8 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             0,              
                             0,                 
                             1.1f,              
-                            1.2f,              
-                            1.2f               
+                            1.3f,              
+                            1.3f               
                         };
 
 
@@ -35,22 +35,19 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     submachineGun.statModifier = submachineStatModifier;
     submachineGun.fireRateMs = 100.0f;
     
-    submachineGun.knockback = 500.0f;
-    submachineGun.bulletVelocity = 800.0f;
-    submachineGun.distanceStrengthModifier = 0.7f;
+    submachineGun.knockback = 800.0f;
+    submachineGun.bulletVelocity = 1100.0f;
+    submachineGun.distanceStrengthModifier = 1.2f;
     submachineGun.hasNormalDropOff = true;
 
     submachineGun.recoil = 20.0f;
 
-    submachineGun.reloadMs = 2000.0f;
+    submachineGun.reloadMs = 1500.0f;
     
     submachineGun.magazineSize = 30;
     submachineGun.magazineAmmo = 30;
-    submachineGun.reserveAmmo = submachineGun.magazineSize * 2;
+    submachineGun.reserveAmmo = submachineGun.magazineSize;
     submachineGun.gunSize = {60,30};
-
-    guns.push_back(submachineGun);
-
 
     // Assault rifle
     Gun assaultRifle;
@@ -60,8 +57,8 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             0,              
                             0,                 
                             1.0f,              
-                            0.85f,              
-                            0.85f               
+                            0.90f,              
+                            0.90f               
                         };
 
 
@@ -69,23 +66,20 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     assaultRifle.statModifier = assaultRifleStatModifier;
     assaultRifle.fireRateMs = 250.0f;
     
-    assaultRifle.knockback = 800.0f;
-    assaultRifle.bulletVelocity = 1200.0f;
-    assaultRifle.distanceStrengthModifier = 0.5f;
+    assaultRifle.knockback = 1300.0f;
+    assaultRifle.bulletVelocity = 1300.0f;
+    assaultRifle.distanceStrengthModifier = 0.2f;
     assaultRifle.hasNormalDropOff = true;
 
     assaultRifle.recoil = 40.0f;
 
-    assaultRifle.reloadMs = 3000.0f;
+    assaultRifle.reloadMs = 2500.0f;
     
     assaultRifle.magazineSize = 20;
     assaultRifle.magazineAmmo = 20;
-    assaultRifle.reserveAmmo = assaultRifle.magazineSize * 2;
+    assaultRifle.reserveAmmo = assaultRifle.magazineSize;
 
     assaultRifle.gunSize = {80,40};
-
-    guns.push_back(assaultRifle);
-
 
     // Sniper rifle
     Gun sniperRifle;
@@ -95,32 +89,68 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             0,              
                             0,                 
                             1.0f,              
-                            0.75f,              
-                            0.75f               
+                            0.85f,              
+                            0.85f               
                         };
 
 
     sniperRifle.name = "Sniper Rifle";
     sniperRifle.statModifier = sniperRifleStatModifier;
-    sniperRifle.fireRateMs = 750.0f;
+    sniperRifle.fireRateMs = 650.0f;
     
-    sniperRifle.knockback = 500.0f;
-    sniperRifle.bulletVelocity = 1600.0f;
-    sniperRifle.distanceStrengthModifier = 3.0f;
+    sniperRifle.knockback = 2500.0f;
+    sniperRifle.bulletVelocity = 1800.0f;
+    sniperRifle.distanceStrengthModifier = 1.5f;
     sniperRifle.hasNormalDropOff = false;
 
     sniperRifle.recoil = 150.0f;
     sniperRifle.recoilAnimationModifier = 0.8f;
 
-    sniperRifle.reloadMs = 5000.0f;
+    sniperRifle.reloadMs = 3500.0f;
     
-    sniperRifle.magazineSize = 4;
-    sniperRifle.magazineAmmo = 4;
-    sniperRifle.reserveAmmo = sniperRifle.magazineSize * 2;
+    sniperRifle.magazineSize = 5;
+    sniperRifle.magazineAmmo = 5;
+    sniperRifle.reserveAmmo = sniperRifle.magazineSize;
 
     sniperRifle.gunSize = {120,30};
 
+    // Sniper rifle
+    Gun shotgun;
+    StatModifier shotgunStatModifier = StatModifier{
+                            "Shotgun Stat",
+                            false,              
+                            0,              
+                            0,                 
+                            1.0f,              
+                            1.2f,              
+                            1.2f               
+                        };
+
+
+    shotgun.name = "Shotgun";
+    shotgun.statModifier = shotgunStatModifier;
+    shotgun.fireRateMs = 750.0f;
+    
+    shotgun.knockback = 3000.0f;
+    shotgun.isHitScan = true;
+    shotgun.bulletVelocity = 90.0f; // stores width of hit scan box
+    shotgun.distanceStrengthModifier = 70.0f; // stores height of hitscan box
+
+    shotgun.recoil = 200.0f;
+    shotgun.recoilAnimationModifier = 0.8f;
+
+    shotgun.reloadMs = 4000.0f;
+    
+    shotgun.magazineSize = 6;
+    shotgun.magazineAmmo = 6;
+    shotgun.reserveAmmo = shotgun.magazineSize;
+
+    shotgun.gunSize = {70,30};
+
+    guns.push_back(submachineGun);
+    guns.push_back(assaultRifle);
     guns.push_back(sniperRifle);
+    guns.push_back(shotgun);
 
 }
 

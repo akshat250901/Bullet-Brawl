@@ -175,17 +175,19 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
 		for(uint j = 0; j < bullets_container.components.size(); j++)
 		{
 			Entity entity_j = bullets_container.entities[j];
-			Motion& motion_j = motion_container.get(entity_j);
 			Bullet& bullet = registry.bullets.get(entity_j);
-			
 
-			const Mesh* bullet_mesh = registry.meshPtrs.get(entity_j);
-			if (bullet.shooter != entity_i && meshIntersectsMotion(bullet_mesh, motion_j, motion_i))
-			{
-				// Create a collisions event
-				// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
-				registry.playerBulletCollisions.emplace_with_duplicates(entity_i, entity_j);
-				registry.playerBulletCollisions.emplace_with_duplicates(entity_j, entity_i);
+			if (!bullet.isHitscan) { // compute collisions only if bullet is not hitscan
+				Motion& motion_j = motion_container.get(entity_j);
+				const Mesh* bullet_mesh = registry.meshPtrs.get(entity_j);
+
+				if (bullet.shooter != entity_i && meshIntersectsMotion(bullet_mesh, motion_j, motion_i))
+				{
+					// Create a collisions event
+					// We are abusing the ECS system a bit in that we potentially insert muliple collisions for the same entity
+					registry.playerBulletCollisions.emplace_with_duplicates(entity_i, entity_j);
+					registry.playerBulletCollisions.emplace_with_duplicates(entity_j, entity_i);
+				}
 			}
 		}
 	}

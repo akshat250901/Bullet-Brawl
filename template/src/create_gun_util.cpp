@@ -33,7 +33,7 @@ public:
 
         StatModifier defaultStatModifier;
 
-        Entity gunEntity = createGun(renderer, {30, 30}, "");
+        Entity gunEntity = createGun(renderer, {30, 30}, "Pistol");
 
         Gun& gunComponent = registry.guns.emplace(gunEntity);
 	    gunComponent.gunOwner = owner;

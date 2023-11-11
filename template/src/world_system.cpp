@@ -220,7 +220,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 		if (popup.timer > 0) {
 			popup.timer -= elapsed_ms_since_last_update;
-			printf("%f \n",(1000 - popup.timer));
 
 			if (popup.timer < 800.f) {
 				popup_motion.position = { player_motion.position.x , (player_motion.position.y - 30) - (1000 - popup.timer) / 10 };
@@ -448,36 +447,41 @@ void WorldSystem::handle_player_bullet_collisions() {
 		if (registry.players.has(entity) && registry.bullets.has(entity_other)) {
 			Player& hit_player = registry.players.get(entity);
 			Motion& playerMotion = registry.motions.get(entity);
-
-			Motion& bullet_motion = registry.motions.get(entity_other);
 			Bullet& bullet = registry.bullets.get(entity_other);
 
-			// TODO compute drop off and apply the knockback based on stats stored in the bullet
+			sound_system->play_hit_sound();
 
-			float distanceTravelled = abs(bullet_motion.position.x - bullet.originalXPosition);
+			if (bullet.isHitscan) {
 
-			if (bullet.hasNormalDropOff) {
-				float dropOffPenalty = distanceTravelled * 0.5 * bullet.distanceStrengthModifier;
+				printf("HITSCAN KNOCKBACK: %f\n", bullet.knockback);
+				playerMotion.velocity.x += bullet.knockback;
 
-				if (dropOffPenalty >= bullet.knockback) {
-					dropOffPenalty = bullet.knockback;
-				}
-
-				float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
-
-				sound_system->play_hit_sound();
-
-				printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
-
-				playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
 			} else {
-				float distanceBonus = distanceTravelled * bullet.distanceStrengthModifier;
+				Motion& bullet_motion = registry.motions.get(entity_other);
+				
+				float distanceTravelled = abs(bullet_motion.position.x - bullet.originalXPosition);
 
-				float knockbackWithBonus = bullet.knockback + distanceBonus;
+				if (bullet.hasNormalDropOff) {
+					float dropOffPenalty = distanceTravelled * 0.5 * bullet.distanceStrengthModifier;
 
-				printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus);
+					if (dropOffPenalty >= bullet.knockback) {
+						dropOffPenalty = bullet.knockback;
+					}
 
-				playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+					float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
+
+					printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
+
+					playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+				} else {
+					float distanceBonus = distanceTravelled * bullet.distanceStrengthModifier;
+
+					float knockbackWithBonus = bullet.knockback + distanceBonus;
+
+					printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus);
+
+					playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+				}
 			}
 
 

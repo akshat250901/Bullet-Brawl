@@ -101,7 +101,7 @@ struct PowerUp
 // Struct for gun and default values are the starting pistol
 struct Gun 
 {
-	std::string name = "Default pistol";
+	std::string name = "Pistol";
 
 	Entity gunOwner;
 
@@ -110,10 +110,10 @@ struct Gun
 	float fireRateMs = 300.0f;
 	float fireRateTimerMs = 0.0f;
 
-	float bulletVelocity = 750.0f;
-	float knockback = 500.0f; // This is added to players x velocity
+	float bulletVelocity = 1000.0f;
+	float knockback = 1000.0f; // This is added to players x velocity
 	bool hasNormalDropOff = true;
-	float distanceStrengthModifier = 1;
+	float distanceStrengthModifier = 0.8;
 
 	float recoil = 30.0f;
 	float recoilAnimationModifier = 0.5f; // Faster animation as this value gets closer to 1
@@ -130,7 +130,11 @@ struct Gun
 	int magazineAmmo = 10; // Current ammo in magazine
 	int reserveAmmo = magazineSize * 2;
 
-	vec2 gunSize = {10.0f, 10.0f};
+	vec2 gunSize = {30.0f, 30.0f};
+};
+
+struct MuzzleFlash {
+	float timerMs = 100.0f;
 };
 
 struct NonInteractable {
@@ -193,6 +197,7 @@ struct Bullet
 {
 	float originalXPosition = 0.0f;
 
+	bool isHitscan = false;
 	bool hasNormalDropOff = true;
 	float distanceStrengthModifier = 1; // if normal drop off, lower value less penalty, if non normal drop off then lower value more penalty
 

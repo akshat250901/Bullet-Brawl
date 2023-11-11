@@ -382,6 +382,31 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 	return entity;
 }
 
+Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion)
+{
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderSystem->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Setting initial motion values
+	Motion& motion_return = registry.motions.insert(entity, motion);
+	motion_return.velocity = { 0.f, 0.f };
+
+	registry.colors.insert(entity, {0.0f, 0.0f, 0.0f});
+
+	registry.muzzleFlashes.emplace(entity);
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+		 EFFECT_ASSET_ID::COLOURED,
+		 GEOMETRY_BUFFER_ID::SQUARE });
+
+	return entity;
+}
+
 Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
 {
 	// Reserve en entity
