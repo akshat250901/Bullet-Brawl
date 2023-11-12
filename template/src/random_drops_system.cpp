@@ -145,7 +145,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     shotgun.magazineAmmo = 6;
     shotgun.reserveAmmo = shotgun.magazineSize;
 
-    shotgun.gunSize = {70,30};
+    shotgun.gunSize = {90,30};
 
     guns.push_back(submachineGun);
     guns.push_back(assaultRifle);

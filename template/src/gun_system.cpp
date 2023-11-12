@@ -195,7 +195,7 @@ void GunSystem::step(float elapsed_ms_since_last_update)
             hitscan_motion.scale = {lengthOfHitscan, heightOfHitscan};
             hitscan_motion.position = {xPositionHitscan, gun_motion.position.y };
 
-            createMuzzleFlash(renderer, hitscan_motion);
+            createMuzzleFlash(renderer, hitscan_motion, player_component.facing_right);
             checkHitscanCollision(gun_i, hitscan_motion, player_component);
         }
 
@@ -209,6 +209,8 @@ void GunSystem::step(float elapsed_ms_since_last_update)
             gun_i.currentlyReloading = true;
             gun_i.reloadTimerMs = gun_i.reloadMs;
             sound_system->play_reload_sound(gun_i.name);
+
+            createPopupIndicator(renderer, "Reload" , owner);
             continue;
         }
 
