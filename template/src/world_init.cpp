@@ -1,7 +1,6 @@
 #include "world_init.hpp"
 #include "tiny_ecs_registry.hpp"
 #include <string>
-#include <iostream>
 
 Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 pos)
 {
@@ -110,7 +109,6 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 	TEXTURE_ASSET_ID texture_id;
 
 	popup.type = popup_type;
-	std::cout << "popup type: \n" << popup_type;
 
 	if (popup_type == "Submachine Gun") {
 		texture_id = TEXTURE_ASSET_ID::SMG_PICKUP;
@@ -121,6 +119,9 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 	else if (popup_type == "Sniper Rifle") {
 		texture_id = TEXTURE_ASSET_ID::SNIPER_PICKUP;
 	}
+	else if (popup_type == "Shotgun") {
+		texture_id = TEXTURE_ASSET_ID::SHOTGUN_PICKUP;
+	}
 	else if (popup_type == "Triple Jump") {
 		texture_id = TEXTURE_ASSET_ID::TRIPLEJUMP;
 	}
@@ -129,6 +130,9 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 	}
 	else if (popup_type == "Super Jump") {
 		texture_id = TEXTURE_ASSET_ID::SUPERJUMP;
+	}
+	else if (popup_type == "Reload") {
+		texture_id = TEXTURE_ASSET_ID::RELOAD_TEXT;
 	}
 	else {
 		// not a valid popup_type
@@ -368,6 +372,13 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
+	else if (gun_name == "Shotgun") {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::SHOTGUN,
+				EFFECT_ASSET_ID::TEXTURED,
+				GEOMETRY_BUFFER_ID::SPRITE });
+	}
 	else {
 		// default case should be pistol
 		registry.renderRequests.insert(
@@ -382,7 +393,7 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 	return entity;
 }
 
-Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion)
+Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion, bool facing_right)
 {
 	auto entity = Entity();
 
@@ -394,18 +405,18 @@ Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion)
 	Motion& motion_return = registry.motions.insert(entity, motion);
 	motion_return.velocity = { 0.f, 0.f };
 
-	registry.colors.insert(entity, {0.0f, 0.0f, 0.0f});
-
 	registry.muzzleFlashes.emplace(entity);
+
+	registry.muzzleFlashes.get(entity).facing_right = facing_right;
 
 	registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
-		 EFFECT_ASSET_ID::COLOURED,
-		 GEOMETRY_BUFFER_ID::SQUARE });
+		{ TEXTURE_ASSET_ID::SHOTGUN_MUZZLE,
+		 EFFECT_ASSET_ID::TEXTURED,
+		 GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
-}
+}	
 
 Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
 {

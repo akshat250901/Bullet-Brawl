@@ -218,20 +218,36 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		Player& player = registry.players.get(popup.player);
 		Motion& player_motion = registry.motions.get(popup.player);
 
-		if (popup.timer > 0) {
-			popup.timer -= elapsed_ms_since_last_update;
-
-			if (popup.timer < 800.f) {
-				popup_motion.position = { player_motion.position.x , (player_motion.position.y - 30) - (1000 - popup.timer) / 10 };
-			}
-			else {
-				popup_motion.position = { player_motion.position.x , player_motion.position.y - 50 };
+		if (popup.type == "Reload") {
+			for (Gun gun : registry.guns.components) {
+				if (gun.currentlyReloading && gun.gunOwner == popup.player) {
+					popup_motion.position = { player_motion.position.x , player_motion.position.y - 50 };
+				}
+				else if (!gun.currentlyReloading && gun.gunOwner == popup.player) {
+					registry.popupIndicator.remove(popup_entity);
+					registry.motions.remove(popup_entity);
+				}
 			}
 		}
 		else {
-			registry.popupIndicator.remove(popup_entity);
-			registry.motions.remove(popup_entity);
+			if (popup.timer > 0) {
+				popup.timer -= elapsed_ms_since_last_update;
+
+				if (popup.timer < 800.f) {
+					popup_motion.position = { player_motion.position.x , (player_motion.position.y - 30) - (1000 - popup.timer) / 10 };
+				}
+				else {
+					popup_motion.position = { player_motion.position.x , player_motion.position.y - 50 };
+				}
+			}
+			else {
+				registry.popupIndicator.remove(popup_entity);
+				registry.motions.remove(popup_entity);
+			}
 		}
+
+
+		
 	}
 
 	//parallax background

@@ -27,6 +27,7 @@ void SoundSystem::init_sounds() {
     smg_shoot_sound = Mix_LoadWAV(audio_path("guns/smg_shoot.wav").c_str());
     ar_shoot_sound = Mix_LoadWAV(audio_path("guns/ar_shoot.wav").c_str());
     sniper_shoot_sound = Mix_LoadWAV(audio_path("guns/sniper_shoot.wav").c_str());
+    shotgun_shoot_sound = Mix_LoadWAV(audio_path("guns/shotgun_shoot.wav").c_str());
 
     player_reload_sound = Mix_LoadWAV(audio_path("guns/gun_reload.wav").c_str());
     weapon_pickup_sound = Mix_LoadWAV(audio_path("guns/weapon_pickup.wav").c_str());
@@ -41,6 +42,7 @@ void SoundSystem::init_sounds() {
     Mix_VolumeChunk(smg_shoot_sound, volume);
     Mix_VolumeChunk(ar_shoot_sound, volume);
     Mix_VolumeChunk(sniper_shoot_sound, volume/2);
+    Mix_VolumeChunk(shotgun_shoot_sound, volume / 2);
 
     Mix_VolumeChunk(player_reload_sound, volume);
     Mix_VolumeChunk(weapon_pickup_sound, volume*3);
@@ -60,6 +62,9 @@ void SoundSystem::play_shoot_sound(std::string gun_type) {
     }
     else if (gun_type == "Sniper Rifle") {
         Mix_PlayChannel(-1, sniper_shoot_sound, 0);
+    }
+    else if (gun_type == "Shotgun") {
+        Mix_PlayChannel(-1, shotgun_shoot_sound, 0);
     }
     else {
         // default case should be pistol

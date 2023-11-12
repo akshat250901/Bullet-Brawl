@@ -135,6 +135,7 @@ struct Gun
 
 struct MuzzleFlash {
 	float timerMs = 100.0f;
+	bool facing_right;
 };
 
 struct NonInteractable {
@@ -344,7 +345,9 @@ enum class TEXTURE_ASSET_ID {
 	SMG = PISTOL + 1,
 	AR = SMG + 1,
 	SNIPER = AR + 1,
-	WEAPON_BOX = SNIPER + 1,
+	SHOTGUN = SNIPER + 1,
+	SHOTGUN_MUZZLE = SHOTGUN + 1,
+	WEAPON_BOX = SHOTGUN_MUZZLE + 1,
 	JUNGLEMAP = WEAPON_BOX + 1,
 	SPACEMAP = JUNGLEMAP + 1,
 	TEMPLEMAP = SPACEMAP + 1,
@@ -354,7 +357,9 @@ enum class TEXTURE_ASSET_ID {
 	SMG_PICKUP = TRIPLEJUMP + 1,
 	AR_PICKUP = SMG_PICKUP + 1,
 	SNIPER_PICKUP = AR_PICKUP + 1,
-	TEXTURE_COUNT = SNIPER_PICKUP + 1
+	SHOTGUN_PICKUP = SNIPER_PICKUP + 1,
+	RELOAD_TEXT = SHOTGUN_PICKUP + 1,
+	TEXTURE_COUNT = RELOAD_TEXT + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

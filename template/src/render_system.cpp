@@ -33,6 +33,11 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		transform.scale(player.facing_right ? motion.scale : flipScale);
 	}
+	else if (registry.muzzleFlashes.has(entity))
+	{
+		MuzzleFlash& flash = registry.muzzleFlashes.get(entity);
+		transform.scale(flash.facing_right ? motion.scale : flipScale);
+	}
 	else 
 	{
 		transform.scale(motion.scale);

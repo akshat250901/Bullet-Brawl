@@ -45,6 +45,8 @@ class RenderSystem {
 			textures_path("smg.png"),
 			textures_path("ar.png"),
 			textures_path("sniper.png"),
+			textures_path("shotgun.png"),
+			textures_path("shotgun_muzzle.png"),
 			textures_path("weapon_box.png"),
 			textures_path("JUNGLEMAP.png"),
 			textures_path("SPACEMAP.png"),
@@ -54,7 +56,9 @@ class RenderSystem {
 			textures_path("popup_text/triplejump.png"),
 			textures_path("popup_text/smg.png"),
 			textures_path("popup_text/ar.png"),
-			textures_path("popup_text/sniper.png")
+			textures_path("popup_text/sniper.png"),
+			textures_path("popup_text/shotgun.png"),
+			textures_path("popup_text/reload.png")
 	};
 
 	std::array<GLuint, effect_count> effects;
