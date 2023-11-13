@@ -87,7 +87,8 @@ bool meshIntersectsMotion(const Mesh* mesh, Motion& bullet_motion, const Motion&
 		glm::vec2 vertex3 = glm::vec2(mesh->vertices[mesh->vertex_indices[i + 2]].position.x, mesh->vertices[mesh->vertex_indices[i + 2]].position.y);
 
 		// Check if the transformed line segment intersects with the current triangle
-		if (lineMeshCollision(object_motion.position - object_motion.scale / 2.0f, object_motion.position + object_motion.scale / 2.0f, { vertex1, vertex2, vertex3 }, bullet_motion)) {
+		if (lineMeshCollision(object_motion.position - object_motion.scale / 2.0f, object_motion.position + object_motion.scale / 2.0f, { vertex1, vertex2, vertex3 }, bullet_motion) ||
+			lineMeshCollision(object_motion.position + object_motion.scale / 2.0f, object_motion.position - object_motion.scale / 2.0f, { vertex1, vertex2, vertex3 }, bullet_motion)) {
 			return true; // Collision detected with this triangle
 		}
 	}
