@@ -66,6 +66,30 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 	return entity;
 }
 
+Entity createOutOfBoundsArrow(RenderSystem* renderer, Entity player, bool isPlayer1) 
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	OutOfBoundsArrow& arrow = registry.outOfBoundsArrows.emplace(entity);
+	arrow.entity_to_track = player;
+	arrow.textureId = (isPlayer1 ? TEXTURE_ASSET_ID::GREEN_ARROW : TEXTURE_ASSET_ID::RED_ARROW);
+
+	// Initialize the position, scale, and physics components
+	auto& motion = registry.motions.emplace(entity);
+	motion.angle = 0.f;
+	motion.velocity = { 0.f, 0.f };
+	motion.position = { 0.f, 0.f };
+
+	motion.scale = { 50.0f, 50.0f };
+
+	return entity;
+}
+
 
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size)
 {

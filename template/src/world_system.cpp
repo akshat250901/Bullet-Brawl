@@ -113,8 +113,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	const float kill_limit = 800.0f;
+
 	// check if players are out of window
-	if (playerMotion.position.y > window_height_px + 50) {
+	if (playerMotion.position.y > window_height_px + abs(playerMotion.scale.y / 2) +  kill_limit) {
 		// Player death logic
 		playerMotion.position = vec2(900, 300);
 		playerMotion.velocity = vec2(0, 0);
@@ -151,7 +153,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	}
 
 	// check if players are out of window
-	if (playerMotion2.position.y > window_height_px) {
+	if (playerMotion2.position.y > window_height_px + abs(playerMotion2.scale.y / 2) + kill_limit) {
 		// Player death logic
 		playerMotion2.position = vec2(300, 200);
 		playerMotion2.velocity = vec2(0, 0);
@@ -325,6 +327,9 @@ void WorldSystem::restart_game() {
 	};
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
 	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
+
+	createOutOfBoundsArrow( renderer, player, true);
+	createOutOfBoundsArrow( renderer, player2, false);
 
 	// Add default pistols for players
 

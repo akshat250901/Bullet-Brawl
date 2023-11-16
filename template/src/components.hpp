@@ -225,8 +225,6 @@ struct Motion {
 };
 
 
-
-
 // Stucture to store collision information
 struct PlayerPlatformCollision
 {
@@ -359,7 +357,9 @@ enum class TEXTURE_ASSET_ID {
 	SNIPER_PICKUP = AR_PICKUP + 1,
 	SHOTGUN_PICKUP = SNIPER_PICKUP + 1,
 	RELOAD_TEXT = SHOTGUN_PICKUP + 1,
-	TEXTURE_COUNT = RELOAD_TEXT + 1
+	RED_ARROW = RELOAD_TEXT + 1,
+	GREEN_ARROW = RED_ARROW + 1,
+	TEXTURE_COUNT = GREEN_ARROW + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -392,5 +392,12 @@ struct RenderRequest {
 	TEXTURE_ASSET_ID used_texture = TEXTURE_ASSET_ID::TEXTURE_COUNT;
 	EFFECT_ASSET_ID used_effect = EFFECT_ASSET_ID::EFFECT_COUNT;
 	GEOMETRY_BUFFER_ID used_geometry = GEOMETRY_BUFFER_ID::GEOMETRY_COUNT;
+};
+
+
+// Out of bounds arrow
+struct OutOfBoundsArrow {
+	Entity entity_to_track;
+	TEXTURE_ASSET_ID textureId;
 };
 

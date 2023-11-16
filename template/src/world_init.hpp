@@ -12,6 +12,8 @@ const float TURTLE_BB_WIDTH = 0.4f * 300.f;
 const float TURTLE_BB_HEIGHT = 0.4f * 202.f;
 // the player
 Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 pos);
+// the arrow that tracks player when they are out of the screen
+Entity createOutOfBoundsArrow(RenderSystem* renderer, Entity player, bool isPlayer1);
 // the platform
 Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 size);
 // visual indicator for player
