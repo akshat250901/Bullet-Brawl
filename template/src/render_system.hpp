@@ -39,6 +39,7 @@ class RenderSystem {
 			textures_path("middleground.png"),
 			textures_path("foreground.png"),
 			textures_path("menuBackground.png"),
+			textures_path("levelSelectBackground.png"),
 			textures_path("islandPlatform.png"),
 			textures_path("islandPlatformTutorial.png"),
 			textures_path("pistol.png"),

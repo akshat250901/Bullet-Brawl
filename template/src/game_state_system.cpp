@@ -15,6 +15,14 @@ void GameStateSystem::change_game_state(int newState) {
 	is_state_changed = true;
 };
 
+void GameStateSystem::change_level(int newLevel) {
+	currentLevel = newLevel;
+};
+
+int GameStateSystem::get_current_level() {
+	return currentLevel;
+}
+
 // Debugging
 namespace {
 	void glfw_err_cb(int error, const char *desc) {

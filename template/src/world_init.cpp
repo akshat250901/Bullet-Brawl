@@ -33,7 +33,7 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 
 	registry.controllers.emplace(entity);
 	
-	if (game_state_system->get_current_state() == 1) {
+	if (game_state_system->get_current_state() == 2) {
 		for (int i = 0; i < 5; i++) {
 			float start_x = 50.f;
 			TEXTURE_ASSET_ID health = TEXTURE_ASSET_ID::RED_HEALTH;
@@ -458,13 +458,13 @@ Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_stat
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	if (game_state_system->get_current_state() == 1) {
+	if (game_state_system->get_current_state() == 2) {
 		registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::PLATFORM,
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
-	} else if (game_state_system->get_current_state() == 2) {
+	} else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
@@ -574,14 +574,14 @@ Entity createBackgroundJungle(RenderSystem* renderer, GameStateSystem* game_stat
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	if (game_state_system->get_current_state() == 1) {
+	if (game_state_system->get_current_state() == 2) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::JUNGLEMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (game_state_system->get_current_state() == 2) {
+	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
@@ -608,14 +608,14 @@ Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	if (game_state_system->get_current_state() == 1) {
+	if (game_state_system->get_current_state() == 2) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SPACEMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (game_state_system->get_current_state() == 2) {
+	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
@@ -642,14 +642,14 @@ Entity createBackgroundTemple(RenderSystem* renderer, GameStateSystem* game_stat
 
 	// Add the Parallax component for the back layer, which might move the slowest.
 	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
-	if (game_state_system->get_current_state() == 1) {
+	if (game_state_system->get_current_state() == 2) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::TEMPLEMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (game_state_system->get_current_state() == 2) {
+	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
