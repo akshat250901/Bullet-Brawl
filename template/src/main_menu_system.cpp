@@ -126,19 +126,19 @@ bool MainMenuSystem::is_hovering_button(double x, double y) {
 }
 
 void MainMenuSystem::on_key(int key, int, int action, int mod) {
-    if (game_state_system->get_current_state() == 0)  {
-        if (game_state_system && action == GLFW_RELEASE) {
-            if (key == GLFW_KEY_SPACE) {
-                game_state_system->change_game_state(1);
-            }
-            else if (key == GLFW_KEY_TAB) {
-                game_state_system->change_game_state(3);
-            }
-            else if (key == GLFW_KEY_ESCAPE) {
-                game_state_system->is_quit = true;
-            }
-        }
-    }
+    // if (game_state_system->get_current_state() == 0)  {
+    //     if (game_state_system && action == GLFW_RELEASE) {
+    //         if (key == GLFW_KEY_SPACE) {
+    //             game_state_system->change_game_state(1);
+    //         }
+    //         else if (key == GLFW_KEY_TAB) {
+    //             game_state_system->change_game_state(3);
+    //         }
+    //         else if (key == GLFW_KEY_ESCAPE) {
+    //             game_state_system->is_quit = true;
+    //         }
+    //     }
+    // }
     
 }
 
