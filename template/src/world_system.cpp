@@ -123,7 +123,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 		CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
 
-		if (game_state_system->get_current_state() == 1) {
+		if (game_state_system->get_current_state() == 2) {
 			Player& hit_player = registry.players.get(player);
 			auto health_container = registry.lives;
 			for (int i = 0; i < health_container.components.size(); i++) {
@@ -296,18 +296,19 @@ void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
 
+	// TODO: USE ISLAND MAP FOR TUTORIAL
 	// ISLAND MAP
 	//createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
 
-	////JUNGLE MAP
-	 createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
-
-	//SPACE MAP
-	//createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
-
-	//TEMPLE map
-	//createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
-
+	int level = game_state_system->get_current_level();
+	if (level == 1) {
+		createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
+	} else if (level == 2) {
+		createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
+	} else if (level == 3) {
+		createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
+	}
+	
 
 	Keybinds player2_keys{
 		GLFW_KEY_UP,
@@ -631,7 +632,7 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	if (!paused) {
 
 		handle_player(key, action, player);
-		if (game_state_system->get_current_state() == 1) {
+		if (game_state_system->get_current_state() == 2) {
 			handle_player(key, action, player2);
 		}
 

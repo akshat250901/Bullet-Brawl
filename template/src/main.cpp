@@ -62,12 +62,12 @@ int main()
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
 		
-		if (game_state_system.get_current_state() == 0) {
+		if (game_state_system.get_current_state() == 0 || game_state_system.get_current_state() == 1) {
 			if (game_state_system.is_state_changed) {
 				main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 				game_state_system.is_state_changed = false;
 			}
-		} else if (game_state_system.get_current_state() == 1 || 2) {
+		} else if (game_state_system.get_current_state() == 2 || game_state_system.get_current_state() == 3) {
 			if (game_state_system.is_state_changed) {
 				world_system.init(&render_system, &game_state_system, window, &sound_system);
 				game_state_system.is_state_changed = false;
