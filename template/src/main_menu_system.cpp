@@ -70,7 +70,6 @@ void MainMenuSystem::create_button(RenderSystem* renderer, const Button& button)
 
     // Setting initial values, scale is negative to make it face the opposite way
     motion.scale = size;
-    registry.buttons.emplace(entity);
     registry.colors.insert(entity, color);
     registry.renderRequests.insert(
         entity,
