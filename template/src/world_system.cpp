@@ -654,6 +654,11 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 				debugging.in_debug_mode = true;
 		}
 
+		if (action == GLFW_RELEASE && key == GLFW_KEY_P) {
+			Motion& player_motion = registry.motions.get(player);
+			createRocket(renderer, player, player2);
+		}
+
 		// Control the current speed with `<` `>`
 		if (action == GLFW_RELEASE && (mod & GLFW_MOD_SHIFT) && key == GLFW_KEY_COMMA) {
 			current_speed -= 0.1f;

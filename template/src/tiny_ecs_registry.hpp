@@ -42,6 +42,9 @@ public:
 	ComponentContainer<NonInteractable> nonInteractables;
 	ComponentContainer<MuzzleFlash> muzzleFlashes;
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
+	ComponentContainer<BezierMotion> bezierMotion;
+	ComponentContainer<SimplePathfinding> simplePathFinding;
+	ComponentContainer<Rocket> rocket;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -75,6 +78,9 @@ public:
 		registry_list.push_back(&popupIndicator);
 		registry_list.push_back(&muzzleFlashes);
 		registry_list.push_back(&outOfBoundsArrows);
+		registry_list.push_back(&bezierMotion);
+		registry_list.push_back(&simplePathFinding);
+		registry_list.push_back(&rocket);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
@@ -84,6 +90,7 @@ public:
 
 		// registry_list.push_back(&buttons);
 		registry_list.push_back(&interpolation);
+
 	}
 
 	void clear_all_components() {
