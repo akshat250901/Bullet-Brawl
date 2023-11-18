@@ -19,6 +19,14 @@ void GameStateSystem::change_level(int newLevel) {
 	currentLevel = newLevel;
 };
 
+int GameStateSystem::get_winner() {
+	return winner;
+};
+
+void GameStateSystem::set_winner(int winner) {
+	this->winner = winner;
+};
+
 int GameStateSystem::get_current_level() {
 	return currentLevel;
 }

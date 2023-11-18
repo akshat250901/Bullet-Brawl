@@ -5,7 +5,6 @@
 // stlib
 #include <cassert>
 #include <sstream>
-
 #include "physics_system.hpp"
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
@@ -133,7 +132,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 					registry.lives.remove(health_container.entities[i]);
 					hit_player.lives = hit_player.lives - 1;
 					if (hit_player.lives == 0) {
-						// TODO: Add a screen to show which player won
+						game_state_system->set_winner(1);
+						game_state_system->change_game_state(GameStateSystem::GameState::Winner);
 						restart_game();
 					}
 					break;
@@ -169,7 +169,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				registry.lives.remove(health_container.entities[i]);
 				hit_player.lives = hit_player.lives - 1;
 				if (hit_player.lives == 0) {
-					// TODO: Add a screen to show which player won
+					game_state_system->set_winner(2);
+					game_state_system->change_game_state(GameStateSystem::GameState::Winner);
 					restart_game();
 				}
 				break;
@@ -310,7 +311,6 @@ void WorldSystem::restart_game() {
 			createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
 		}
 	}
-	
 
 	Keybinds player2_keys{
 		GLFW_KEY_UP,

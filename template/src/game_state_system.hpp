@@ -16,6 +16,7 @@ public:
         GameWorld,
         Tutorial,
         Paused,
+        Winner
     };
 
     GameStateSystem();
@@ -23,7 +24,8 @@ public:
 
     int get_current_state();
     int get_current_level();
-
+    int get_winner();
+    void set_winner(int winner);
     void change_game_state(int newState);
     void change_level(int newLevel);
 
@@ -33,6 +35,7 @@ public:
 	GLFWwindow* window;
     bool is_state_changed = false;
     bool is_quit = false;
+    int winner = -1;
 
 private:
     // States are 0 for main menu, 1 for tutorial
