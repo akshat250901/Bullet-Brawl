@@ -442,7 +442,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 			if (playerStatModifier.powerUpStatModifiers.find(statModifier.name) != playerStatModifier.powerUpStatModifiers.end()) {
 				//if player has powerup, reset the timer of the powerup
 				StatModifier& modifier = playerStatModifier.powerUpStatModifiers.at(statModifier.name);
-				modifier.timer_ms = 5000;
+				modifier.timer_ms = modifier.max_time_ms;
 			}
 			else {
 				// if player does not have power up, modify players stats and add to powerup map
@@ -494,17 +494,17 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 					float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
 
-					printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
+					printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff * hit_player.knockback_resistance);
 
-					playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+					playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1) * hit_player.knockback_resistance; 
 				} else {
 					float distanceBonus = distanceTravelled * bullet.distanceStrengthModifier;
 
 					float knockbackWithBonus = bullet.knockback + distanceBonus;
 
-					printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus);
+					printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus * hit_player.knockback_resistance);
 
-					playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+					playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1) * hit_player.knockback_resistance; 
 				}
 			}
 

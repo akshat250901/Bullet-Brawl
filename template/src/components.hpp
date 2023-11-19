@@ -44,6 +44,8 @@ struct Player
 	float running_force = 400.f;
 	// Running speed
 	float speed = 200.f;
+	// Knockback resistance
+	float knockback_resistance = 1.0f;
 	// True if player is running left
 	bool is_running_left = false; 
 	// True if player is running right
@@ -78,12 +80,14 @@ struct StatModifier
 	std::string name = "";
 
 	bool hasTimer = false;
-	float timer_ms = 0;
+	float timer_ms = 0.0f;
+	float max_time_ms = 0.0f;
 
 	int extra_jumps = 0;
-	float jump_force_modifier = 1;
-	float running_force_modifier = 1;
-	float max_speed_modifier = 1;
+	float jump_force_modifier = 1.0f;
+	float running_force_modifier = 1.0f;
+	float max_speed_modifier = 1.0f;
+	float knockback_resistance_modifier = 0.0f;
 };
 
 // Stat Modifier component
