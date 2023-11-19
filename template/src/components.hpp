@@ -278,7 +278,7 @@ struct DebugComponent
 // A timer that will be associated to dying salmon
 struct DeathTimer
 {
-	float timer_ms = 3000.f;
+	float timer_ms = 1000.f;
 };
 
 // Single Vertex Buffer element for non-textured meshes (coloured.vs.glsl & salmon.vs.glsl)
