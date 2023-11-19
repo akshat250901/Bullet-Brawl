@@ -5,7 +5,6 @@
 // stlib
 #include <cassert>
 #include <sstream>
-
 #include "physics_system.hpp"
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
@@ -76,7 +75,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 	// Removing out of screen entities
 	auto& motion_container = registry.motions;
-
+	ScreenState& screen = registry.screenStates.components[0];
+	int winner = -1;
 	// Remove entities that leave the screen
 	// Iterate backwards to be able to remove without unterfering with the next object to visit
 	// (the containers exchange the last element with the current)
@@ -89,7 +89,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 			}
 		}
 	}
-
 	// Enable and disable platform colliders based on player position
 	Motion& playerMotion = registry.motions.get(player);
 	Motion& playerMotion2 = registry.motions.get(player2);
@@ -117,12 +116,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 	// check if players are out of window
 	if (playerMotion.position.y > window_height_px + abs(playerMotion.scale.y / 2) +  kill_limit) {
-		// Player death logic
-		playerMotion.position = vec2(900, 300);
-		playerMotion.velocity = vec2(0, 0);
-
-		CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
-
 		if (game_state_system->get_current_state() == 2) {
 			Player& hit_player = registry.players.get(player);
 			auto health_container = registry.lives;
@@ -133,11 +126,23 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 					registry.lives.remove(health_container.entities[i]);
 					hit_player.lives = hit_player.lives - 1;
 					if (hit_player.lives == 0) {
-						// TODO: Add a screen to show which player won
-						restart_game();
+						if (!registry.deathTimers.has(player)) {
+							registry.deathTimers.emplace(player);
+						}
+
+						game_state_system->set_winner(1);
+
 					}
 					break;
 				}
+			}
+			if(game_state_system->get_winner() == -1)
+			{
+				// Player death logic
+				playerMotion.position = vec2(900, 300);
+				playerMotion.velocity = vec2(0, 0);
+
+				CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
 			}
 		}
 
@@ -151,15 +156,10 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 
 	}
+	
 
 	// check if players are out of window
 	if (playerMotion2.position.y > window_height_px + abs(playerMotion2.scale.y / 2) + kill_limit) {
-		// Player death logic
-		playerMotion2.position = vec2(300, 200);
-		playerMotion2.velocity = vec2(0, 0);
-
-		CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
-
 		Player& hit_player = registry.players.get(player2);
 		auto health_container = registry.lives;
 		for (int i = 0; i < health_container.components.size(); i++) {
@@ -168,9 +168,13 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				registry.renderRequests.remove(health_container.entities[i]);
 				registry.lives.remove(health_container.entities[i]);
 				hit_player.lives = hit_player.lives - 1;
+
 				if (hit_player.lives == 0) {
-					// TODO: Add a screen to show which player won
-					restart_game();
+					if (!registry.deathTimers.has(player2)) {
+						registry.deathTimers.emplace(player2);
+					}
+					game_state_system->set_winner(2);
+
 				}
 				break;
 			}
@@ -182,6 +186,14 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
 			kv.second.timer_ms = 0;
+		}
+		if (game_state_system->get_winner() == -1)
+		{
+			// Player death logic
+			playerMotion2.position = vec2(300, 200);
+			playerMotion2.velocity = vec2(0, 0);
+
+			CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
 		}
 	}
 
@@ -270,6 +282,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	float min_timer_ms = 1000.f;
+	for (Entity entity : registry.deathTimers.entities) {
+		// progress timer
+		DeathTimer& timer = registry.deathTimers.get(entity);
+		timer.timer_ms -= elapsed_ms_since_last_update;
+		if (timer.timer_ms < min_timer_ms) {
+			min_timer_ms = timer.timer_ms;
+		}
+
+		// restart the game once the death timer expired
+		if (timer.timer_ms < 0) {
+			registry.deathTimers.remove(entity);
+			screen.screen_darken_factor = 0;
+			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
+			restart_game();
+			return true;
+		}
+	}
+	// reduce window brightness if any of the present salmons is dying
+	screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+
 	return true;
 }
 
@@ -310,7 +343,6 @@ void WorldSystem::restart_game() {
 			createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
 		}
 	}
-	
 
 	Keybinds player2_keys{
 		GLFW_KEY_UP,

@@ -282,7 +282,7 @@ struct DebugComponent
 // A timer that will be associated to dying salmon
 struct DeathTimer
 {
-	float timer_ms = 3000.f;
+	float timer_ms = 1000.f;
 };
 
 // Single Vertex Buffer element for non-textured meshes (coloured.vs.glsl & salmon.vs.glsl)
@@ -364,7 +364,9 @@ enum class TEXTURE_ASSET_ID {
 	RELOAD_TEXT = SHOTGUN_PICKUP + 1,
 	RED_ARROW = RELOAD_TEXT + 1,
 	GREEN_ARROW = RED_ARROW + 1,
-	TEXTURE_COUNT = GREEN_ARROW + 1
+	GREEN_PLAYER_WON = GREEN_ARROW + 1,
+	RED_PLAYER_WON = GREEN_PLAYER_WON + 1,
+	TEXTURE_COUNT = RED_PLAYER_WON + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

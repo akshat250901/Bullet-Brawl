@@ -4,7 +4,7 @@
 
 // stlib
 #include <chrono>
-
+#include <thread>
 // internal
 #include "physics_system.hpp"
 #include "render_system.hpp"
@@ -17,6 +17,7 @@
 #include "gun_system.hpp"
 #include "sound_system.hpp"
 #include "out_of_bounds_arrow_system.hpp"
+#include "world_init.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -49,6 +50,7 @@ int main()
 	sound_system.init_sounds();
 	render_system.init(window);
 	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
+	
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -61,7 +63,13 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
-		
+		if (game_state_system.get_current_state() == GameStateSystem::GameState::Winner) {
+			createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+			game_state_system.set_winner(-1);
+			game_state_system.change_game_state(0);
+			render_system.draw();
+			std::this_thread::sleep_for(std::chrono::seconds(3));
+		}
 		if (game_state_system.get_current_state() == 0 || game_state_system.get_current_state() == 1) {
 			if (game_state_system.is_state_changed) {
 				main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);

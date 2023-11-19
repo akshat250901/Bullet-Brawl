@@ -62,6 +62,8 @@ class RenderSystem {
 			textures_path("popup_text/reload.png"),
 			textures_path("red_arrow.png"),
 			textures_path("green_arrow.png"),
+			textures_path("green_player_won.png"),
+			textures_path("red_player_won.png")
 	};
 
 	std::array<GLuint, effect_count> effects;
