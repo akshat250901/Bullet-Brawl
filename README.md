@@ -65,3 +65,46 @@ Akshat:
   - Created a new component and component container for interpolation  [Components.hpp 76 - 83, Tiny_ecs_registry.hpp]
   - Added interpolation to powerups with desired values[World_init.cpp 136-141 ]
   - Handled interpolation functioning for powerup [random_drops_system.cpp 59- 80]
+
+## Milestone 3
+In Milestone 3, the major milestone was successfully implementing the Gun System, adding various weapons each supporting a unique playstyle and with their own sounds and animations. We integrated sound effects, UI elements for power-ups/weapons, and diverse art assets. In addition, we focused on map refactoring, creating visually appealing maps like Island, Jungle, Space, and Temple. Overall, we enhanced the user experience and quality of life, by introducing an enhanced main menu intro screen and added clickable buttons to allow players to choose between various maps. Furthermore, we added text to indicate when players are reloading and arrows to indicate when players are outside of the view along with satisfying victory screens. Lastly, we rebalanced and fine-tuned the gameplay by tuning the guns and powerups. All requirements for this milestone have been met, and no major changes are needed based on the initial proposal.
+
+Danny:
+- Implement the Gun System which includes all the game logic that surrounds all the guns
+  - Add gun declarations and stats to a list so that they can be spawned in weapon crates [RandomDropsSystem::RandomDropsSystem()]
+  - Gun recoil animation [GunSystem::animateRecoil()]
+  - Gun logic for all weapons [GunSystem::step()]
+  - Damage drop off for weapons [WorldSystem::handle_player_bullet_collisions() lines 516-529]
+- Implemented arrows that point to players' positions when they are outside of the screen [OutOfBoundsArrowSystem::step()]
+
+Leo
+- Implemented sound effects for player movement and guns [sound_system.cpp and sound_system.hpp]
+- Implemented UI elements to display what powerup/weapon is being picked up, as well as if the player is currently reloading [world_init.cpp::createPopupIndicator()]
+- Various art assets like the main menu, guns, popup indicators, win screen[/data/*]
+  - Gun renders different depending on the weapon that the player is holding [world_init.cpp: line 378-413]
+
+Jason
+- Refactored createBackground() methods for different maps
+  - [world_init::createIslandMap()]
+  - [world_init::createJungleMap()]
+  - [world_init::SpaceMap()]
+  - [world_init::TempleMap()]
+- Created art assets like Space, Jungle and Temple map for more interesting game play
+- Created map layout to accommodate new game play maps
+
+
+Seraj:
+- Created end game screen which shows the winning player and added fade out animation
+  - world_init.cpp#L712 [createDeathScreen]
+- Added stock count for player lives
+  - world_system.cpp#L118[WorldSystem::step]
+
+Ishraq:
+- Added the level selection screen by adding another layer to MainMenuSystem
+- Updated menu selection to allow mouse clicks to switch to game modes and switch between main menu and level selection
+  - [MainMenuSystem::initialize_main_menu()]
+  - [MainMenuSystem::is_point_inside_button()]
+  - [MainMenuSystem::is_hovering()]
+  - [MainMenuSystem::on_mouse_move()]
+- Updated player respawn positions to be random
+  - [WorldSystem::step()]
