@@ -69,7 +69,7 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update) {
-	// Remove debug info from the last step
+		// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
@@ -114,6 +114,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 	const float kill_limit = 800.0f;
 
+	// Generate random x and y positions on the screen (to be used when respawning)
+	int x_pos = uniform_dist_int(rng, decltype(uniform_dist_int)::param_type{window_width_px / 4, 3 * window_width_px / 4});
+    int y_pos = uniform_dist_int(rng, decltype(uniform_dist_int)::param_type{2 * window_height_px / 5, 3 * window_height_px / 5});
+
+
 	// check if players are out of window
 	if (playerMotion.position.y > window_height_px + abs(playerMotion.scale.y / 2) +  kill_limit) {
 		if (game_state_system->get_current_state() == 2) {
@@ -139,7 +144,7 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 			if(game_state_system->get_winner() == -1)
 			{
 				// Player death logic
-				playerMotion.position = vec2(900, 300);
+				playerMotion.position = vec2(x_pos, y_pos);
 				playerMotion.velocity = vec2(0, 0);
 
 				CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
@@ -190,9 +195,9 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		if (game_state_system->get_winner() == -1)
 		{
 			// Player death logic
-			playerMotion2.position = vec2(300, 200);
+			playerMotion2.position = vec2(x_pos, y_pos);
 			playerMotion2.velocity = vec2(0, 0);
-
+			
 			CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
 		}
 	}
@@ -505,7 +510,7 @@ void WorldSystem::handle_player_bullet_collisions() {
 			Motion& playerMotion = registry.motions.get(entity);
 			Bullet& bullet = registry.bullets.get(entity_other);
 
-			sound_system->play_hit_sound();
+						sound_system->play_hit_sound();
 
 			if (bullet.isHitscan) {
 
