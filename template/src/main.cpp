@@ -17,6 +17,7 @@
 #include "gun_system.hpp"
 #include "sound_system.hpp"
 #include "out_of_bounds_arrow_system.hpp"
+#include "player_respawn_system.hpp"
 #include "world_init.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
@@ -36,6 +37,7 @@ int main()
 	SoundSystem sound_system;
 	GunSystem gun_system(&render_system, &sound_system);
 	OutOfBoundsArrowSystem out_of_bounds_arrow_system;
+	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system);
 
 	// Initializing window
 	GLFWwindow* window = game_state_system.create_window();
@@ -90,6 +92,7 @@ int main()
 				animation_system.step(elapsed_ms);
 				sound_system.step(elapsed_ms);
 				world_system.handle_collisions();
+				player_respawn_system.step();
 				random_drops_system.handleInterpolation(elapsed_ms);
 			}
 		}
