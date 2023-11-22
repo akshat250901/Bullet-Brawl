@@ -4,11 +4,11 @@
 
 // Drop timing
 const size_t MAX_POWERUPS = 5;
-const float POWERUP_DELAY_MS = 10000.0f;
+const float POWERUP_DELAY_MS = 15000.0f;
 const float POWERUP_SIZE = 50.f;
 
 const size_t MAX_MYSTERY_BOX = 1;
-const float MYSTERY_BOX_DELAY_MS = 1000.0f;
+const float MYSTERY_BOX_DELAY_MS = 12000.0f;
 const float MYSTERY_BOX_SIZE = 40.0f;
 
 RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
@@ -24,10 +24,12 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             "Submachine Gun Stat",
                             false,              
                             0,              
+                            0,
                             0,                 
                             1.1f,              
                             1.3f,              
-                            1.3f               
+                            1.3f,
+                            0.0f               
                         };
 
 
@@ -55,10 +57,12 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             "Assault Rifle Stat",
                             false,              
                             0,              
-                            0,                 
+                            0,
+                            0,                
                             1.0f,              
                             0.90f,              
-                            0.90f               
+                            0.90f,
+                            0.0f              
                         };
 
 
@@ -87,10 +91,12 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             "Sniper Rifle Stat",
                             false,              
                             0,              
-                            0,                 
+                            0, 
+                            0,                
                             1.0f,              
                             0.85f,              
-                            0.85f               
+                            0.85f,
+                            0.0f             
                         };
 
 
@@ -120,10 +126,12 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                             "Shotgun Stat",
                             false,              
                             0,              
-                            0,                 
+                            0, 
+                            0,                
                             1.0f,              
                             1.2f,              
-                            1.2f               
+                            1.2f,
+                            0.0f           
                         };
 
 

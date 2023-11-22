@@ -49,29 +49,35 @@ private:
         {"Triple Jump", StatModifier{
                             "Triple Jump",
                             true,              
-                            5000,             
+                            7000.0f,
+                            7000.0f,             
                             1,                 
+                            1.1f,              
                             1.0f,              
-                            1.0f,              
-                            1.0f               
+                            1.0f,
+                            0.3f               
                         }},
         {"Speed Boost", StatModifier{
                             "Speed Boost",
                             true,              
-                            5000,              
+                            5000.0f,
+                            5000.0f,              
                             0,                 
                             1.0f,              
-                            1.5f,              
-                            1.5f               
+                            2.0f,              
+                            1.9f,
+                            -0.1f              
                         }},
         {"Super Jump", StatModifier{
                             "Super Jump", 
                             true,              
-                            5000,              
+                            6000.0f,
+                            6000.0f,              
                             0,                 
-                            1.3f,              
+                            1.45f,              
                             1.0f,              
-                            1.0f               
+                            1.0f,
+                            0.5f               
                         }}
     };
 

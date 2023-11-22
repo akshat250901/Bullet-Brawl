@@ -11,6 +11,7 @@ public:
         playerToModify.jump_force *= statModifier.jump_force_modifier;
         playerToModify.running_force *= statModifier.running_force_modifier;
         playerToModify.speed *= statModifier.max_speed_modifier;
+        playerToModify.knockback_resistance -= statModifier.knockback_resistance_modifier;
     }
 
     static void remove_stat_modifier(Player& playerToModify, const StatModifier& statModifier) {
@@ -18,5 +19,6 @@ public:
         playerToModify.jump_force /= statModifier.jump_force_modifier;
         playerToModify.running_force /= statModifier.running_force_modifier;
         playerToModify.speed /= statModifier.max_speed_modifier;
+        playerToModify.knockback_resistance += statModifier.knockback_resistance_modifier;
     }
 };

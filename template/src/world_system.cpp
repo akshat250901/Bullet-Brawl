@@ -5,7 +5,6 @@
 // stlib
 #include <cassert>
 #include <sstream>
-
 #include "physics_system.hpp"
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
@@ -70,13 +69,14 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update) {
-	// Remove debug info from the last step
+		// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
 	// Removing out of screen entities
 	auto& motion_container = registry.motions;
-
+	ScreenState& screen = registry.screenStates.components[0];
+	int winner = -1;
 	// Remove entities that leave the screen
 	// Iterate backwards to be able to remove without unterfering with the next object to visit
 	// (the containers exchange the last element with the current)
@@ -89,7 +89,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 			}
 		}
 	}
-
 	// Enable and disable platform colliders based on player position
 	Motion& playerMotion = registry.motions.get(player);
 	Motion& playerMotion2 = registry.motions.get(player2);
@@ -110,78 +109,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 		else {
 			platform.collider_active_player2 = false;
-		}
-	}
-
-	const float kill_limit = 800.0f;
-
-	// check if players are out of window
-	if (playerMotion.position.y > window_height_px + abs(playerMotion.scale.y / 2) +  kill_limit) {
-		// Player death logic
-		playerMotion.position = vec2(900, 300);
-		playerMotion.velocity = vec2(0, 0);
-
-		CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
-
-		if (game_state_system->get_current_state() == 2) {
-			Player& hit_player = registry.players.get(player);
-			auto health_container = registry.lives;
-			for (int i = 0; i < health_container.components.size(); i++) {
-				Life health_entity = health_container.components[i];
-				if (health_entity.player == player) {
-					registry.renderRequests.remove(health_container.entities[i]);
-					registry.lives.remove(health_container.entities[i]);
-					hit_player.lives = hit_player.lives - 1;
-					if (hit_player.lives == 0) {
-						// TODO: Add a screen to show which player won
-						restart_game();
-					}
-					break;
-				}
-			}
-		}
-
-
-		// Set timer to 0 for all power ups to stats are reset
-
-		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player);
-
-		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-			kv.second.timer_ms = 0;
-		}
-
-	}
-
-	// check if players are out of window
-	if (playerMotion2.position.y > window_height_px + abs(playerMotion2.scale.y / 2) + kill_limit) {
-		// Player death logic
-		playerMotion2.position = vec2(300, 200);
-		playerMotion2.velocity = vec2(0, 0);
-
-		CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
-
-		Player& hit_player = registry.players.get(player2);
-		auto health_container = registry.lives;
-		for (int i = 0; i < health_container.components.size(); i++) {
-			Life health_entity = health_container.components[i];
-			if (health_entity.player == player2) {
-				registry.renderRequests.remove(health_container.entities[i]);
-				registry.lives.remove(health_container.entities[i]);
-				hit_player.lives = hit_player.lives - 1;
-				if (hit_player.lives == 0) {
-					// TODO: Add a screen to show which player won
-					restart_game();
-				}
-				break;
-			}
-		}
-
-		// Set timer to 0 for all power ups to stats are reset
-
-		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player2);
-
-		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-			kv.second.timer_ms = 0;
 		}
 	}
 
@@ -270,6 +197,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
+	float min_timer_ms = 1000.f;
+	for (Entity entity : registry.deathTimers.entities) {
+		// progress timer
+		DeathTimer& timer = registry.deathTimers.get(entity);
+		timer.timer_ms -= elapsed_ms_since_last_update;
+		if (timer.timer_ms < min_timer_ms) {
+			min_timer_ms = timer.timer_ms;
+		}
+
+		// restart the game once the death timer expired
+		if (timer.timer_ms < 0) {
+			registry.deathTimers.remove(entity);
+			screen.screen_darken_factor = 0;
+			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
+			restart_game();
+			return true;
+		}
+	}
+	// reduce window brightness if any of the present salmons is dying
+	screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+
 	return true;
 }
 
@@ -310,7 +258,6 @@ void WorldSystem::restart_game() {
 			createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
 		}
 	}
-	
 
 	Keybinds player2_keys{
 		GLFW_KEY_UP,
@@ -442,7 +389,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 			if (playerStatModifier.powerUpStatModifiers.find(statModifier.name) != playerStatModifier.powerUpStatModifiers.end()) {
 				//if player has powerup, reset the timer of the powerup
 				StatModifier& modifier = playerStatModifier.powerUpStatModifiers.at(statModifier.name);
-				modifier.timer_ms = 5000;
+				modifier.timer_ms = modifier.max_time_ms;
 			}
 			else {
 				// if player does not have power up, modify players stats and add to powerup map
@@ -473,7 +420,7 @@ void WorldSystem::handle_player_bullet_collisions() {
 			Motion& playerMotion = registry.motions.get(entity);
 			Bullet& bullet = registry.bullets.get(entity_other);
 
-			sound_system->play_hit_sound();
+						sound_system->play_hit_sound();
 
 			if (bullet.isHitscan) {
 
@@ -494,17 +441,17 @@ void WorldSystem::handle_player_bullet_collisions() {
 
 					float knockbackWithDropOff = bullet.knockback - dropOffPenalty;
 
-					printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff);
+					printf("KNOCKBACK WITH PENALTY: %f\n", knockbackWithDropOff * hit_player.knockback_resistance);
 
-					playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+					playerMotion.velocity.x += knockbackWithDropOff * (bullet_motion.velocity.x < 0 ? -1 : 1) * hit_player.knockback_resistance; 
 				} else {
 					float distanceBonus = distanceTravelled * bullet.distanceStrengthModifier;
 
 					float knockbackWithBonus = bullet.knockback + distanceBonus;
 
-					printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus);
+					printf("KNOCKBACK WITH BONUS: %f\n", knockbackWithBonus * hit_player.knockback_resistance);
 
-					playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1); 
+					playerMotion.velocity.x += knockbackWithBonus * (bullet_motion.velocity.x < 0 ? -1 : 1) * hit_player.knockback_resistance; 
 				}
 			}
 

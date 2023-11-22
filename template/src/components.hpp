@@ -44,6 +44,8 @@ struct Player
 	float running_force = 400.f;
 	// Running speed
 	float speed = 200.f;
+	// Knockback resistance
+	float knockback_resistance = 1.0f;
 	// True if player is running left
 	bool is_running_left = false; 
 	// True if player is running right
@@ -78,12 +80,14 @@ struct StatModifier
 	std::string name = "";
 
 	bool hasTimer = false;
-	float timer_ms = 0;
+	float timer_ms = 0.0f;
+	float max_time_ms = 0.0f;
 
 	int extra_jumps = 0;
-	float jump_force_modifier = 1;
-	float running_force_modifier = 1;
-	float max_speed_modifier = 1;
+	float jump_force_modifier = 1.0f;
+	float running_force_modifier = 1.0f;
+	float max_speed_modifier = 1.0f;
+	float knockback_resistance_modifier = 0.0f;
 };
 
 // Stat Modifier component
@@ -278,7 +282,7 @@ struct DebugComponent
 // A timer that will be associated to dying salmon
 struct DeathTimer
 {
-	float timer_ms = 3000.f;
+	float timer_ms = 1000.f;
 };
 
 // Single Vertex Buffer element for non-textured meshes (coloured.vs.glsl & salmon.vs.glsl)
@@ -377,7 +381,9 @@ enum class TEXTURE_ASSET_ID {
 	RELOAD_TEXT = SHOTGUN_PICKUP + 1,
 	RED_ARROW = RELOAD_TEXT + 1,
 	GREEN_ARROW = RED_ARROW + 1,
-	TEXTURE_COUNT = GREEN_ARROW + 1
+	GREEN_PLAYER_WON = GREEN_ARROW + 1,
+	RED_PLAYER_WON = GREEN_PLAYER_WON + 1,
+	TEXTURE_COUNT = RED_PLAYER_WON + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 

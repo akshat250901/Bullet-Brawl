@@ -709,6 +709,7 @@ void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
 }
 
+
 Entity createRocket(RenderSystem* renderer, Entity rocketOwner, Entity targetPlayer) {
 	auto entity = Entity();
 	registry.rocket.emplace(entity);
@@ -757,4 +758,39 @@ Entity createRocket(RenderSystem* renderer, Entity rocketOwner, Entity targetPla
 		  GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
+
+void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_system, const vec2& position, const vec2& size) {
+	// Reserve an entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+	parallax.scrollingSpeedBack = 0.0f; // Adjust this value as needed.
+	if (game_state_system->get_winner() == 1) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::RED_PLAYER_WON,
+			  EFFECT_ASSET_ID::BACKGROUND,
+			  GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	else if (game_state_system->get_winner() == 2) {
+		registry.renderRequests.insert(
+			entity,
+			{ TEXTURE_ASSET_ID::GREEN_PLAYER_WON,
+			  EFFECT_ASSET_ID::BACKGROUND,
+			  GEOMETRY_BUFFER_ID::SPRITE });
+	}
+	auto player1 = createPlayer(renderer, game_state_system, { 900, 300 });
+	registry.players.get(player1).color = { 1.f, 0.f, 0.f };
+	auto player2 = createPlayer(renderer, game_state_system, { 300, 200 });
+	registry.players.get(player2).color = { 0.f, 1.f, 0.f };
 }

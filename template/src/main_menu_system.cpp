@@ -28,18 +28,22 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
     glfwSetKeyCallback(window, key_redirect);
     glfwSetMouseButtonCallback(window, mouse_button_redirect);
 
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	int window_width = mode->width;
+	int window_height = mode->height;
+
 	if (game_state_system->get_current_state() == 0) {
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 450 }, { 300, 70 }, "Start Game"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 550 }, { 300, 70 }, "Tutorial"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 650 }, { 300, 70 }, "End Game"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.80f }, { window_width / 4, window_height / 16.5f }, "Start Game"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.48f }, { window_width / 4, window_height / 16.5f }, "Tutorial"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.28f }, { window_width / 4, window_height / 16.5f }, "End Game"});
 		for (Button button: buttons) {
 			create_button(renderer, button);
 		}
 	} else if (game_state_system->get_current_state() == 1) {
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 400 }, { 300, 50 }, "Jungle"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 500 }, { 300, 50 }, "Space"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 600 }, { 300, 50 }, "Temple"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width_px / 2, 700 }, { 300, 50 }, "back"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 2 }, { window_width / 3.4f, window_height / 16 }, "Jungle"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.6f }, { window_width / 3.4f, window_height / 16 }, "Space"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.3333f }, { window_width / 3.4f, window_height / 16 }, "Temple"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.14285f }, { window_width / 3.4f, window_height / 16 }, "back"});
 		for (Button button: buttons) {
 			create_button(renderer, button);
 		}
