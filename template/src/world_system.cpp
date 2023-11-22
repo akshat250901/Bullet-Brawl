@@ -112,11 +112,28 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
-	// Decrement timers in the PlayerStatModifier
+	// Decrement timers in the PlayerStatModifier and Invincibility
 	for (Entity playerEntity : registry.players.entities) {
+		Player& currPlayer = registry.players.get(playerEntity);
 		PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(playerEntity);
+		Invincibility& invincibility = registry.invincibility.get(playerEntity);
 
 		auto& powerUpMap = playerStatModifier.powerUpStatModifiers;
+
+		if (invincibility.has_TIMER) {
+			invincibility.timer_ms -= elapsed_ms_since_last_update;
+			int timer_quarter_sec = invincibility.timer_ms / 250.f;
+			if ((timer_quarter_sec % 2) == 0) {
+				currPlayer.color = invincibility.player_original_color;
+			} else {
+				currPlayer.color = invincibility.invincibility_color;
+			}
+
+			if (invincibility.timer_ms <= 0) {
+				currPlayer.color = invincibility.player_original_color;
+				invincibility.has_TIMER = false;
+			}
+		}
 
 		for (auto it = powerUpMap.begin(); it != powerUpMap.end();) {
 			StatModifier& statModifier = it->second;
@@ -125,12 +142,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				statModifier.timer_ms -= elapsed_ms_since_last_update;
 
 				if (statModifier.timer_ms <= 0) {
-					Player& currPlayer = registry.players.get(playerEntity);
-
 					StatUtil::remove_stat_modifier(currPlayer, statModifier);
-
 					it = powerUpMap.erase(it);
-
 					continue;
 				}
 			}
@@ -418,9 +431,14 @@ void WorldSystem::handle_player_bullet_collisions() {
 		if (registry.players.has(entity) && registry.bullets.has(entity_other)) {
 			Player& hit_player = registry.players.get(entity);
 			Motion& playerMotion = registry.motions.get(entity);
+			Invincibility& invincibility = registry.invincibility.get(entity);
 			Bullet& bullet = registry.bullets.get(entity_other);
 
-						sound_system->play_hit_sound();
+			if (invincibility.has_TIMER) {
+				continue;
+			}
+						
+			sound_system->play_hit_sound();
 
 			if (bullet.isHitscan) {
 

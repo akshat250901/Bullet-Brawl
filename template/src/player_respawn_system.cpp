@@ -22,6 +22,8 @@ void PlayerRespawnSystem::step()
         Motion& player_motion = registry.motions.get(entity_i);
         PlayerStatModifier& player_stat_modifier = registry.playerStatModifiers.get(entity_i);
 
+        Invincibility& invincibility = registry.invincibility.get(entity_i);
+
         // Check if players are out of window
         if (player_motion.position.y > window_height_px + abs(player_motion.scale.y / 2) +  KILL_LIMIT) {
             if (game_state_system->get_current_state() == 2) {
@@ -72,6 +74,11 @@ void PlayerRespawnSystem::step()
 
                         player_motion.position = vec2(xCoord, Y_HEIGHT_RESPAWN);
                         player_motion.velocity = vec2(0, 0);
+
+                        invincibility.has_TIMER = true;
+                        invincibility.timer_ms = invincibility.max_time_ms;
+                        invincibility.player_original_color = player_i.color;
+                        player_i.color = invincibility.invincibility_color;
 
                         CreateGunUtil::givePlayerStartingPistol(renderer, entity_i, true);
                     }

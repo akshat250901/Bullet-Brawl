@@ -42,6 +42,7 @@ public:
 	ComponentContainer<NonInteractable> nonInteractables;
 	ComponentContainer<MuzzleFlash> muzzleFlashes;
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
+	ComponentContainer<Invincibility>invincibility;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -75,6 +76,7 @@ public:
 		registry_list.push_back(&popupIndicator);
 		registry_list.push_back(&muzzleFlashes);
 		registry_list.push_back(&outOfBoundsArrows);
+		registry_list.push_back(&invincibility);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
