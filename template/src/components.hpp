@@ -74,6 +74,16 @@ struct Controller
 	float upKey_delay_timer_ms = 300.0f;
 };
 
+// Player invincibility component
+struct Invincibility 
+{
+	bool has_TIMER = false;
+	float timer_ms = 0.0f;
+	float max_time_ms = 4000.0f;
+	vec3 player_original_color;
+	vec3 invincibility_color = vec3(0.f, 0.f, 0.f);
+};
+
 // Player stat modifier struct for use in power ups and gun pick ups
 struct StatModifier
 {
