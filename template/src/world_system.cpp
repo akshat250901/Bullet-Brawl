@@ -64,7 +64,7 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 
 // Update our game world
 bool WorldSystem::step(float elapsed_ms_since_last_update) {
-	// Remove debug info from the last step
+		// Remove debug info from the last step
 	while (registry.debugComponents.entities.size() > 0)
 		registry.remove_all_components_of(registry.debugComponents.entities.back());
 
@@ -107,100 +107,28 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
-	const float kill_limit = 800.0f;
-
-	// check if players are out of window
-	if (playerMotion.position.y > window_height_px + abs(playerMotion.scale.y / 2) +  kill_limit) {
-		if (game_state_system->get_current_state() == 2) {
-			Player& hit_player = registry.players.get(player);
-			auto health_container = registry.lives;
-			for (int i = 0; i < health_container.components.size(); i++) {
-				Life health_entity = health_container.components[i];
-				if (health_entity.player == player) {
-					registry.renderRequests.remove(health_container.entities[i]);
-					registry.lives.remove(health_container.entities[i]);
-					hit_player.lives = hit_player.lives - 1;
-					if (hit_player.lives == 0) {
-						if (!registry.deathTimers.has(player)) {
-							registry.deathTimers.emplace(player);
-						}
-
-						game_state_system->set_winner(1);
-
-					}
-					break;
-				}
-			}
-			if(game_state_system->get_winner() == -1)
-			{
-				// Player death logic
-				playerMotion.position = vec2(900, 300);
-				playerMotion.velocity = vec2(0, 0);
-
-				CreateGunUtil::givePlayerStartingPistol(renderer, player, true);
-			}
-		}
-		else if (game_state_system->get_current_state() == 3) {
-			playerMotion.position = vec2(700, 200);
-			playerMotion.velocity = vec2(0, 0);
-		}
-
-
-		// Set timer to 0 for all power ups to stats are reset
-
-		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player);
-
-		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-			kv.second.timer_ms = 0;
-		}
-
-	}
-	
-
-	// check if players are out of window
-	if (playerMotion2.position.y > window_height_px + abs(playerMotion2.scale.y / 2) + kill_limit) {
-		Player& hit_player = registry.players.get(player2);
-		auto health_container = registry.lives;
-		for (int i = 0; i < health_container.components.size(); i++) {
-			Life health_entity = health_container.components[i];
-			if (health_entity.player == player2) {
-				registry.renderRequests.remove(health_container.entities[i]);
-				registry.lives.remove(health_container.entities[i]);
-				hit_player.lives = hit_player.lives - 1;
-
-				if (hit_player.lives == 0) {
-					if (!registry.deathTimers.has(player2)) {
-						registry.deathTimers.emplace(player2);
-					}
-					game_state_system->set_winner(2);
-
-				}
-				break;
-			}
-		}
-
-		// Set timer to 0 for all power ups to stats are reset
-
-		PlayerStatModifier& PlayerStatModifier = registry.playerStatModifiers.get(player2);
-
-		for (auto& kv : PlayerStatModifier.powerUpStatModifiers) {
-			kv.second.timer_ms = 0;
-		}
-		if (game_state_system->get_winner() == -1)
-		{
-			// Player death logic
-			playerMotion2.position = vec2(300, 200);
-			playerMotion2.velocity = vec2(0, 0);
-
-			CreateGunUtil::givePlayerStartingPistol(renderer, player2, true);
-		}
-	}
-
-	// Decrement timers in the PlayerStatModifier
+	// Decrement timers in the PlayerStatModifier and Invincibility
 	for (Entity playerEntity : registry.players.entities) {
+		Player& currPlayer = registry.players.get(playerEntity);
 		PlayerStatModifier& playerStatModifier = registry.playerStatModifiers.get(playerEntity);
+		Invincibility& invincibility = registry.invincibility.get(playerEntity);
 
 		auto& powerUpMap = playerStatModifier.powerUpStatModifiers;
+
+		if (invincibility.has_TIMER) {
+			invincibility.timer_ms -= elapsed_ms_since_last_update;
+			int timer_quarter_sec = invincibility.timer_ms / 250.f;
+			if ((timer_quarter_sec % 2) == 0) {
+				currPlayer.color = invincibility.player_original_color;
+			} else {
+				currPlayer.color = invincibility.invincibility_color;
+			}
+
+			if (invincibility.timer_ms <= 0) {
+				currPlayer.color = invincibility.player_original_color;
+				invincibility.has_TIMER = false;
+			}
+		}
 
 		for (auto it = powerUpMap.begin(); it != powerUpMap.end();) {
 			StatModifier& statModifier = it->second;
@@ -209,12 +137,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				statModifier.timer_ms -= elapsed_ms_since_last_update;
 
 				if (statModifier.timer_ms <= 0) {
-					Player& currPlayer = registry.players.get(playerEntity);
-
 					StatUtil::remove_stat_modifier(currPlayer, statModifier);
-
 					it = powerUpMap.erase(it);
-
 					continue;
 				}
 			}
@@ -506,8 +430,13 @@ void WorldSystem::handle_player_bullet_collisions() {
 		if (registry.players.has(entity) && registry.bullets.has(entity_other)) {
 			Player& hit_player = registry.players.get(entity);
 			Motion& playerMotion = registry.motions.get(entity);
+			Invincibility& invincibility = registry.invincibility.get(entity);
 			Bullet& bullet = registry.bullets.get(entity_other);
 
+			if (invincibility.has_TIMER) {
+				continue;
+			}
+						
 			sound_system->play_hit_sound();
 
 			if (bullet.isHitscan) {

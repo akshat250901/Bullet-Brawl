@@ -33,9 +33,9 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
 	int window_height = mode->height;
 
 	if (game_state_system->get_current_state() == 0) {
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.777f }, { window_width / 4, window_height / 11.4285f }, "Start Game"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.4545f }, { window_width / 4, window_height / 11.4285f }, "Tutorial"});
-		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.2307f }, { window_width / 4, window_height / 11.4285f }, "End Game"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.80f }, { window_width / 4, window_height / 16.5f }, "Start Game"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.48f }, { window_width / 4, window_height / 16.5f }, "Tutorial"});
+		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.28f }, { window_width / 4, window_height / 16.5f }, "End Game"});
 		for (Button button: buttons) {
 			create_button(renderer, button);
 		}

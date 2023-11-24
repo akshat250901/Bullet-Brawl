@@ -30,6 +30,7 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 	registry.players.emplace(entity);
 
 	registry.playerStatModifiers.emplace(entity);
+	registry.invincibility.emplace(entity);
 
 	registry.controllers.emplace(entity);
 	

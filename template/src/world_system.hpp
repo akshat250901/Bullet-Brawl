@@ -76,6 +76,7 @@ private:
 	// C++ random number generator
 	std::default_random_engine rng;
 	std::uniform_real_distribution<float> uniform_dist; // number between 0..1
+	std::uniform_int_distribution<int> uniform_dist_int; // number between 0..1
 
 	// private methods
 	void handle_player_platform_collisions();
