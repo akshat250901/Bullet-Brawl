@@ -9,12 +9,6 @@
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
 
-// Game configuration
-const size_t MAX_TURTLES = 15;
-const size_t MAX_FISH = 5;
-const size_t TURTLE_DELAY_MS = 2000 * 3;
-const size_t FISH_DELAY_MS = 5000 * 3;
-
 // Create the fish world
 WorldSystem::WorldSystem()
 	: points(0)
@@ -491,7 +485,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 				StatUtil::apply_stat_modifier(player, statModifier);
 			}
-
+			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
 		}
 	}
@@ -604,7 +598,7 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
 				newGunComponent.gunOwner = entity;
 			}
-
+			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
 		}
 	}

@@ -170,42 +170,68 @@ void RandomDropsSystem::init(GameStateSystem* game_state_system)
 
 void RandomDropsSystem::step(float elapsed_ms_since_last_update)
 {
+    // Power up spawn
+    next_powerup_spawn -= elapsed_ms_since_last_update;
+
     if (game_state_system->get_current_state() == 3 && !is_tutorial_intialized) {
 
         std::vector<int> powerup_positions = {200, 300, 400};
 
         int bottom_plat_pos_y = 633;
-        for (int i = 0; i < powerUpsNames.size(); i++) {
-            std::string powerUpName = powerUpsNames.at(i);
 
-            auto color = powerUpsNamesToColor[powerUpName];
+        if (next_powerup_spawn < 0.0f) {
+            // Reset timer
+            next_powerup_spawn = POWERUP_DELAY_MS;
+            for (int i = 0; i < powerUpsNames.size(); i++) {
+                std::string powerUpName = powerUpsNames.at(i);
 
-            vec2 powerUpPos = { powerup_positions.at(i) , bottom_plat_pos_y - 5 - (int)(POWERUP_SIZE / 2)};
-            auto statModifier = powerUpsNamesToStatModifier[powerUpName];
-            Entity entity = createPowerup(renderer, powerUpPos, { POWERUP_SIZE, POWERUP_SIZE }, color);
-            PowerUp& powerUp = registry.powerUps.emplace(entity);
-            powerUp.statModifier = statModifier;
+                auto color = powerUpsNamesToColor[powerUpName];
+                vec2 power_up_pos = { powerup_positions.at(i) , bottom_plat_pos_y - 5 - (int)(POWERUP_SIZE / 2) };
+
+                bool should_spawn = true;
+
+                for (int j = 0; j < registry.powerUps.components.size(); j++) {
+                    if (powerUpName == registry.powerUps.components[j].statModifier.name) {
+                        should_spawn = false;
+                    }
+                }
+
+                if (should_spawn) {
+                    auto statModifier = powerUpsNamesToStatModifier[powerUpName];
+                    Entity entity = createPowerup(renderer, power_up_pos, { POWERUP_SIZE, POWERUP_SIZE }, color);
+                    PowerUp& powerUp = registry.powerUps.emplace(entity);
+                    powerUp.statModifier = statModifier;
+                }
+               
+            }
+
+            std::vector<int> gun_positions = { 700, 800, 900, 1000 };
+            for (int i = 0; i < guns.size(); i++) {
+
+                Gun gun = guns.at(i);
+
+                bool should_spawn = true;
+
+                for (int j = 0; j < registry.guns.components.size(); j++) {
+                    if (gun.name == registry.guns.components[j].name) {
+                        should_spawn = false;
+                    }
+                }
+                if (should_spawn) {
+                    vec2 mysteryBoxPos = { gun_positions.at(i), bottom_plat_pos_y - 5 - (int)(MYSTERY_BOX_SIZE / 2) };
+                    Entity entity = createGunMysteryBox(renderer, mysteryBoxPos, { MYSTERY_BOX_SIZE, MYSTERY_BOX_SIZE });
+                    GunMysteryBox& gunMysteryBox = registry.gunMysteryBoxes.emplace(entity);
+                    gunMysteryBox.randomGun = gun;
+                }
+            }
+
+            is_tutorial_intialized = true;
         }
 
-        std::vector<int> gun_positions = { 700, 800, 900, 1000 };
-        for (int i = 0; i < guns.size(); i++) {
-            
-            Gun gun = guns.at(i);
-
-            vec2 mysteryBoxPos = { gun_positions.at(i), bottom_plat_pos_y - 5 - (int)(MYSTERY_BOX_SIZE / 2) };
-            Entity entity = createGunMysteryBox(renderer, mysteryBoxPos, { MYSTERY_BOX_SIZE, MYSTERY_BOX_SIZE });
-            GunMysteryBox& gunMysteryBox = registry.gunMysteryBoxes.emplace(entity);
-            gunMysteryBox.randomGun = gun;
-
-        }
-
-        is_tutorial_intialized = true;
+        
     }
     else if (game_state_system->get_current_state() != 3)
     {
-        // Power up spawn
-        next_powerup_spawn -= elapsed_ms_since_last_update;
-
         if (registry.powerUps.components.size() >= MAX_POWERUPS) {
             next_powerup_spawn = POWERUP_DELAY_MS;
         }

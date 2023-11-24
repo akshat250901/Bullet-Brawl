@@ -9,8 +9,6 @@ int GameStateSystem::get_current_state() {
 };
 
 void GameStateSystem::change_game_state(int newState) {
-	currentState = currentState;
-	newState = newState;
     currentState = newState;
 	is_state_changed = true;
 };
