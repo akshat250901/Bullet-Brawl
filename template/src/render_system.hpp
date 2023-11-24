@@ -52,6 +52,7 @@ class RenderSystem {
 			textures_path("JUNGLEMAP.png"),
 			textures_path("SPACEMAP.png"),
 			textures_path("TEMPLEMAP.png"),
+			textures_path("TUTORIALMAP.png"),
 			textures_path("popup_text/speedboost.png"),
 			textures_path("popup_text/superjump.png"),
 			textures_path("popup_text/triplejump.png"),

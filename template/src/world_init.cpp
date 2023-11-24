@@ -467,7 +467,7 @@ Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_stat
 	} else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+		{ TEXTURE_ASSET_ID::TUTORIALMAP,
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -584,7 +584,7 @@ Entity createBackgroundJungle(RenderSystem* renderer, GameStateSystem* game_stat
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -618,7 +618,7 @@ Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -652,12 +652,47 @@ Entity createBackgroundTemple(RenderSystem* renderer, GameStateSystem* game_stat
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
 
 	return entity;
+}
+
+Entity createBackgroundTutorial(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TUTORIALMAP,
+			EFFECT_ASSET_ID::BACKGROUND,
+			GEOMETRY_BUFFER_ID::SPRITE });
+	
+	return entity;
+}
+
+void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundTutorial(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 314 }, { 792, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 467 }, { 230, 10 }); // Middle left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 940, 467 }, { 230, 10 }); // Middle right 
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 633 }, { 792, 10 }); // Bottom
 }
 
 void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
