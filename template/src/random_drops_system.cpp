@@ -5,6 +5,7 @@
 // Drop timing
 const size_t MAX_POWERUPS = 5;
 const float POWERUP_DELAY_MS = 15000.0f;
+const float TUTORIAL_POWERUP_DELAY_MS = 2000.f;
 const float POWERUP_SIZE = 50.f;
 
 const size_t MAX_MYSTERY_BOX = 1;
@@ -172,16 +173,19 @@ void RandomDropsSystem::step(float elapsed_ms_since_last_update)
 {
     // Power up spawn
     next_powerup_spawn -= elapsed_ms_since_last_update;
+    if (game_state_system->get_current_state() == 3 && next_powerup_spawn > TUTORIAL_POWERUP_DELAY_MS) {
+        next_powerup_spawn = 1.f;
+    }
 
     if (game_state_system->get_current_state() == 3 && !is_tutorial_intialized) {
-
+        
         std::vector<int> powerup_positions = {200, 300, 400};
 
         int bottom_plat_pos_y = 633;
 
         if (next_powerup_spawn < 0.0f) {
             // Reset timer
-            next_powerup_spawn = POWERUP_DELAY_MS;
+            next_powerup_spawn = TUTORIAL_POWERUP_DELAY_MS;
             for (int i = 0; i < powerUpsNames.size(); i++) {
                 std::string powerUpName = powerUpsNames.at(i);
 
