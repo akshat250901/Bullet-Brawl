@@ -9,12 +9,6 @@
 #include "stat_util.cpp"
 #include "create_gun_util.cpp"
 
-// Game configuration
-const size_t MAX_TURTLES = 15;
-const size_t MAX_FISH = 5;
-const size_t TURTLE_DELAY_MS = 2000 * 3;
-const size_t FISH_DELAY_MS = 5000 * 3;
-
 // Create the fish world
 WorldSystem::WorldSystem()
 	: points(0)
@@ -49,11 +43,12 @@ namespace {
 }
 
 
-GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system) {
+GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system, RandomDropsSystem* random_drops_system) {
 	this->window = window;
 	this->renderer = renderer_arg;
 	this->game_state_system = game_state_system;
 	this->sound_system = sound_system;
+	this->random_drops_system = random_drops_system;
 	glfwSetWindowUserPointer(window, this);
 	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
 	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
@@ -260,7 +255,8 @@ void WorldSystem::restart_game() {
 	// TODO: USE ISLAND MAP FOR TUTORIAL
 	// ISLAND MAP
 	if (game_state_system->get_current_state() == 3) {
-		createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
+		createTutorialMap(renderer, game_state_system, window_width_px, window_height_px);
+		random_drops_system->is_tutorial_intialized = false;
 	} else if (game_state_system->get_current_state() == 2) {
 		int level = game_state_system->get_current_level();
 		if (level == 1) {
@@ -289,14 +285,17 @@ void WorldSystem::restart_game() {
 	GLFW_KEY_H,
 	};
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
-	player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 
-	createOutOfBoundsArrow( renderer, player, true);
+	if (game_state_system->get_current_state() == 3) {
+		player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
+	}
+	else {
+		player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
+		createOutOfBoundsArrow(renderer, player, true);
+		CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
+	}
+
 	createOutOfBoundsArrow( renderer, player2, false);
-
-	// Add default pistols for players
-
-	CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
 	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
 }
 
@@ -410,7 +409,7 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 				StatUtil::apply_stat_modifier(player, statModifier);
 			}
-
+			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
 		}
 	}
@@ -528,7 +527,7 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
 				newGunComponent.gunOwner = entity;
 			}
-
+			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
 		}
 	}
@@ -597,11 +596,11 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	}
 
 	if (!paused) {
-
-		handle_player(key, action, player);
 		if (game_state_system->get_current_state() == 2) {
-			handle_player(key, action, player2);
+			handle_player(key, action, player);
 		}
+		handle_player(key, action, player2);
+		
 
 		// Resetting game
 		if (action == GLFW_RELEASE && key == GLFW_KEY_R) {

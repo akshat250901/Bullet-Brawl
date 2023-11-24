@@ -83,6 +83,17 @@ void PlayerRespawnSystem::step()
                         CreateGunUtil::givePlayerStartingPistol(renderer, entity_i, true);
                     }
             }
+            else if (game_state_system->get_current_state() == 3) {
+                if (i == 0) {
+                    player_motion.position = vec2(300, 200);
+                    player_motion.velocity = vec2(0, 0);
+                }
+                if (i == 1) {
+                    player_motion.position = vec2(700, 200);
+                    player_motion.velocity = vec2(0, 0);
+                }
+                
+            }
 
             // Set timer to 0 for all power ups to stats are reset
             for (auto& kv : player_stat_modifier.powerUpStatModifiers) {

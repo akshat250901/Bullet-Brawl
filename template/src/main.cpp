@@ -52,7 +52,7 @@ int main()
 	sound_system.init_sounds();
 	render_system.init(window);
 	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
-	
+	random_drops_system.init(&game_state_system);
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -79,7 +79,7 @@ int main()
 			}
 		} else if (game_state_system.get_current_state() == 2 || game_state_system.get_current_state() == 3) {
 			if (game_state_system.is_state_changed) {
-				world_system.init(&render_system, &game_state_system, window, &sound_system);
+				world_system.init(&render_system, &game_state_system, window, &sound_system, &random_drops_system);
 				game_state_system.is_state_changed = false;
 			}
 			if (!world_system.paused) {

@@ -5,6 +5,7 @@
 #include "components.hpp"
 #include "tiny_ecs_registry.hpp"
 #include "render_system.hpp"
+#include "game_state_system.hpp"
 
 #include <random>
 #include <unordered_map>
@@ -14,8 +15,9 @@
 class RandomDropsSystem
 {
 public:
+    bool is_tutorial_intialized;
+    void init(GameStateSystem* game_state_system);
 	void step(float elapsed_ms);
-
     void handleInterpolation(float elapsed_ms);
 
 	RandomDropsSystem(RenderSystem* renderer);
@@ -24,6 +26,7 @@ private:
 
     // Game state
     RenderSystem* renderer;
+    GameStateSystem* game_state_system;
     float next_powerup_spawn;
     float next_mystery_box_spawn;
 

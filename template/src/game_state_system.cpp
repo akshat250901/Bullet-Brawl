@@ -9,8 +9,6 @@ int GameStateSystem::get_current_state() {
 };
 
 void GameStateSystem::change_game_state(int newState) {
-	currentState = currentState;
-	newState = newState;
     currentState = newState;
 	is_state_changed = true;
 };
@@ -58,7 +56,8 @@ GLFWwindow* GameStateSystem::create_window() {
 #if __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwWindowHint(GLFW_RESIZABLE, 0);
 
 	// Create the main window (for rendering, keyboard, and mouse input)
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
