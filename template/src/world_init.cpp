@@ -738,10 +738,10 @@ void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, 
 void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	createBackgroundTemple(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 270 }, { 360, 1 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 385 }, { 900, 1 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 305 }, { 360, 1 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 400 }, { 900, 1 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 505 }, { 380, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 520 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
 }
 
