@@ -790,7 +790,7 @@ void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_syste
 			  EFFECT_ASSET_ID::BACKGROUND,
 			  GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (game_state_system->get_winner() == 2) {
+	else {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::GREEN_PLAYER_WON,
