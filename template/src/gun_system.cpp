@@ -116,6 +116,21 @@ void GunSystem::step(float elapsed_ms_since_last_update)
         }
         // set angle to 0
         gun_motion.angle = 0.0f;
+
+
+        for (int i = 0; i < registry.texts.components.size(); i++) {
+            Text& text_i = registry.texts.components[i];
+
+            if (text_i.owner == owner) {
+                if (text_i.tag == "CURRENT_GUN") {
+                    text_i.string = gun_i.name;
+                }
+
+                if (text_i.tag == "AMMO_COUNT") {
+                    text_i.string = std::to_string(gun_i.magazineAmmo) + "/" + (gun_i.hasInfiniteAmmo ? "INF" : std::to_string(gun_i.reserveAmmo));
+                }
+            }
+        }
         
         bool fireKey = controller.fireKey;
 

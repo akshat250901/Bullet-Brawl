@@ -56,8 +56,8 @@ GLFWwindow* GameStateSystem::create_window() {
 #if __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwWindowHint(GLFW_RESIZABLE, 0);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	//glfwWindowHint(GLFW_RESIZABLE, 0);
 
 	// Create the main window (for rendering, keyboard, and mouse input)
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -81,20 +81,20 @@ GLFWwindow* GameStateSystem::create_window() {
 		return nullptr;
 	}
 
-	background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
-	salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
-	salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav").c_str());
+	// background_music = Mix_LoadMUS(audio_path("music.wav").c_str());
+	// salmon_dead_sound = Mix_LoadWAV(audio_path("salmon_dead.wav").c_str());
+	// salmon_eat_sound = Mix_LoadWAV(audio_path("salmon_eat.wav").c_str());
 
-	if (background_music == nullptr || salmon_dead_sound == nullptr || salmon_eat_sound == nullptr) {
-		fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
-			audio_path("music.wav").c_str(),
-			audio_path("salmon_dead.wav").c_str(),
-			audio_path("salmon_eat.wav").c_str());
-		return nullptr;
-	}
-	// Playing background music indefinitely
-	//Mix_PlayMusic(background_music, -1);
-	fprintf(stderr, "Loaded music\n");
+	// if (background_music == nullptr || salmon_dead_sound == nullptr || salmon_eat_sound == nullptr) {
+	// 	fprintf(stderr, "Failed to load sounds\n %s\n %s\n %s\n make sure the data directory is present",
+	// 		audio_path("music.wav").c_str(),
+	// 		audio_path("salmon_dead.wav").c_str(),
+	// 		audio_path("salmon_eat.wav").c_str());
+	// 	return nullptr;
+	// }
+	// // Playing background music indefinitely
+	// //Mix_PlayMusic(background_music, -1);
+	// fprintf(stderr, "Loaded music\n");
 
 	return window;
 };

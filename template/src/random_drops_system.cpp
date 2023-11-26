@@ -34,7 +34,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                         };
 
 
-    submachineGun.name = "Submachine Gun";
+    submachineGun.name = "SUBMACHINE GUN";
     submachineGun.statModifier = submachineStatModifier;
     submachineGun.fireRateMs = 100.0f;
     
@@ -67,7 +67,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                         };
 
 
-    assaultRifle.name = "Assault Rifle";
+    assaultRifle.name = "ASSAULT RIFLE";
     assaultRifle.statModifier = assaultRifleStatModifier;
     assaultRifle.fireRateMs = 250.0f;
     
@@ -101,7 +101,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                         };
 
 
-    sniperRifle.name = "Sniper Rifle";
+    sniperRifle.name = "SNIPER RIFLE";
     sniperRifle.statModifier = sniperRifleStatModifier;
     sniperRifle.fireRateMs = 650.0f;
     
@@ -136,7 +136,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
                         };
 
 
-    shotgun.name = "Shotgun";
+    shotgun.name = "SHOTGUN";
     shotgun.statModifier = shotgunStatModifier;
     shotgun.fireRateMs = 750.0f;
     

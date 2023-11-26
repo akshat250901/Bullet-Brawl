@@ -135,16 +135,16 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 
 	popup.type = popup_type;
 
-	if (popup_type == "Submachine Gun") {
+	if (popup_type == "SUBMACHINE GUN") {
 		texture_id = TEXTURE_ASSET_ID::SMG_PICKUP;
 	}
-	else if (popup_type == "Assault Rifle") {
+	else if (popup_type == "ASSAULT RIFLE") {
 		texture_id = TEXTURE_ASSET_ID::AR_PICKUP;
 	}
-	else if (popup_type == "Sniper Rifle") {
+	else if (popup_type == "SNIPER RIFLE") {
 		texture_id = TEXTURE_ASSET_ID::SNIPER_PICKUP;
 	}
-	else if (popup_type == "Shotgun") {
+	else if (popup_type == "SHOTGUN") {
 		texture_id = TEXTURE_ASSET_ID::SHOTGUN_PICKUP;
 	}
 	else if (popup_type == "Triple Jump") {
@@ -376,28 +376,28 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 	motion.scale = scale;
 	motion.velocity = { 0.f, 0.f };
 
-	if (gun_name == "Submachine Gun") {
+	if (gun_name == "SUBMACHINE GUN") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SMG,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Assault Rifle") {
+	else if (gun_name == "ASSAULT RIFLE") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::AR,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Sniper Rifle") {
+	else if (gun_name == "SNIPER RIFLE") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SNIPER,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Shotgun") {
+	else if (gun_name == "SHOTGUN") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SHOTGUN,
@@ -684,6 +684,28 @@ Entity createBackgroundTutorial(RenderSystem* renderer, GameStateSystem* game_st
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 	
+	return entity;
+}
+
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag) {
+
+	// Reserve en entity
+	auto entity = Entity();
+
+	Text& textObj = registry.texts.emplace(entity);
+	textObj.string = text;
+	textObj.position = position;
+	textObj.color = color;
+	textObj.scale = scale;
+	textObj.opacity = opacity;
+	textObj.horizontalAlignment = horizontalAlignment;
+	textObj.verticalAlignment = verticalAlignment;
+	textObj.owner = owner;
+	textObj.tag = tag;
+
+	// Put into motion but do nothing
+	registry.motions.emplace(entity);
+
 	return entity;
 }
 

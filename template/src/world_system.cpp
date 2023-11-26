@@ -219,7 +219,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 			registry.deathTimers.remove(entity);
 			screen.screen_darken_factor = 0;
 			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
-			restart_game();
 			return true;
 		}
 	}
@@ -250,7 +249,7 @@ void WorldSystem::restart_game() {
 		registry.remove_all_components_of(registry.motions.entities.back());
 
 	// Debugging for memory/component leaks
-	registry.list_all_components();
+	//registry.list_all_components();
 
 	// TODO: USE ISLAND MAP FOR TUTORIAL
 	// ISLAND MAP
@@ -284,19 +283,31 @@ void WorldSystem::restart_game() {
 	GLFW_KEY_G,
 	GLFW_KEY_H,
 	};
+
+	float textHorizontalOffset = 400.0f;
+	float textVerticalOffset = 40.0f;
+	
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
+	createOutOfBoundsArrow( renderer, player2, false);
+	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
+
+	//Create text for ammo counter and weapon
+	createText("RED PLAYER", {textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {255.0f, 0.0f, 0.0f}, 2.5f, 1.0f, 0, 2, player2, "PLAYER_ID");
+	createText("PISTOL", {textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "CURRENT_GUN");
+	createText("20/20", {textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "AMMO_COUNT");
 
 	if (game_state_system->get_current_state() == 3) {
 		player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
-	}
-	else {
+	} else {
 		player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 		createOutOfBoundsArrow(renderer, player, true);
 		CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
-	}
 
-	createOutOfBoundsArrow( renderer, player2, false);
-	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
+		//Create text for ammo counter and weapon
+		createText("GREEN PLAYER", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {0.0f, 255.0f, 0.0f}, 2.5f, 1.0f, 2, 2, player, "PLAYER_ID");
+		createText("PISTOL", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
+		createText("20/20", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
+	}
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
@@ -592,6 +603,8 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 	    	registry.remove_all_components_of(registry.bullets.entities.back());
 		while (registry.powerUps.entities.size() > 0)
 	    	registry.remove_all_components_of(registry.powerUps.entities.back());
+		while (registry.texts.entities.size() > 0)
+	    	registry.remove_all_components_of(registry.texts.entities.back());
 		game_state_system->change_game_state(0);
 	}
 

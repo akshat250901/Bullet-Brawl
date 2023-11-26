@@ -116,6 +116,7 @@ private:
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
 	void drawAnimated(Entity entity, EFFECT_ASSET_ID asset_id);
+	void drawText(int viewportWidth, int viewportHeight);
 
 	// Window handle
 	GLFWwindow* window;
