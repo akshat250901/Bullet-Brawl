@@ -32,6 +32,8 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun);
 Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion, bool facing_right);
 // render space map
 Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
+// create a text element
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag);
 // render tutorial map
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
 // render island map

@@ -40,8 +40,10 @@ void PlayerRespawnSystem::step()
                                 registry.deathTimers.emplace(entity_i);
                             }
 
-                            game_state_system->set_winner(1);
+                            while (registry.texts.entities.size() > 0)
+	    	                    registry.remove_all_components_of(registry.texts.entities.back());
 
+                            game_state_system->set_winner(1);
                         }
                         break;
                     }

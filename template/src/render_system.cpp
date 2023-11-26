@@ -1,8 +1,11 @@
 // internal
 #include "render_system.hpp"
 #include <SDL.h>
+#include <string>
 
 #include "tiny_ecs_registry.hpp"
+#define GLT_IMPLEMENTATION
+#include "../ext/gltext/gltext.h"
 
 void RenderSystem::drawTexturedMesh(Entity entity,
 									const mat3 &projection)
@@ -319,6 +322,54 @@ void RenderSystem::drawAnimated(Entity entity, EFFECT_ASSET_ID asset_id) {
 	gl_has_errors();
 }
 
+void RenderSystem::drawText(int viewportWidth, int viewportHeight) {
+
+	 // Initialize glText
+    if (!gltInit()) {
+        fprintf(stderr, "Failed to initialize glText\n");
+		glfwTerminate();
+    }
+
+    // Create a text object and set its text
+	float widthScale = (float) viewportWidth / (float) window_width_px;
+	float heightScale = (float) viewportHeight / (float) window_height_px;
+
+	float scalingFactor = (float) viewportWidth / 2560.0f;
+
+	glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Disable depth testing
+    // glDisable(GL_DEPTH_TEST);
+
+    // Begin text drawing (this sets up the necessary OpenGL state and shaders)
+	GLTtext* text = gltCreateText();
+    gltBeginDraw();
+
+	for (int i = 0; i < registry.texts.size(); i++) {
+		Text& text_i = registry.texts.components[i];
+
+		gltSetText(text, text_i.string.c_str());
+		gltColor(text_i.color.x, text_i.color.y, text_i.color.z, text_i.opacity);
+    	gltDrawText2DAligned(text, text_i.position.x * widthScale, text_i.position.y * heightScale, text_i.scale * scalingFactor, text_i.horizontalAlignment, text_i.verticalAlignment);
+	}
+
+    // End text drawing (restores OpenGL state)
+	gltDeleteText(text);
+    gltEndDraw();
+	gltTerminate();
+
+	// Restore depth test state if other parts of your rendering use it
+    //glEnable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+
+    // Check for errors
+    gl_has_errors();
+}
 
 // Render our game world
 // http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-14-render-to-texture/
@@ -356,6 +407,7 @@ void RenderSystem::draw()
 
 	// Truely render to the screen
 	drawToScreen();
+	drawText(w, h);
 
 	// flicker-free display with a double buffer
 	glfwSwapBuffers(window);

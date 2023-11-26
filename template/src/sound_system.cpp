@@ -54,16 +54,16 @@ void SoundSystem::init_sounds() {
 }
 
 void SoundSystem::play_shoot_sound(std::string gun_type) {
-    if (gun_type == "Submachine Gun") {
+    if (gun_type == "SUBMACHINE GUN") {
         Mix_PlayChannel(-1, smg_shoot_sound, 0);
     }
-    else if (gun_type == "Assault Rifle") {
+    else if (gun_type == "ASSAULT RIFLE") {
         Mix_PlayChannel(-1, ar_shoot_sound, 0);
     }
-    else if (gun_type == "Sniper Rifle") {
+    else if (gun_type == "SNIPER RIFLE") {
         Mix_PlayChannel(-1, sniper_shoot_sound, 0);
     }
-    else if (gun_type == "Shotgun") {
+    else if (gun_type == "SHOTGUN") {
         Mix_PlayChannel(-1, shotgun_shoot_sound, 0);
     }
     else {
