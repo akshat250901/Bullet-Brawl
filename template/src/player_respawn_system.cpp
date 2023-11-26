@@ -42,8 +42,12 @@ void PlayerRespawnSystem::step()
 
                             while (registry.texts.entities.size() > 0)
 	    	                    registry.remove_all_components_of(registry.texts.entities.back());
-
-                            game_state_system->set_winner(1);
+                            if (player_i.color == glm::vec3{ 1.f, 0.f, 0.f }) {
+                                game_state_system->set_winner(2);
+                            }
+                            else {
+                                game_state_system->set_winner(1);
+                            }
                         }
                         break;
                     }
