@@ -41,7 +41,7 @@ struct Player
 	// Jump force
 	float jump_force = 430.0f;
 	// Running force
-	float running_force = 400.f;
+	float running_force = 850.f;
 	// Running speed
 	float speed = 200.f;
 	// Knockback resistance
