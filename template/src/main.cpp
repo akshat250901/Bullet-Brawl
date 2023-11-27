@@ -65,6 +65,7 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
+		printf("TIME PER LOOP: %f\n", elapsed_ms);
 		if (game_state_system.get_current_state() == GameStateSystem::GameState::Winner) {
 			createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 			game_state_system.set_winner(-1);

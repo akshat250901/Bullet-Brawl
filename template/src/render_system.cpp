@@ -357,7 +357,6 @@ void RenderSystem::drawText(int viewportWidth, int viewportHeight) {
     // End text drawing (restores OpenGL state)
 	gltDeleteText(text);
     gltEndDraw();
-	gltTerminate();
 
 	// Restore depth test state if other parts of your rendering use it
     //glEnable(GL_DEPTH_TEST);

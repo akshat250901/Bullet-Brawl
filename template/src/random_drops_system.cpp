@@ -106,7 +106,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     sniperRifle.fireRateMs = 650.0f;
     
     sniperRifle.knockback = 2500.0f;
-    sniperRifle.bulletVelocity = 1800.0f;
+    sniperRifle.bulletVelocity = 1500.0f;
     sniperRifle.distanceStrengthModifier = 1.5f;
     sniperRifle.hasNormalDropOff = false;
 
@@ -119,7 +119,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     sniperRifle.magazineAmmo = 5;
     sniperRifle.reserveAmmo = sniperRifle.magazineSize;
 
-    sniperRifle.gunSize = {120,30};
+    sniperRifle.gunSize = {100,30};
 
     // Sniper rifle
     Gun shotgun;
@@ -154,7 +154,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     shotgun.magazineAmmo = 6;
     shotgun.reserveAmmo = shotgun.magazineSize;
 
-    shotgun.gunSize = {90,30};
+    shotgun.gunSize = {80,30};
 
     guns.push_back(submachineGun);
     guns.push_back(assaultRifle);
