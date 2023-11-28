@@ -64,7 +64,7 @@ void MovementSystem::step(float elapsed_ms)
         float step_seconds = elapsed_ms / 1000.f;
 
         if (rightKey && (motion_i.velocity.x <= player_i.speed)) {
-				motion_i.velocity.x += player_i.running_force * step_seconds;
+			motion_i.velocity.x += player_i.running_force * step_seconds;
 		}
 
         if (leftKey && (motion_i.velocity.x >= -player_i.speed)) {

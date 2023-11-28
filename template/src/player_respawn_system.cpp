@@ -22,6 +22,8 @@ void PlayerRespawnSystem::step()
         Motion& player_motion = registry.motions.get(entity_i);
         PlayerStatModifier& player_stat_modifier = registry.playerStatModifiers.get(entity_i);
 
+        Invincibility& invincibility = registry.invincibility.get(entity_i);
+
         // Check if players are out of window
         if (player_motion.position.y > window_height_px + abs(player_motion.scale.y / 2) +  KILL_LIMIT) {
             if (game_state_system->get_current_state() == 2) {
@@ -38,8 +40,14 @@ void PlayerRespawnSystem::step()
                                 registry.deathTimers.emplace(entity_i);
                             }
 
-                            game_state_system->set_winner(1);
-
+                            while (registry.texts.entities.size() > 0)
+	    	                    registry.remove_all_components_of(registry.texts.entities.back());
+                            if (player_i.color == glm::vec3{ 1.f, 0.f, 0.f }) {
+                                game_state_system->set_winner(2);
+                            }
+                            else {
+                                game_state_system->set_winner(1);
+                            }
                         }
                         break;
                     }
@@ -73,8 +81,24 @@ void PlayerRespawnSystem::step()
                         player_motion.position = vec2(xCoord, Y_HEIGHT_RESPAWN);
                         player_motion.velocity = vec2(0, 0);
 
+                        invincibility.has_TIMER = true;
+                        invincibility.timer_ms = invincibility.max_time_ms;
+                        invincibility.player_original_color = player_i.color;
+                        player_i.color = invincibility.invincibility_color;
+
                         CreateGunUtil::givePlayerStartingPistol(renderer, entity_i, true);
                     }
+            }
+            else if (game_state_system->get_current_state() == 3) {
+                if (i == 0) {
+                    player_motion.position = vec2(300, 200);
+                    player_motion.velocity = vec2(0, 0);
+                }
+                if (i == 1) {
+                    player_motion.position = vec2(700, 200);
+                    player_motion.velocity = vec2(0, 0);
+                }
+                
             }
 
             // Set timer to 0 for all power ups to stats are reset

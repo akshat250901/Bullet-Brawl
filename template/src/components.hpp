@@ -41,7 +41,7 @@ struct Player
 	// Jump force
 	float jump_force = 430.0f;
 	// Running force
-	float running_force = 400.f;
+	float running_force = 850.f;
 	// Running speed
 	float speed = 200.f;
 	// Knockback resistance
@@ -72,6 +72,16 @@ struct Controller
 	bool abilityKey = false;
 
 	float upKey_delay_timer_ms = 300.0f;
+};
+
+// Player invincibility component
+struct Invincibility 
+{
+	bool has_TIMER = false;
+	float timer_ms = 0.0f;
+	float max_time_ms = 4000.0f;
+	vec3 player_original_color;
+	vec3 invincibility_color = vec3(0.f, 0.f, 0.f);
 };
 
 // Player stat modifier struct for use in power ups and gun pick ups
@@ -105,7 +115,7 @@ struct PowerUp
 // Struct for gun and default values are the starting pistol
 struct Gun 
 {
-	std::string name = "Pistol";
+	std::string name = "PISTOL";
 
 	Entity gunOwner;
 
@@ -226,6 +236,26 @@ struct Motion {
 	float angle = 0.f;
 	vec2 velocity = { 0.f, 0.f };
 	vec2 scale = { 10.f, 10.f };
+};
+
+// Component to store text rendering data
+
+struct Text {
+	std::string string = "";
+	vec2 position = { 0.f, 0.f };
+	vec3 color = { 0.f, 0.f, 0.f };
+	float scale = 1.0f;
+	float opacity = 1.0f;
+
+	// 0 is LEFT OR TOP
+	// 1 is CENTER
+	// 2 is RIGHT OR BOTTOM
+
+	int horizontalAlignment = 1;
+	int verticalAlignment = 1;
+
+	Entity owner;
+	std::string tag;
 };
 
 
@@ -371,7 +401,8 @@ enum class TEXTURE_ASSET_ID {
 	JUNGLEMAP = WEAPON_BOX + 1,
 	SPACEMAP = JUNGLEMAP + 1,
 	TEMPLEMAP = SPACEMAP + 1,
-	SPEEDBOOST = TEMPLEMAP + 1,
+	TUTORIALMAP = TEMPLEMAP + 1,
+	SPEEDBOOST = TUTORIALMAP + 1,
 	SUPERJUMP = SPEEDBOOST + 1,
 	TRIPLEJUMP = SUPERJUMP + 1,
 	SMG_PICKUP = TRIPLEJUMP + 1,

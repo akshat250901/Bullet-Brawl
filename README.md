@@ -99,6 +99,18 @@ Seraj:
 - Added stock count for player lives
   - world_system.cpp#L118[WorldSystem::step]
 
+Akshat:
+- Implemented a new rocket System
+  - [rocket_system.cpp]
+  - [rocket_system.hpp]
+- Created a rocket for the players to shoot another player
+  - [world_init::createRocket()]
+- Implemented complex prescribed motion specifically Bezier S motion for the rocket’s initial motion
+  - [rocket_system:: updateBezierMotion()]
+  - [rocket_system::interpolate()]
+- Implemented path finding for rocket so that it moves towards the other player and tries to hit it
+  - [rocket_system::updatePathfinding()]
+
 Ishraq:
 - Added the level selection screen by adding another layer to MainMenuSystem
 - Updated menu selection to allow mouse clicks to switch to game modes and switch between main menu and level selection

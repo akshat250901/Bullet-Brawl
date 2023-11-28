@@ -59,7 +59,7 @@ int main()
 	sound_system.init_sounds();
 	render_system.init(window);
 	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
-	
+	random_drops_system.init(&game_state_system);
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -72,6 +72,7 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
+		printf("TIME PER LOOP: %f\n", elapsed_ms);
 		if (game_state_system.get_current_state() == GameStateSystem::GameState::Winner) {
 			createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 			game_state_system.set_winner(-1);
@@ -86,7 +87,7 @@ int main()
 			}
 		} else if (game_state_system.get_current_state() == 2 || game_state_system.get_current_state() == 3) {
 			if (game_state_system.is_state_changed) {
-				world_system.init(&render_system, &game_state_system, window, &sound_system);
+				world_system.init(&render_system, &game_state_system, window, &sound_system, &random_drops_system);
 				game_state_system.is_state_changed = false;
 			}
 			if (!world_system.paused) {

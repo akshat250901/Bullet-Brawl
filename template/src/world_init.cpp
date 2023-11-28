@@ -30,6 +30,7 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 	registry.players.emplace(entity);
 
 	registry.playerStatModifiers.emplace(entity);
+	registry.invincibility.emplace(entity);
 
 	registry.controllers.emplace(entity);
 	
@@ -134,16 +135,16 @@ Entity createPopupIndicator(RenderSystem* renderer, std::string popup_type, Enti
 
 	popup.type = popup_type;
 
-	if (popup_type == "Submachine Gun") {
+	if (popup_type == "SUBMACHINE GUN") {
 		texture_id = TEXTURE_ASSET_ID::SMG_PICKUP;
 	}
-	else if (popup_type == "Assault Rifle") {
+	else if (popup_type == "ASSAULT RIFLE") {
 		texture_id = TEXTURE_ASSET_ID::AR_PICKUP;
 	}
-	else if (popup_type == "Sniper Rifle") {
+	else if (popup_type == "SNIPER RIFLE") {
 		texture_id = TEXTURE_ASSET_ID::SNIPER_PICKUP;
 	}
-	else if (popup_type == "Shotgun") {
+	else if (popup_type == "SHOTGUN") {
 		texture_id = TEXTURE_ASSET_ID::SHOTGUN_PICKUP;
 	}
 	else if (popup_type == "Triple Jump") {
@@ -375,28 +376,28 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun_name)
 	motion.scale = scale;
 	motion.velocity = { 0.f, 0.f };
 
-	if (gun_name == "Submachine Gun") {
+	if (gun_name == "SUBMACHINE GUN") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SMG,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Assault Rifle") {
+	else if (gun_name == "ASSAULT RIFLE") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::AR,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Sniper Rifle") {
+	else if (gun_name == "SNIPER RIFLE") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SNIPER,
 				EFFECT_ASSET_ID::TEXTURED,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
-	else if (gun_name == "Shotgun") {
+	else if (gun_name == "SHOTGUN") {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::SHOTGUN,
@@ -467,7 +468,7 @@ Entity createBackgroundIsland(RenderSystem* renderer, GameStateSystem* game_stat
 	} else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 		entity,
-		{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+		{ TEXTURE_ASSET_ID::TUTORIALMAP,
 			EFFECT_ASSET_ID::BACKGROUND,
 			GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -584,7 +585,7 @@ Entity createBackgroundJungle(RenderSystem* renderer, GameStateSystem* game_stat
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -618,7 +619,7 @@ Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
@@ -652,12 +653,69 @@ Entity createBackgroundTemple(RenderSystem* renderer, GameStateSystem* game_stat
 	else if (game_state_system->get_current_state() == 3) {
 		registry.renderRequests.insert(
 			entity,
-			{ TEXTURE_ASSET_ID::TUTORIALPLATFORM,
+			{ TEXTURE_ASSET_ID::TUTORIALMAP,
 				EFFECT_ASSET_ID::BACKGROUND,
 				GEOMETRY_BUFFER_ID::SPRITE });
 	}
 
 	return entity;
+}
+
+Entity createBackgroundTutorial(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size)
+{
+	// Reserve en entity
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TUTORIALMAP,
+			EFFECT_ASSET_ID::BACKGROUND,
+			GEOMETRY_BUFFER_ID::SPRITE });
+	
+	return entity;
+}
+
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag) {
+
+	// Reserve en entity
+	auto entity = Entity();
+
+	Text& textObj = registry.texts.emplace(entity);
+	textObj.string = text;
+	textObj.position = position;
+	textObj.color = color;
+	textObj.scale = scale;
+	textObj.opacity = opacity;
+	textObj.horizontalAlignment = horizontalAlignment;
+	textObj.verticalAlignment = verticalAlignment;
+	textObj.owner = owner;
+	textObj.tag = tag;
+
+	// Put into motion but do nothing
+	registry.motions.emplace(entity);
+
+	return entity;
+}
+
+void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
+{
+	createBackgroundTutorial(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 314 }, { 792, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 467 }, { 230, 10 }); // Middle left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 940, 467 }, { 230, 10 }); // Middle right 
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 633 }, { 792, 10 }); // Bottom
 }
 
 void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
@@ -702,10 +760,10 @@ void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, 
 void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	createBackgroundTemple(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 270 }, { 360, 1 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 385 }, { 900, 1 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 305 }, { 360, 1 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 400 }, { 900, 1 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 505 }, { 380, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 520 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
 }
 
@@ -781,8 +839,7 @@ void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_syste
 			{ TEXTURE_ASSET_ID::RED_PLAYER_WON,
 			  EFFECT_ASSET_ID::BACKGROUND,
 			  GEOMETRY_BUFFER_ID::SPRITE });
-	}
-	else if (game_state_system->get_winner() == 2) {
+	} else if (game_state_system->get_winner() == 2) {
 		registry.renderRequests.insert(
 			entity,
 			{ TEXTURE_ASSET_ID::GREEN_PLAYER_WON,

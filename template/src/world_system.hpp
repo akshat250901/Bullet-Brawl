@@ -11,6 +11,7 @@
 #include "render_system.hpp"
 #include "game_state_system.hpp"
 #include "sound_system.hpp"
+#include "random_drops_system.hpp"
 
 // Container for all our entities and game logic. Individual rendering / update is
 // deferred to the relative update() methods
@@ -21,7 +22,7 @@ public:
 	~WorldSystem();
 	
 	// starts the game
-	GLFWwindow* init(RenderSystem* renderer, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system);
+	GLFWwindow* init(RenderSystem* renderer, GameStateSystem* game_state_system, GLFWwindow* window, SoundSystem* sound_system, RandomDropsSystem* random_drops_system);
 
 	// Steps the game ahead by ms milliseconds
 	bool step(float elapsed_ms);
@@ -41,6 +42,7 @@ private:
 	GLFWwindow* window;
 	SoundSystem* sound_system;
 	GameStateSystem* game_state_system;
+	RandomDropsSystem* random_drops_system;
 
 	// restart level
 	void restart_game();
