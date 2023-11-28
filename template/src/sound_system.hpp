@@ -28,6 +28,7 @@ public:
 	Mix_Chunk* hit_sound;
 	// player sounds
 	Mix_Chunk* player_step_sound;
+	Mix_Chunk* player_fall_sound;
 
 	// misc sounds
 	Mix_Chunk* powerup_pickup_sound;
@@ -42,5 +43,7 @@ public:
 
 	// misc sounds
 	void play_walk_sound();
+
+	void play_fall_sound();
 };
 

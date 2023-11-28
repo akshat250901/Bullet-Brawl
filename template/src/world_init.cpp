@@ -687,7 +687,7 @@ Entity createBackgroundTutorial(RenderSystem* renderer, GameStateSystem* game_st
 	return entity;
 }
 
-Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag) {
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag, float timer) {
 
 	// Reserve en entity
 	auto entity = Entity();
@@ -702,7 +702,7 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 	textObj.verticalAlignment = verticalAlignment;
 	textObj.owner = owner;
 	textObj.tag = tag;
-
+	textObj.timer_ms = timer;
 	// Put into motion but do nothing
 	registry.motions.emplace(entity);
 

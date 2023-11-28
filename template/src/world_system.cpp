@@ -58,7 +58,6 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 
 	// Set all states to default
 	restart_game();
-
 	return window;
 }
 
@@ -220,6 +219,21 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 			screen.screen_darken_factor = 0;
 			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
 			return true;
+		}
+	}
+
+	for (Entity entity : registry.texts.entities) {
+		// progress timer
+		Text& text = registry.texts.get(entity);
+		if (text.tag == "PLAYER_FALL")
+		{
+			text.timer_ms -= elapsed_ms_since_last_update;
+			text.opacity -= 0.01f;
+
+			// restart the game once the death timer expired
+			if (text.timer_ms < 0) {
+				registry.texts.remove(entity);
+			}
 		}
 	}
 	// reduce window brightness if any of the present salmons is dying

@@ -6,8 +6,8 @@
 const float KILL_LIMIT = 800.0f;
 const float Y_HEIGHT_RESPAWN = -600.0f;
 
-PlayerRespawnSystem::PlayerRespawnSystem(RenderSystem* renderSystem, GameStateSystem* gameStateSystem) 
-    : renderer(renderSystem), game_state_system(gameStateSystem) {
+PlayerRespawnSystem::PlayerRespawnSystem(RenderSystem* renderSystem, GameStateSystem* gameStateSystem, SoundSystem* sound_system)
+    : renderer(renderSystem), game_state_system(gameStateSystem), sound_system(sound_system) {
     rng = std::default_random_engine(std::random_device()());
 }
 
@@ -35,6 +35,14 @@ void PlayerRespawnSystem::step()
                         registry.renderRequests.remove(health_container.entities[j]);
                         registry.lives.remove(health_container.entities[j]);
                         player_i.lives = player_i.lives - 1;
+                        // Death animations
+                        sound_system->play_fall_sound();
+                        std::string player_text = player_i.color[1] == 1.f ? "GREEN" : "RED";
+                        float textHorizontalOffset = player_i.color[1] == 1.f ? 150 : 1000;
+                        float textVerticalOffset = 50.0f;
+                        glm::vec3 result = player_i.color * vec3(255.0f, 255.0f, 255.0f);
+                        createText("-1 to " + player_text, {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40}, result, 2.5f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 10000);
+                        
                         if (player_i.lives == 0) {
                             if (!registry.deathTimers.has(entity_i)) {
                                 registry.deathTimers.emplace(entity_i);

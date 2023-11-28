@@ -256,6 +256,7 @@ struct Text {
 
 	Entity owner;
 	std::string tag;
+	float timer_ms;
 };
 
 

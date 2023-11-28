@@ -37,7 +37,7 @@ int main()
 	SoundSystem sound_system;
 	GunSystem gun_system(&render_system, &sound_system);
 	OutOfBoundsArrowSystem out_of_bounds_arrow_system;
-	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system);
+	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system, &sound_system);
 
 	// Initializing window
 	GLFWwindow* window = game_state_system.create_window();
