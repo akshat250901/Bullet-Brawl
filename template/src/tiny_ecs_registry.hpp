@@ -44,6 +44,7 @@ public:
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
+	ComponentContainer<TextDeathLog> deathLog;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -79,6 +80,7 @@ public:
 		registry_list.push_back(&outOfBoundsArrows);
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
+		registry_list.push_back(&deathLog);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);

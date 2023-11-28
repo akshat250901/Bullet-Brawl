@@ -330,6 +330,13 @@ struct TexturedVertex
 	vec2 texcoord;
 };
 
+
+// Player death log
+struct TextDeathLog
+{
+	
+};
+
 // Mesh datastructure for storing vertex and index buffers
 struct Mesh
 {

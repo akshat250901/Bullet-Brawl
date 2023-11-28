@@ -38,18 +38,23 @@ void PlayerRespawnSystem::step()
                         // Death animations
                         sound_system->play_fall_sound();
                         std::string player_text = player_i.color[1] == 1.f ? "GREEN" : "RED";
-                        float textHorizontalOffset = player_i.color[1] == 1.f ? 150 : 1000;
+                        float textHorizontalOffset = 1000;
                         float textVerticalOffset = 50.0f;
                         glm::vec3 result = player_i.color * vec3(255.0f, 255.0f, 255.0f);
-                        createText("-1 to " + player_text, {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40}, result, 2.5f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 10000);
-                        
+                        Entity text = createText("-1 to " + player_text, {textHorizontalOffset, textVerticalOffset }, result, 2.5f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 0.003f);
+                        Text& death_log_text = registry.texts.get(text);
+                        if (registry.deathLog.size() > 1) {
+                            death_log_text.position.y = textVerticalOffset * registry.deathLog.size();
+                        }
                         if (player_i.lives == 0) {
                             if (!registry.deathTimers.has(entity_i)) {
                                 registry.deathTimers.emplace(entity_i);
                             }
 
                             while (registry.texts.entities.size() > 0)
-	    	                    registry.remove_all_components_of(registry.texts.entities.back());
+                            {
+                                registry.remove_all_components_of(registry.texts.entities.back());
+                            }
                             if (player_i.color == glm::vec3{ 1.f, 0.f, 0.f }) {
                                 game_state_system->set_winner(2);
                             }

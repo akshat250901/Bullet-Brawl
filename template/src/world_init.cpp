@@ -49,11 +49,11 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 			health_motion.velocity = { 0.f, 0.f };
 			health_motion.position = { start_x + i * 60.f, 50.f };
 			health_motion.scale = { 50.f, 50.f };
-			registry.renderRequests.insert(
+			/*registry.renderRequests.insert(
 				health_entity,
 				{ health,
 				EFFECT_ASSET_ID::TEXTURED,
-				GEOMETRY_BUFFER_ID::SPRITE });
+				GEOMETRY_BUFFER_ID::SPRITE });*/
 		}
 	}
 
@@ -705,6 +705,10 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 	textObj.timer_ms = timer;
 	// Put into motion but do nothing
 	registry.motions.emplace(entity);
+	if (timer != -1) {
+		// Text for players death log
+		registry.deathLog.emplace(entity);
+	}
 
 	return entity;
 }
