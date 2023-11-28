@@ -324,11 +324,16 @@ void RenderSystem::drawAnimated(Entity entity, EFFECT_ASSET_ID asset_id) {
 
 void RenderSystem::drawText(int viewportWidth, int viewportHeight) {
 
-	 // Initialize glText
-    if (!gltInit()) {
-        fprintf(stderr, "Failed to initialize glText\n");
-		glfwTerminate();
-    }
+	//printf("INIT TEXT RENDER VALUE %d", initTextRender);
+
+	// Initialize glText
+	if (!initTextRender) {
+		if (!gltInit()) {
+			fprintf(stderr, "Failed to initialize glText\n");
+			glfwTerminate();
+    	}
+		initTextRender = true;
+	}
 
     // Create a text object and set its text
 	float widthScale = (float) viewportWidth / (float) window_width_px;
@@ -353,18 +358,15 @@ void RenderSystem::drawText(int viewportWidth, int viewportHeight) {
 		gltColor(text_i.color.x, text_i.color.y, text_i.color.z, text_i.opacity);
     	gltDrawText2DAligned(text, text_i.position.x * widthScale, text_i.position.y * heightScale, text_i.scale * scalingFactor, text_i.horizontalAlignment, text_i.verticalAlignment);
 	}
-
     // End text drawing (restores OpenGL state)
-	gltDeleteText(text);
     gltEndDraw();
+	gltDeleteText(text);
 
 	// Restore depth test state if other parts of your rendering use it
     //glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	glBindVertexArray(vao_rebind);
 
     // Check for errors
     gl_has_errors();
