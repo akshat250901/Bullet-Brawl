@@ -286,18 +286,18 @@ void WorldSystem::restart_game() {
 
 	float textHorizontalOffset = 400.0f;
 	float textVerticalOffset = 40.0f;
-	
+	float horizontalAlignment = 0;
+
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
 	createOutOfBoundsArrow( renderer, player2, false);
 	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
 
-	//Create text for ammo counter and weapon
-	createText("RED PLAYER", {textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {255.0f, 0.0f, 0.0f}, 2.5f, 1.0f, 0, 2, player2, "PLAYER_ID");
-	createText("PISTOL", {textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "CURRENT_GUN");
-	createText("20/20", {textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "AMMO_COUNT");
+	
 
 	if (game_state_system->get_current_state() == 3) {
 		player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
+		textHorizontalOffset = 600;
+		horizontalAlignment = 1;
 	} else {
 		player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 		createOutOfBoundsArrow(renderer, player, true);
@@ -308,6 +308,11 @@ void WorldSystem::restart_game() {
 		createText("PISTOL", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
 		createText("20/20", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
 	}
+
+	//Create text for ammo counter and weapon
+	createText("RED PLAYER", { textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 255.0f, 0.0f, 0.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "PLAYER_ID");
+	createText("PISTOL", { textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "CURRENT_GUN");
+	createText("20/20", { textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "AMMO_COUNT");
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
