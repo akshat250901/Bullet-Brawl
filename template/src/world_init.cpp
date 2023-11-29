@@ -711,6 +711,37 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
+	// render text
+	std::string movement_text = "Use WASD to control the character, and G to shoot. Use arrow\nkeys and ; (semicolon) for the respective actions as the second player. \nEach player has 1 extra jump in the air by default!";
+	std::string gun_text = "Guns will come inside of these mystery boxes.\nEach have their own unique traits and\naffect the player's movement speed differenty.";
+	std::string powerup_text = "Powerups can be picked up through these.\nThey each last 5 seconds, and give the\nplayer reduced knockback!";
+	
+
+	std::string triple_text = "TRIPLE\n  JUMP";
+	std::string speed_text = "SUPER\nSPEED";
+	std::string jump_text = "SUPER\n JUMP";
+
+	std::string smg_text = "SUBMACHINE\n        GUN";
+	std::string ar_text = "ASSAULT\n  RIFLE";
+	std::string sniper_text = "SNIPER\n RIFLE";
+	std::string shotgun_text = "SHOTGUN";
+
+	auto text_owner = Entity();
+	
+	// pickup text
+	createText(triple_text, { 200, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(speed_text, { 300, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(jump_text, { 400, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+
+	createText(smg_text, { 700, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(ar_text, { 800, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(sniper_text, { 900, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(shotgun_text, { 1000, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+
+	createText(movement_text, { 337, 100 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(powerup_text, { 220, 720 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(gun_text, { 1150, 720 }, { 1, 1, 1 }, 2, 0.7f, 2, 1, text_owner, "TUTORIAL_TEXT");
+
 	createBackgroundTutorial(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 314 }, { 792, 10 }); // Top
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 467 }, { 230, 10 }); // Middle left
