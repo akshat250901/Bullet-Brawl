@@ -847,6 +847,7 @@ Entity createRocket(RenderSystem* renderer, Entity rocketOwner, Entity targetPla
 		  GEOMETRY_BUFFER_ID::SPRITE });
 
 	return entity;
+}
 
 void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_system, const vec2& position, const vec2& size) {
 	// Reserve an entity
