@@ -84,4 +84,5 @@ private:
     void handle_player_bullet_collisions();
 	void handle_player_mystery_box_collisions();
 
+	void create_info_popup(std::string);
 };
