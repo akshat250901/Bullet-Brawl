@@ -43,7 +43,6 @@ public:
 	ComponentContainer<MuzzleFlash> muzzleFlashes;
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
 	ComponentContainer<BezierMotion> bezierMotion;
-	ComponentContainer<SimplePathfinding> simplePathFinding;
 	ComponentContainer<Rocket> rocket;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
@@ -82,7 +81,6 @@ public:
 		registry_list.push_back(&outOfBoundsArrows);
 
 		registry_list.push_back(&bezierMotion);
-		registry_list.push_back(&simplePathFinding);
 		registry_list.push_back(&rocket);
 
 		registry_list.push_back(&invincibility);

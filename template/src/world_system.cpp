@@ -75,9 +75,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// Remove entities that leave the screen
 	// Iterate backwards to be able to remove without unterfering with the next object to visit
 	// (the containers exchange the last element with the current)
+	float sideBoundaryOffset = 200;
+
 	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
 		Motion& motion = motion_container.components[i];
-		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
+		if (motion.position.x + abs(motion.scale.x) < -sideBoundaryOffset || motion.position.x + abs(motion.scale.x) > window_width_px + sideBoundaryOffset ||
 			motion.position.y + abs(motion.scale.y) > window_height_px) {
 			if (!registry.players.has(motion_container.entities[i]) && (registry.bullets.has(motion_container.entities[i]) || registry.nonInteractables.has(motion_container.entities[i]))) {
 				registry.remove_all_components_of(motion_container.entities[i]);
@@ -709,11 +711,6 @@ void WorldSystem::on_key(int key, int, int action, int mod) {
 				debugging.in_debug_mode = false;
 			else
 				debugging.in_debug_mode = true;
-		}
-
-		if (action == GLFW_RELEASE && key == GLFW_KEY_P) {
-			Motion& player_motion = registry.motions.get(player);
-			createRocket(renderer, player, player2);
 		}
 
 		// Control the current speed with `<` `>`

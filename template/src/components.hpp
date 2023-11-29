@@ -344,14 +344,8 @@ struct BezierMotion {
 	float elapsedTime;
 };
 
-struct SimplePathfinding {
-	Entity targetEntity;
-	float speed;
-	bool active = false;
-};
-
 struct Rocket {
-	float timer = 6000.0f;
+
 };
 
 /**

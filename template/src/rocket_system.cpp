@@ -4,59 +4,49 @@
 void RocketSystem::step(float elapsed_ms) {
     for (Entity entity : registry.rocket.entities) {
         Rocket& rocket = registry.rocket.get(entity);
-        rocket.timer = rocket.timer - elapsed_ms;
-        if (rocket.timer <= 0) {
-            registry.rocket.remove(entity);
-            registry.motions.remove(entity);
-            registry.bezierMotion.remove(entity);
-            registry.simplePathFinding.remove(entity);
-            registry.meshPtrs.remove(entity);
+        if (registry.bezierMotion.has(entity)) {
+            updateBezierMotion(entity, elapsed_ms);
         }
-        else {
-            if (registry.bezierMotion.has(entity)) {
-                updateBezierMotion(entity, elapsed_ms);
-            }
-            else if (registry.simplePathFinding.has(entity)) {
-                updatePathfinding(entity, elapsed_ms);
-            }
-        }
-
     }
 }
 
 void RocketSystem::updateBezierMotion(Entity& entity, float deltaTime_ms) {
     BezierMotion& bezier = registry.bezierMotion.get(entity);
     Motion& motion = registry.motions.get(entity);
+    float height = 80.0f;
 
     bezier.elapsedTime += deltaTime_ms;
     float t = bezier.elapsedTime / bezier.duration;
 
+    if (motion.position.x - abs(motion.scale.x / 2) > window_width_px) {
+
+        motion.position.x = motion.scale.x * -1;
+
+        bezier.elapsedTime = 0;
+
+        bezier.controlPoints = {
+            motion.position,
+            { motion.position.x + 70, motion.position.y - height },
+            { motion.position.x + 140, motion.position.y + height },
+            { motion.position.x + 230, motion.position.y}
+	    };
+
+        return;
+    }
+
     if (t < 1.0f) {
         motion.position = interpolate(bezier.controlPoints, t);
-    }
-    else {
-        // Switch to pathfinding
-        SimplePathfinding& pathfinding = registry.simplePathFinding.get(entity);
-        pathfinding.active = true;
-        registry.bezierMotion.remove(entity);
-        updatePathfinding(entity, deltaTime_ms);
-    }
-}
+    } else {
+        bezier.elapsedTime = 0;
 
-void RocketSystem::updatePathfinding(Entity& entity, float deltaTime_ms) {
-    SimplePathfinding& pathfinding = registry.simplePathFinding.get(entity);
-    Motion& motion = registry.motions.get(entity);
-
-    if (pathfinding.active) {
-        if (registry.motions.has(pathfinding.targetEntity)) {
-            Motion& targetMotion = registry.motions.get(pathfinding.targetEntity);
-            vec2 direction = normalize(targetMotion.position - motion.position);
-            motion.velocity = direction * pathfinding.speed;
-            motion.position += motion.velocity * (deltaTime_ms / 1000.0f); // Convert ms to seconds
-        }
+	    bezier.controlPoints = {
+            motion.position,
+            { motion.position.x + 70, motion.position.y - height },
+            { motion.position.x + 140, motion.position.y + height },
+            { motion.position.x + 230, motion.position.y}
+	    };
     }
 }
-
 
 vec2 RocketSystem::interpolate(const std::vector<vec2>& points, float t) {
 

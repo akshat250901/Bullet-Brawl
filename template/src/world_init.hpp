@@ -31,7 +31,7 @@ Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun);
 // create muzzle flash
 Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion, bool facing_right);
 // Create Rocket
-Entity createRocket(RenderSystem* renderer, Entity rocketOwner, Entity targetPlayer);
+Entity createRocket(RenderSystem* renderer, vec2 position);
 // render space map
 Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
 // create a text element
