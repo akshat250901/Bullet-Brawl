@@ -41,7 +41,7 @@ void PlayerRespawnSystem::step()
                         float textHorizontalOffset = 1000;
                         float textVerticalOffset = 50.0f;
                         glm::vec3 result = player_i.color * vec3(255.0f, 255.0f, 255.0f);
-                        Entity text = createText("-1 to " + player_text, {textHorizontalOffset, textVerticalOffset }, result, 2.5f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 0.003f);
+                        Entity text = createText("-1 to " + player_text, {textHorizontalOffset, textVerticalOffset }, result, 2.5f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 0.001f);
                         Text& death_log_text = registry.texts.get(text);
                         if (registry.deathLog.size() > 1) {
                             death_log_text.position.y = textVerticalOffset * registry.deathLog.size();

@@ -231,8 +231,8 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 
 			// restart the game once the death timer expired
 			if (text.opacity <= 0) {
-				registry.texts.remove(entity);
 				registry.deathLog.remove(entity);
+				registry.texts.remove(entity);
 			}
 		}
 		if (text.tag == "HEALTH_COUNT") {
