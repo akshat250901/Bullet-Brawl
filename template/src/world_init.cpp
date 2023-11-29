@@ -712,7 +712,7 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	// render text
-	std::string movement_text = "Use WASD to control the character, and G to shoot. Use arrow\nkeys and ; (semicolon) for the respective actions as the second player. \nEach player has 1 extra jump in the air by default!";
+	std::string movement_text = "Use WASD to control the character, and G to shoot. Use arrow\nkeys and ; (semicolon) for the respective actions as the second player. \nEach player has 1 extra jump in the air by default!\n\nThe objective is to knock the other player off of the platform by shooting them!";
 	std::string gun_text = "Guns will come inside of these mystery boxes.\nEach have their own unique traits and\naffect the player's movement speed differenty.";
 	std::string powerup_text = "Powerups can be picked up through these.\nThey each last 5 seconds, and give the\nplayer reduced knockback!";
 	
