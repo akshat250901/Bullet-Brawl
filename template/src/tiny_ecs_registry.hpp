@@ -42,6 +42,8 @@ public:
 	ComponentContainer<NonInteractable> nonInteractables;
 	ComponentContainer<MuzzleFlash> muzzleFlashes;
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
+	ComponentContainer<BezierMotion> bezierMotion;
+	ComponentContainer<Rocket> rocket;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
 	ComponentContainer<TextDeathLog> deathLog;
@@ -78,9 +80,14 @@ public:
 		registry_list.push_back(&popupIndicator);
 		registry_list.push_back(&muzzleFlashes);
 		registry_list.push_back(&outOfBoundsArrows);
+
+		registry_list.push_back(&bezierMotion);
+		registry_list.push_back(&rocket);
+
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
 		registry_list.push_back(&deathLog);
+
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
@@ -90,6 +97,7 @@ public:
 
 		// registry_list.push_back(&buttons);
 		registry_list.push_back(&interpolation);
+
 	}
 
 	void clear_all_components() {

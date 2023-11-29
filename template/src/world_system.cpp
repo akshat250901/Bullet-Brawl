@@ -74,9 +74,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// Remove entities that leave the screen
 	// Iterate backwards to be able to remove without unterfering with the next object to visit
 	// (the containers exchange the last element with the current)
+	float sideBoundaryOffset = 200;
+
 	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
 		Motion& motion = motion_container.components[i];
-		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
+		if (motion.position.x + abs(motion.scale.x) < -sideBoundaryOffset || motion.position.x + abs(motion.scale.x) > window_width_px + sideBoundaryOffset ||
 			motion.position.y + abs(motion.scale.y) > window_height_px) {
 			if (!registry.players.has(motion_container.entities[i]) && (registry.bullets.has(motion_container.entities[i]) || registry.nonInteractables.has(motion_container.entities[i]))) {
 				registry.remove_all_components_of(motion_container.entities[i]);

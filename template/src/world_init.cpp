@@ -782,6 +782,7 @@ void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	createBackgroundSpace(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createRocket(renderer, {0, 80});
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 365, 265 }, { 300, 10 }); // Top left
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 940, 285 }, { 270, 10 }); // Top right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 635, 418 }, { 740, 10 }); // middle
@@ -800,6 +801,41 @@ void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 520 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
+}
+
+
+Entity createRocket(RenderSystem* renderer, vec2 position) {
+	auto entity = Entity();
+	registry.rocket.emplace(entity);
+	// Initialize mesh and motion components
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	Motion& motion = registry.motions.emplace(entity);
+	motion.scale = { 20, 40 };
+	motion.position = {-motion.scale.x, position.y};
+	motion.velocity = { 0.f, 0.f };
+
+	BezierMotion& bezierMotion = registry.bezierMotion.emplace(entity);
+	float height = 80.0f;
+	bezierMotion.controlPoints = {
+		motion.position,
+		{ motion.position.x + 70, motion.position.y - height },
+		{ motion.position.x + 140, motion.position.y + height },
+		{ motion.position.x + 230, motion.position.y}
+	};
+
+	bezierMotion.duration = 2000.0f;
+	bezierMotion.elapsedTime = 0.0f;
+	
+	// Rendering setup (adjust according to your game's rendering system)
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::ROCKET,
+		  EFFECT_ASSET_ID::TEXTURED,
+		  GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
 }
 
 void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_system, const vec2& position, const vec2& size) {

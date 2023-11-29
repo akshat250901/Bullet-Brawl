@@ -346,6 +346,16 @@ struct Mesh
 	std::vector<uint16_t> vertex_indices;
 };
 
+struct BezierMotion {
+	std::vector<vec2> controlPoints;
+	float duration;
+	float elapsedTime;
+};
+
+struct Rocket {
+
+};
+
 /**
  * The following enumerators represent global identifiers refering to graphic
  * assets. For example TEXTURE_ASSET_ID are the identifiers of each texture
@@ -373,7 +383,8 @@ struct Mesh
 enum class TEXTURE_ASSET_ID {
 	RED_HEALTH = 0,
 	GREEN_HEALTH = RED_HEALTH + 1,
-	PLAYER_SPRITESHEET = GREEN_HEALTH + 1,
+	ROCKET = GREEN_HEALTH + 1,
+	PLAYER_SPRITESHEET = ROCKET + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
 	BACKGROUND = POWERUP_SPRITESHEET + 1,
 	MIDDLEGROUND = BACKGROUND + 1,

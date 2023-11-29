@@ -72,7 +72,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     assaultRifle.fireRateMs = 250.0f;
     
     assaultRifle.knockback = 1300.0f;
-    assaultRifle.bulletVelocity = 1300.0f;
+    assaultRifle.bulletVelocity = 1200.0f;
     assaultRifle.distanceStrengthModifier = 0.2f;
     assaultRifle.hasNormalDropOff = true;
 
@@ -106,7 +106,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     sniperRifle.fireRateMs = 650.0f;
     
     sniperRifle.knockback = 2500.0f;
-    sniperRifle.bulletVelocity = 1500.0f;
+    sniperRifle.bulletVelocity = 1200.0f;
     sniperRifle.distanceStrengthModifier = 1.5f;
     sniperRifle.hasNormalDropOff = false;
 
