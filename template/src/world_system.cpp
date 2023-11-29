@@ -213,17 +213,25 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		if (timer.timer_ms < min_timer_ms) {
 			min_timer_ms = timer.timer_ms;
 		}
-
-		// restart the game once the death timer expired
+		
 		if (timer.timer_ms < 0) {
-			registry.deathTimers.remove(entity);
-			screen.screen_darken_factor = 0;
-			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
-			return true;
+			if (game_state_system->get_current_state() == 3) {
+				registry.remove_all_components_of(entity);
+				return false;
+			}
+			else {
+				// restart the game once the death timer expired
+				registry.deathTimers.remove(entity);
+				screen.screen_darken_factor = 0;
+				game_state_system->change_game_state(GameStateSystem::GameState::Winner);
+				return true;
+			}
 		}
 	}
-	// reduce window brightness if any of the present salmons is dying
-	screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+	if (game_state_system->get_current_state() != 3) {
+		// reduce window brightness if any of the present salmons is dying
+		screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+	}
 
 	return true;
 }
@@ -425,8 +433,14 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 				StatUtil::apply_stat_modifier(player, statModifier);
 			}
+
+			if (game_state_system->get_current_state() == 3) {
+				create_info_popup(statModifier.name);
+			}
+
 			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
+
 		}
 	}
 	// Remove all collisions from player-powerup
@@ -542,6 +556,10 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 				Entity newGunEntity = createGun(renderer, randomGun.gunSize, randomGun.name);
 				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
 				newGunComponent.gunOwner = entity;
+
+				if (game_state_system->get_current_state() == 3) {
+					create_info_popup(newGunComponent.name);
+				}
 			}
 			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
@@ -550,6 +568,63 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 	// Remove all collisions from player-mystery box
 	registry.playerMysteryBoxCollisions.clear();
 }
+
+void WorldSystem::create_info_popup(std::string pickup_name) {
+	// clear any existing text
+	for (Entity entity : registry.deathTimers.entities) {
+		registry.remove_all_components_of(entity);
+	}
+
+	auto placeholder_entity = Entity();
+
+
+	std::string text1;
+	std::string text2;
+	std::string text3;
+
+	if (pickup_name == "SUBMACHINE GUN") {
+		text1 = "A light close quarters gun with weak knockback.";
+		text2 = "However, it makes up for that deficiency with";
+		text3 = "its fast fire rate and large magazine size.";
+	}
+	else if (pickup_name == "ASSAULT RIFLE") {
+		text1 = "A heavier mid-range gun with medium knockback.";
+		text2 = "It only has 20 rounds in its magazine, but the bullets";
+		text3 = "travel faster and is effective at longer ranges.";
+	}
+	else if (pickup_name == "SNIPER RIFLE") {
+		text1 = "A long range rifle that packs very high knockback.";
+		text2 = "While it has a slow fire rate and very little ammo,";
+		text3 = "the further your target is, the harder it hits.";
+	}
+	else if (pickup_name == "SHOTGUN") {
+		text1 = "A powerful close quarters weapon, with extremely";
+		text2 = "high knockback. However, its range is very";
+		text3 = "limited and relys on being close to the target.";
+	}
+	else if (pickup_name == "Triple Jump") {
+		text1 = "Gives the user an extra jump while in the air.";
+	}
+	else if (pickup_name == "Speed Boost") {
+		text1 = "Boosts the player's movement speed.";
+	}
+	else if (pickup_name == "Super Jump") {
+		text1 = "Boosts the player's jump height.";
+	}
+	
+	// title
+	auto popup_text_title = createText(pickup_name, { 1100, 70 }, { 255.0f, 255.0f, 255.0f }, 3.f, 1.0f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc1 = createText(text1, { 1100, 100 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc2 = createText(text2, { 1100, 125 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc3 = createText(text3, { 1100, 150 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+
+	float text_duration = 5000.0f; // in milliseconds
+	registry.deathTimers.insert(popup_text_title, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc1, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc2, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc3, DeathTimer{ text_duration });
+}
+
 
 void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 {

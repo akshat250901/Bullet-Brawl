@@ -729,14 +729,14 @@ void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_syste
 	auto text_owner = Entity();
 	
 	// pickup text
-	createText(triple_text, { 200, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
-	createText(speed_text, { 300, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
-	createText(jump_text, { 400, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(triple_text, { 200, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(speed_text, { 300, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(jump_text, { 400, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
 
-	createText(smg_text, { 700, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
-	createText(ar_text, { 800, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
-	createText(sniper_text, { 900, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
-	createText(shotgun_text, { 1000, 565 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(smg_text, { 700, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(ar_text, { 800, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(sniper_text, { 900, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(shotgun_text, { 1000, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
 
 	createText(movement_text, { 337, 100 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
 	createText(powerup_text, { 220, 720 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
