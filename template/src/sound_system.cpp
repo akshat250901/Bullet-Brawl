@@ -22,7 +22,7 @@ void SoundSystem::step(float elapsed_ms)
 }
 
 void SoundSystem::init_sounds() {
-    printf("SOUNDS INITIALIZEED\n");
+    printf("SOUNDS INITIALIZED\n");
     pistol_shoot_sound = Mix_LoadWAV(audio_path("guns/pistol_shoot.wav").c_str());
     smg_shoot_sound = Mix_LoadWAV(audio_path("guns/smg_shoot.wav").c_str());
     ar_shoot_sound = Mix_LoadWAV(audio_path("guns/ar_shoot.wav").c_str());

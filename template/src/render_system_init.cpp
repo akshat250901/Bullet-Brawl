@@ -50,9 +50,8 @@ bool RenderSystem::init(GLFWwindow* window_arg)
 
 	// We are not really using VAO's but without at least one bound we will crash in
 	// some systems.
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	glGenVertexArrays(1, &vao_rebind);
+	glBindVertexArray(vao_rebind);
 	gl_has_errors();
 
 	initScreenTexture();
