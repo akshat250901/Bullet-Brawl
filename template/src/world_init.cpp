@@ -798,6 +798,56 @@ void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
 }
 
+
+Entity createRocket(RenderSystem* renderer, Entity rocketOwner, Entity targetPlayer) {
+	auto entity = Entity();
+	registry.rocket.emplace(entity);
+	// Initialize mesh and motion components
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	Motion& motion = registry.motions.emplace(entity);
+	Motion& owner_motion = registry.motions.get(rocketOwner);
+	motion.position = owner_motion.position;
+	motion.velocity = { 0.f, 0.f };
+	motion.scale = { 20, 40 };
+
+	BezierMotion& bezierMotion = registry.bezierMotion.emplace(entity);
+	float height = 80.0f;
+	Player& owner = registry.players.get(rocketOwner);
+	if (owner.facing_right) {
+		bezierMotion.controlPoints = {
+		motion.position,
+		{ motion.position.x + 70, motion.position.y - height },
+		{ motion.position.x + 140, motion.position.y + height },
+		{ motion.position.x + 230, motion.position.y}
+		};
+	}
+	else {
+		bezierMotion.controlPoints = {
+		motion.position,
+		{ motion.position.x - 70, motion.position.y - height },
+		{ motion.position.x - 140, motion.position.y + height },
+		{ motion.position.x - 230, motion.position.y}
+		};
+	}
+
+	bezierMotion.duration = 2000.0f;
+	bezierMotion.elapsedTime = 0.0f;
+
+	SimplePathfinding& pathfinding = registry.simplePathFinding.emplace(entity);
+	pathfinding.targetEntity = targetPlayer;
+	pathfinding.speed = 100.0f;
+
+	// Rendering setup (adjust according to your game's rendering system)
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::ROCKET,
+		  EFFECT_ASSET_ID::TEXTURED,
+		  GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
+
 void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_system, const vec2& position, const vec2& size) {
 	// Reserve an entity
 	auto entity = Entity();
