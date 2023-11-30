@@ -74,6 +74,11 @@ struct Controller
 	float upKey_delay_timer_ms = 300.0f;
 };
 
+// To change the color of bullets according to which player it's targeting
+struct BulletShooter {
+
+};
+
 // Player invincibility component
 struct Invincibility 
 {
@@ -409,7 +414,8 @@ enum class EFFECT_ASSET_ID {
 	WATER = TEXTURED + 1,
 	BACKGROUND = WATER + 1,
 	ANIMATED = BACKGROUND + 1,
-	EFFECT_COUNT = ANIMATED + 1
+	BULLET = ANIMATED + 1,
+	EFFECT_COUNT = BULLET + 1
 };
 const int effect_count = (int)EFFECT_ASSET_ID::EFFECT_COUNT;
 

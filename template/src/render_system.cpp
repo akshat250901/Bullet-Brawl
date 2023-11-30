@@ -101,7 +101,61 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 
 		gl_has_errors();
 
-	} else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED){
+	}
+	else if (render_request.used_effect == EFFECT_ASSET_ID::BULLET) {
+		GLint in_position_loc = glGetAttribLocation(program, "in_position");
+		gl_has_errors();
+
+
+
+		glEnableVertexAttribArray(in_position_loc);
+		glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE,
+			sizeof(ColoredVertex), (void*)0);
+		gl_has_errors();
+
+		GLint color_uloc = glGetUniformLocation(program, "color");
+		gl_has_errors();
+
+		//painting entity into colours
+		const vec3 entityColor = registry.colors.has(entity) ? registry.colors.get(entity) : vec3(1);
+
+		glUniform3fv(color_uloc, 1, (float*)&entityColor);
+		gl_has_errors();
+
+		if (registry.greenBullet.has(entity)) {
+			GLint light_up_uloc = glGetUniformLocation(program, "light_up_green");
+			GLint light_up_uloc_red = glGetUniformLocation(program, "light_up_red");
+			assert(light_up_uloc >= 0);
+
+			gl_has_errors();
+			glUniform1i(light_up_uloc, (float)1.0f);
+			glUniform1i(light_up_uloc_red, (float)0.0f);
+			gl_has_errors();
+		}
+		else if (registry.redBullet.has(entity)) {
+			GLint light_up_uloc = glGetUniformLocation(program, "light_up_red");
+			GLint light_up_uloc_green = glGetUniformLocation(program, "light_up_green");
+
+			assert(light_up_uloc >= 0);
+
+			gl_has_errors();
+			glUniform1i(light_up_uloc, (float)1.0f);
+			glUniform1i(light_up_uloc_green, (float)0.0f);
+			gl_has_errors();
+		}
+		else {
+			GLint light_up_uloc_red = glGetUniformLocation(program, "light_up_red");
+			GLint light_up_uloc_green = glGetUniformLocation(program, "light_up_green");
+			assert(light_up_uloc_green >= 0);
+			assert(light_up_uloc_red >= 0);
+			gl_has_errors();
+			glUniform1i(light_up_uloc_red, (float)0.0f);
+			glUniform1i(light_up_uloc_green, (float)0.0f);
+			gl_has_errors();
+		}
+		
+	}
+	else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED) {
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
 		gl_has_errors();
 

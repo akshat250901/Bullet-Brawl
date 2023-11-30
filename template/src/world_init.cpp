@@ -226,7 +226,7 @@ Entity createBullet(RenderSystem* renderer, Entity gunEntity) {
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no texture is needed
-			EFFECT_ASSET_ID::COLOURED,
+			EFFECT_ASSET_ID::BULLET,
 			GEOMETRY_BUFFER_ID::BULLET });
 
 	return entity;

@@ -44,6 +44,12 @@ public:
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
+<<<<<<< Updated upstream
+=======
+	ComponentContainer<TextDeathLog> deathLog;
+	ComponentContainer<BulletShooter> redBullet;
+	ComponentContainer<BulletShooter> greenBullet;
+>>>>>>> Stashed changes
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -79,6 +85,12 @@ public:
 		registry_list.push_back(&outOfBoundsArrows);
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
+<<<<<<< Updated upstream
+=======
+		registry_list.push_back(&deathLog);
+		registry_list.push_back(&redBullet);
+		registry_list.push_back(&greenBullet);
+>>>>>>> Stashed changes
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
