@@ -58,7 +58,6 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 
 	// Set all states to default
 	restart_game();
-
 	return window;
 }
 
@@ -75,9 +74,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 	// Remove entities that leave the screen
 	// Iterate backwards to be able to remove without unterfering with the next object to visit
 	// (the containers exchange the last element with the current)
+	float sideBoundaryOffset = 200;
+
 	for (int i = (int)motion_container.components.size() - 1; i >= 0; --i) {
 		Motion& motion = motion_container.components[i];
-		if (motion.position.x + abs(motion.scale.x) < 0.f || motion.position.x + abs(motion.scale.x) > window_width_px ||
+		if (motion.position.x + abs(motion.scale.x) < -sideBoundaryOffset || motion.position.x + abs(motion.scale.x) > window_width_px + sideBoundaryOffset ||
 			motion.position.y + abs(motion.scale.y) > window_height_px) {
 			if (!registry.players.has(motion_container.entities[i]) && (registry.bullets.has(motion_container.entities[i]) || registry.nonInteractables.has(motion_container.entities[i]))) {
 				registry.remove_all_components_of(motion_container.entities[i]);
@@ -213,17 +214,57 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		if (timer.timer_ms < min_timer_ms) {
 			min_timer_ms = timer.timer_ms;
 		}
-
-		// restart the game once the death timer expired
+		
 		if (timer.timer_ms < 0) {
-			registry.deathTimers.remove(entity);
-			screen.screen_darken_factor = 0;
-			game_state_system->change_game_state(GameStateSystem::GameState::Winner);
-			return true;
+			if (game_state_system->get_current_state() == 3) {
+				registry.remove_all_components_of(entity);
+				return false;
+			}
+			else {
+				// restart the game once the death timer expired
+				registry.deathTimers.remove(entity);
+				screen.screen_darken_factor = 0;
+				game_state_system->change_game_state(GameStateSystem::GameState::Winner);
+				return true;
+			}
 		}
 	}
-	// reduce window brightness if any of the present salmons is dying
-	screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+
+
+	for (Entity entity : registry.texts.entities) {
+		// progress timer
+		Text& text = registry.texts.get(entity);
+		if (text.tag == "PLAYER_FALL")
+		{
+
+			text.persist_timer_ms -= elapsed_ms_since_last_update;
+
+			if (text.persist_timer_ms > 0) {
+				continue;
+			}
+
+			text.timer_ms -= elapsed_ms_since_last_update;
+
+			if (text.timer_ms > 0) {
+				text.opacity = (text.timer_ms/text.total_fade_time);
+			} else {
+				registry.remove_all_components_of(entity);
+			}
+		}
+		if (text.tag == "HEALTH_COUNT") {
+			if (text.owner == player) {
+				text.string = "LIVES: " + std::to_string(registry.players.get(player).lives);
+			}
+			else {
+				text.string = "LIVES: " + std::to_string(registry.players.get(player2).lives);
+			}
+		}
+	}
+
+	if (game_state_system->get_current_state() != 3) {
+		// reduce window brightness if any of the present salmons is dying
+		screen.screen_darken_factor = 1 - min_timer_ms / 1000;
+	}
 
 	return true;
 }
@@ -286,18 +327,16 @@ void WorldSystem::restart_game() {
 
 	float textHorizontalOffset = 400.0f;
 	float textVerticalOffset = 40.0f;
-	
+	float horizontalAlignment = 0;
+
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
 	createOutOfBoundsArrow( renderer, player2, false);
 	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
 
-	//Create text for ammo counter and weapon
-	createText("RED PLAYER", {textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {255.0f, 0.0f, 0.0f}, 2.5f, 1.0f, 0, 2, player2, "PLAYER_ID");
-	createText("PISTOL", {textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "CURRENT_GUN");
-	createText("20/20", {textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 0, 2, player2, "AMMO_COUNT");
-
 	if (game_state_system->get_current_state() == 3) {
 		player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
+		textHorizontalOffset = 600;
+		horizontalAlignment = 1;
 	} else {
 		player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
 		createOutOfBoundsArrow(renderer, player, true);
@@ -306,7 +345,16 @@ void WorldSystem::restart_game() {
 		//Create text for ammo counter and weapon
 		createText("GREEN PLAYER", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {0.0f, 255.0f, 0.0f}, 2.5f, 1.0f, 2, 2, player, "PLAYER_ID");
 		createText("PISTOL", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
-		createText("20/20", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
+		createText("20/20", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
+		createText("LIVES " + std::to_string(registry.players.get(player).lives), { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset + 20}, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "HEALTH_COUNT");
+	}
+
+	//Create text for ammo counter and weapon
+	createText("RED PLAYER", { textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 255.0f, 0.0f, 0.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "PLAYER_ID");
+	createText("PISTOL", { textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "CURRENT_GUN");
+	createText("20/20", { textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "AMMO_COUNT");
+	if (game_state_system->get_current_state() != 3) {
+		createText("LIVES " + std::to_string(registry.players.get(player2).lives), { textHorizontalOffset, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "HEALTH_COUNT");
 	}
 }
 
@@ -420,8 +468,14 @@ void WorldSystem::handle_player_powerup_collisions() {
 
 				StatUtil::apply_stat_modifier(player, statModifier);
 			}
+
+			if (game_state_system->get_current_state() == 3) {
+				create_info_popup(statModifier.name);
+			}
+
 			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
+
 		}
 	}
 	// Remove all collisions from player-powerup
@@ -537,6 +591,10 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 				Entity newGunEntity = createGun(renderer, randomGun.gunSize, randomGun.name);
 				Gun& newGunComponent = gun_container.insert(newGunEntity, randomGun);
 				newGunComponent.gunOwner = entity;
+
+				if (game_state_system->get_current_state() == 3) {
+					create_info_popup(newGunComponent.name);
+				}
 			}
 			random_drops_system->is_tutorial_intialized = false;
 			registry.remove_all_components_of(entity_other);
@@ -545,6 +603,63 @@ void WorldSystem::handle_player_mystery_box_collisions() {
 	// Remove all collisions from player-mystery box
 	registry.playerMysteryBoxCollisions.clear();
 }
+
+void WorldSystem::create_info_popup(std::string pickup_name) {
+	// clear any existing text
+	for (Entity entity : registry.deathTimers.entities) {
+		registry.remove_all_components_of(entity);
+	}
+
+	auto placeholder_entity = Entity();
+
+
+	std::string text1;
+	std::string text2;
+	std::string text3;
+
+	if (pickup_name == "SUBMACHINE GUN") {
+		text1 = "A light close quarters gun with weak knockback.";
+		text2 = "However, it makes up for that deficiency with";
+		text3 = "its fast fire rate and large magazine size.";
+	}
+	else if (pickup_name == "ASSAULT RIFLE") {
+		text1 = "A heavier mid-range gun with medium knockback.";
+		text2 = "It only has 20 rounds in its magazine, but the bullets";
+		text3 = "travel faster and is effective at longer ranges.";
+	}
+	else if (pickup_name == "SNIPER RIFLE") {
+		text1 = "A long range rifle that packs very high knockback.";
+		text2 = "While it has a slow fire rate and very little ammo,";
+		text3 = "the further your target is, the harder it hits.";
+	}
+	else if (pickup_name == "SHOTGUN") {
+		text1 = "A powerful close quarters weapon, with extremely";
+		text2 = "high knockback. However, its range is very";
+		text3 = "limited and relys on being close to the target.";
+	}
+	else if (pickup_name == "Triple Jump") {
+		text1 = "Gives the user an extra jump while in the air.";
+	}
+	else if (pickup_name == "Speed Boost") {
+		text1 = "Boosts the player's movement speed.";
+	}
+	else if (pickup_name == "Super Jump") {
+		text1 = "Boosts the player's jump height.";
+	}
+	
+	// title
+	auto popup_text_title = createText(pickup_name, { 1100, 70 }, { 255.0f, 255.0f, 255.0f }, 3.f, 1.0f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc1 = createText(text1, { 1100, 100 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc2 = createText(text2, { 1100, 125 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+	auto popup_text_desc3 = createText(text3, { 1100, 150 }, { 255.0f, 255.0f, 255.0f }, 2.f, 0.7f, 2, 0, placeholder_entity, "PICKUP_INFO");
+
+	float text_duration = 5000.0f; // in milliseconds
+	registry.deathTimers.insert(popup_text_title, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc1, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc2, DeathTimer{ text_duration });
+	registry.deathTimers.insert(popup_text_desc3, DeathTimer{ text_duration });
+}
+
 
 void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 {

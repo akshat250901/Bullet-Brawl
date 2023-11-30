@@ -261,6 +261,9 @@ struct Text {
 
 	Entity owner;
 	std::string tag;
+	float timer_ms; // fade out timer
+	float total_fade_time = 1000.0f;
+	float persist_timer_ms = 3000.0f;
 };
 
 
@@ -334,6 +337,13 @@ struct TexturedVertex
 	vec2 texcoord;
 };
 
+
+// Player death log
+struct TextDeathLog
+{
+	
+};
+
 // Mesh datastructure for storing vertex and index buffers
 struct Mesh
 {
@@ -341,6 +351,16 @@ struct Mesh
 	vec2 original_size = {1,1};
 	std::vector<ColoredVertex> vertices;
 	std::vector<uint16_t> vertex_indices;
+};
+
+struct BezierMotion {
+	std::vector<vec2> controlPoints;
+	float duration;
+	float elapsedTime;
+};
+
+struct Rocket {
+
 };
 
 /**
@@ -370,7 +390,8 @@ struct Mesh
 enum class TEXTURE_ASSET_ID {
 	RED_HEALTH = 0,
 	GREEN_HEALTH = RED_HEALTH + 1,
-	PLAYER_SPRITESHEET = GREEN_HEALTH + 1,
+	ROCKET = GREEN_HEALTH + 1,
+	PLAYER_SPRITESHEET = ROCKET + 1,
 	POWERUP_SPRITESHEET = PLAYER_SPRITESHEET + 1,
 	BACKGROUND = POWERUP_SPRITESHEET + 1,
 	MIDDLEGROUND = BACKGROUND + 1,

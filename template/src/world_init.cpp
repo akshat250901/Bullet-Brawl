@@ -49,11 +49,11 @@ Entity createPlayer(RenderSystem* renderer, GameStateSystem* game_state_system, 
 			health_motion.velocity = { 0.f, 0.f };
 			health_motion.position = { start_x + i * 60.f, 50.f };
 			health_motion.scale = { 50.f, 50.f };
-			registry.renderRequests.insert(
+			/*registry.renderRequests.insert(
 				health_entity,
 				{ health,
 				EFFECT_ASSET_ID::TEXTURED,
-				GEOMETRY_BUFFER_ID::SPRITE });
+				GEOMETRY_BUFFER_ID::SPRITE });*/
 		}
 	}
 
@@ -687,7 +687,7 @@ Entity createBackgroundTutorial(RenderSystem* renderer, GameStateSystem* game_st
 	return entity;
 }
 
-Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag) {
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag, float timer) {
 
 	// Reserve en entity
 	auto entity = Entity();
@@ -702,15 +702,51 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 	textObj.verticalAlignment = verticalAlignment;
 	textObj.owner = owner;
 	textObj.tag = tag;
-
+	textObj.timer_ms = timer;
+	textObj.total_fade_time = timer;
 	// Put into motion but do nothing
 	registry.motions.emplace(entity);
+	if (timer != -1) {
+		// Text for players death log
+		registry.deathLog.emplace(entity);
+	}
 
 	return entity;
 }
 
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
+	// render text
+	std::string movement_text = "Use WASD to control the character, and G to shoot. Use arrow\nkeys and ; (semicolon) for the respective actions as the second player. \nEach player has 1 extra jump in the air by default!\n\nThe objective is to knock the other player off of the platform by shooting them!";
+	std::string gun_text = "Guns will come inside of these mystery boxes.\nEach have their own unique traits and\naffect the player's movement speed differenty.";
+	std::string powerup_text = "Powerups can be picked up through these.\nThey each last 5 seconds, and give the\nplayer reduced knockback!";
+	
+
+	std::string triple_text = "TRIPLE\n  JUMP";
+	std::string speed_text = "SUPER\nSPEED";
+	std::string jump_text = "SUPER\n JUMP";
+
+	std::string smg_text = "SUBMACHINE\n        GUN";
+	std::string ar_text = "ASSAULT\n  RIFLE";
+	std::string sniper_text = "SNIPER\n RIFLE";
+	std::string shotgun_text = "SHOTGUN";
+
+	auto text_owner = Entity();
+	
+	// pickup text
+	createText(triple_text, { 200, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(speed_text, { 300, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(jump_text, { 400, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+
+	createText(smg_text, { 700, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(ar_text, { 800, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(sniper_text, { 900, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(shotgun_text, { 1000, 563 }, { 1, 1, 1 }, 2, 0.5f, 1, 1, text_owner, "TUTORIAL_TEXT");
+
+	createText(movement_text, { 337, 100 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(powerup_text, { 220, 720 }, { 1, 1, 1 }, 2, 0.7f, 1, 1, text_owner, "TUTORIAL_TEXT");
+	createText(gun_text, { 1150, 720 }, { 1, 1, 1 }, 2, 0.7f, 2, 1, text_owner, "TUTORIAL_TEXT");
+
 	createBackgroundTutorial(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 314 }, { 792, 10 }); // Top
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 467 }, { 230, 10 }); // Middle left
@@ -747,6 +783,7 @@ void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	createBackgroundSpace(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+	createRocket(renderer, {0, 80});
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 365, 265 }, { 300, 10 }); // Top left
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 940, 285 }, { 270, 10 }); // Top right
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 635, 418 }, { 740, 10 }); // middle
@@ -765,6 +802,41 @@ void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 520 }, { 380, 10 }); // long
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
+}
+
+
+Entity createRocket(RenderSystem* renderer, vec2 position) {
+	auto entity = Entity();
+	registry.rocket.emplace(entity);
+	// Initialize mesh and motion components
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	Motion& motion = registry.motions.emplace(entity);
+	motion.scale = { 50, 50 };
+	motion.position = {-motion.scale.x, position.y};
+	motion.velocity = { 0.f, 0.f };
+
+	BezierMotion& bezierMotion = registry.bezierMotion.emplace(entity);
+	float height = 80.0f;
+	bezierMotion.controlPoints = {
+		motion.position,
+		{ motion.position.x + 70, motion.position.y - height },
+		{ motion.position.x + 140, motion.position.y + height },
+		{ motion.position.x + 230, motion.position.y}
+	};
+
+	bezierMotion.duration = 2000.0f;
+	bezierMotion.elapsedTime = 0.0f;
+	
+	// Rendering setup (adjust according to your game's rendering system)
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::ROCKET,
+		  EFFECT_ASSET_ID::TEXTURED,
+		  GEOMETRY_BUFFER_ID::SPRITE });
+
+	return entity;
 }
 
 void createDeathScreen(RenderSystem* renderer, GameStateSystem* game_state_system, const vec2& position, const vec2& size) {

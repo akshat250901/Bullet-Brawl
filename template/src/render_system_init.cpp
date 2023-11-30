@@ -12,6 +12,8 @@
 // stlib
 #include <iostream>
 #include <sstream>
+#define GLT_IMPLEMENTATION
+#include "../ext/gltext/gltext.h"
 
 // World initialization
 bool RenderSystem::init(GLFWwindow* window_arg)
@@ -50,9 +52,8 @@ bool RenderSystem::init(GLFWwindow* window_arg)
 
 	// We are not really using VAO's but without at least one bound we will crash in
 	// some systems.
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
+	glGenVertexArrays(1, &vao_rebind);
+	glBindVertexArray(vao_rebind);
 	gl_has_errors();
 
 	initScreenTexture();
@@ -234,6 +235,10 @@ void RenderSystem::initializeGlGeometryBuffers()
 
 RenderSystem::~RenderSystem()
 {
+	// Terminate text render library
+	gltTerminate();
+	gl_has_errors();
+
 	// Don't need to free gl resources since they last for as long as the program,
 	// but it's polite to clean after yourself.
 	glDeleteBuffers((GLsizei)vertex_buffers.size(), vertex_buffers.data());

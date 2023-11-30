@@ -6,8 +6,8 @@
 const float KILL_LIMIT = 800.0f;
 const float Y_HEIGHT_RESPAWN = -600.0f;
 
-PlayerRespawnSystem::PlayerRespawnSystem(RenderSystem* renderSystem, GameStateSystem* gameStateSystem) 
-    : renderer(renderSystem), game_state_system(gameStateSystem) {
+PlayerRespawnSystem::PlayerRespawnSystem(RenderSystem* renderSystem, GameStateSystem* gameStateSystem, SoundSystem* sound_system)
+    : renderer(renderSystem), game_state_system(gameStateSystem), sound_system(sound_system) {
     rng = std::default_random_engine(std::random_device()());
 }
 
@@ -35,13 +35,31 @@ void PlayerRespawnSystem::step()
                         registry.renderRequests.remove(health_container.entities[j]);
                         registry.lives.remove(health_container.entities[j]);
                         player_i.lives = player_i.lives - 1;
+                        // Death animations
+                        sound_system->play_fall_sound();
+                        std::string player_text = player_i.color[1] == 1.f ? "GREEN" : "RED";
+                        glm::vec3 result = player_i.color * vec3(255.0f, 255.0f, 255.0f);
+
+                        for (int i = 0; i < registry.texts.size(); i++) {
+                            Text& text_i = registry.texts.components[i];
+
+                            if (text_i.tag == "PLAYER_FALL") {
+                                registry.remove_all_components_of(registry.texts.entities[i]);
+                                break;
+                            }
+                        }
+
+                        Entity text = createText("-1 to " + player_text, {window_width_px / 2, 100 }, result, 4.0f, 1.0f, 1, 1, entity_i, "PLAYER_FALL", 1000.0f);
+
                         if (player_i.lives == 0) {
                             if (!registry.deathTimers.has(entity_i)) {
                                 registry.deathTimers.emplace(entity_i);
                             }
 
                             while (registry.texts.entities.size() > 0)
-	    	                    registry.remove_all_components_of(registry.texts.entities.back());
+                            {
+                                registry.remove_all_components_of(registry.texts.entities.back());
+                            }
                             if (player_i.color == glm::vec3{ 1.f, 0.f, 0.f }) {
                                 game_state_system->set_winner(2);
                             }

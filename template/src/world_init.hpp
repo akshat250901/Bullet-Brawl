@@ -30,10 +30,12 @@ Entity createGunMysteryBox(RenderSystem* renderSystem, vec2 pos, vec2 scale);
 Entity createGun(RenderSystem* renderSystem, vec2 scale, std::string gun);
 // create muzzle flash
 Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion, bool facing_right);
+// Create Rocket
+Entity createRocket(RenderSystem* renderer, vec2 position);
 // render space map
 Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
 // create a text element
-Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag);
+Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag, float timer = -1);
 // render tutorial map
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px);
 // render island map

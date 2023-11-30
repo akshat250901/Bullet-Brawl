@@ -17,8 +17,11 @@
 #include "gun_system.hpp"
 #include "sound_system.hpp"
 #include "out_of_bounds_arrow_system.hpp"
+#include "rocket_system.hpp"
+
 #include "player_respawn_system.hpp"
 #include "world_init.hpp"
+
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -37,7 +40,10 @@ int main()
 	SoundSystem sound_system;
 	GunSystem gun_system(&render_system, &sound_system);
 	OutOfBoundsArrowSystem out_of_bounds_arrow_system;
-	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system);
+	RocketSystem rocket_system;
+	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system, &sound_system);
+
+
 
 	// Initializing window
 	GLFWwindow* window = game_state_system.create_window();
@@ -65,7 +71,7 @@ int main()
 		float elapsed_ms =
 			(float)(std::chrono::duration_cast<std::chrono::microseconds>(now - t)).count() / 1000;
 		t = now;
-		printf("TIME PER LOOP: %f\n", elapsed_ms);
+		// printf("TIME PER LOOP: %f\n", elapsed_ms);
 		if (game_state_system.get_current_state() == GameStateSystem::GameState::Winner) {
 			createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 			game_state_system.set_winner(-1);
@@ -95,6 +101,7 @@ int main()
 				world_system.handle_collisions();
 				player_respawn_system.step();
 				random_drops_system.handleInterpolation(elapsed_ms);
+				rocket_system.step(elapsed_ms);
 			}
 		}
 		render_system.draw();

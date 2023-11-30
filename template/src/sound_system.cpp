@@ -22,7 +22,7 @@ void SoundSystem::step(float elapsed_ms)
 }
 
 void SoundSystem::init_sounds() {
-    printf("SOUNDS INITIALIZEED\n");
+    printf("SOUNDS INITIALIZED\n");
     pistol_shoot_sound = Mix_LoadWAV(audio_path("guns/pistol_shoot.wav").c_str());
     smg_shoot_sound = Mix_LoadWAV(audio_path("guns/smg_shoot.wav").c_str());
     ar_shoot_sound = Mix_LoadWAV(audio_path("guns/ar_shoot.wav").c_str());
@@ -36,6 +36,9 @@ void SoundSystem::init_sounds() {
     hit_sound = Mix_LoadWAV(audio_path("hit_sound.wav").c_str());
 
     player_step_sound = Mix_LoadWAV(audio_path("step.wav").c_str());
+
+    player_fall_sound = Mix_LoadWAV(audio_path("player_fall.wav").c_str());
+
 
     int volume = 8;  // to save some ears
     Mix_VolumeChunk(pistol_shoot_sound, volume/2);
@@ -107,6 +110,13 @@ void SoundSystem::play_walk_sound()
     if (!Mix_Playing(1)) {
         Mix_PlayChannel(1, player_step_sound, 0);
     }
+}
+
+void SoundSystem::play_fall_sound()
+{
+    
+     Mix_PlayChannel(-1, player_fall_sound, 0);
+    
 }
 
 void SoundSystem::play_hit_sound()

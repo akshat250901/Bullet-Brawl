@@ -42,14 +42,13 @@ public:
 	ComponentContainer<NonInteractable> nonInteractables;
 	ComponentContainer<MuzzleFlash> muzzleFlashes;
 	ComponentContainer<OutOfBoundsArrow> outOfBoundsArrows;
+	ComponentContainer<BezierMotion> bezierMotion;
+	ComponentContainer<Rocket> rocket;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
-<<<<<<< Updated upstream
-=======
 	ComponentContainer<TextDeathLog> deathLog;
 	ComponentContainer<BulletShooter> redBullet;
 	ComponentContainer<BulletShooter> greenBullet;
->>>>>>> Stashed changes
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -83,14 +82,16 @@ public:
 		registry_list.push_back(&popupIndicator);
 		registry_list.push_back(&muzzleFlashes);
 		registry_list.push_back(&outOfBoundsArrows);
+
+		registry_list.push_back(&bezierMotion);
+		registry_list.push_back(&rocket);
+
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
-<<<<<<< Updated upstream
-=======
+
 		registry_list.push_back(&deathLog);
 		registry_list.push_back(&redBullet);
 		registry_list.push_back(&greenBullet);
->>>>>>> Stashed changes
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);
@@ -100,6 +101,7 @@ public:
 
 		// registry_list.push_back(&buttons);
 		registry_list.push_back(&interpolation);
+
 	}
 
 	void clear_all_components() {

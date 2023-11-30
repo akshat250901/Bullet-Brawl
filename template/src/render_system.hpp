@@ -33,6 +33,7 @@ class RenderSystem {
 	const std::array<std::string, texture_count> texture_paths = {
 			textures_path("red_health.png"),
 			textures_path("green_health.png"),
+			textures_path("rocket.png"),
 			textures_path("player_spritesheet.png"),
 			textures_path("powerup_spritesheet.png"),
 			textures_path("background.png"),
@@ -128,6 +129,10 @@ private:
 	GLuint off_screen_render_buffer_depth;
 
 	Entity screen_state_entity;
+
+
+	GLuint vao_rebind;
+	bool initTextRender = false;
 };
 
 bool loadEffectFromFile(
