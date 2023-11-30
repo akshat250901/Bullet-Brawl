@@ -37,6 +37,9 @@ void SoundSystem::init_sounds() {
 
     player_step_sound = Mix_LoadWAV(audio_path("step.wav").c_str());
 
+    player_fall_sound = Mix_LoadWAV(audio_path("player_fall.wav").c_str());
+
+
     int volume = 8;  // to save some ears
     Mix_VolumeChunk(pistol_shoot_sound, volume/2);
     Mix_VolumeChunk(smg_shoot_sound, volume);
@@ -107,6 +110,13 @@ void SoundSystem::play_walk_sound()
     if (!Mix_Playing(1)) {
         Mix_PlayChannel(1, player_step_sound, 0);
     }
+}
+
+void SoundSystem::play_fall_sound()
+{
+    
+     Mix_PlayChannel(-1, player_fall_sound, 0);
+    
 }
 
 void SoundSystem::play_hit_sound()

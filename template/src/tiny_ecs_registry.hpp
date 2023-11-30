@@ -46,6 +46,7 @@ public:
 	ComponentContainer<Rocket> rocket;
 	ComponentContainer<Invincibility>invincibility;
 	ComponentContainer<Text> texts;
+	ComponentContainer<TextDeathLog> deathLog;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -85,6 +86,7 @@ public:
 
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
+		registry_list.push_back(&deathLog);
 
 
 		// Collisions
