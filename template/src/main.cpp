@@ -41,7 +41,7 @@ int main()
 	GunSystem gun_system(&render_system, &sound_system);
 	OutOfBoundsArrowSystem out_of_bounds_arrow_system;
 	RocketSystem rocket_system;
-	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system);
+	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system, &sound_system);
 
 
 
