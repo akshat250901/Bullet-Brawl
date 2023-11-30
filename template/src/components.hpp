@@ -256,7 +256,9 @@ struct Text {
 
 	Entity owner;
 	std::string tag;
-	float timer_ms;
+	float timer_ms; // fade out timer
+	float total_fade_time = 1000.0f;
+	float persist_timer_ms = 3000.0f;
 };
 
 

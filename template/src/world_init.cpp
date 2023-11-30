@@ -703,6 +703,7 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 	textObj.owner = owner;
 	textObj.tag = tag;
 	textObj.timer_ms = timer;
+	textObj.total_fade_time = timer;
 	// Put into motion but do nothing
 	registry.motions.emplace(entity);
 	if (timer != -1) {
@@ -812,7 +813,7 @@ Entity createRocket(RenderSystem* renderer, vec2 position) {
 	registry.meshPtrs.emplace(entity, &mesh);
 
 	Motion& motion = registry.motions.emplace(entity);
-	motion.scale = { 20, 40 };
+	motion.scale = { 50, 50 };
 	motion.position = {-motion.scale.x, position.y};
 	motion.velocity = { 0.f, 0.f };
 

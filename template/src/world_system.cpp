@@ -236,20 +236,27 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		Text& text = registry.texts.get(entity);
 		if (text.tag == "PLAYER_FALL")
 		{
-			text.opacity -= text.timer_ms;
 
-			// restart the game once the death timer expired
-			if (text.opacity <= 0) {
-				registry.deathLog.remove(entity);
-				registry.texts.remove(entity);
+			text.persist_timer_ms -= elapsed_ms_since_last_update;
+
+			if (text.persist_timer_ms > 0) {
+				continue;
+			}
+
+			text.timer_ms -= elapsed_ms_since_last_update;
+
+			if (text.timer_ms > 0) {
+				text.opacity = (text.timer_ms/text.total_fade_time);
+			} else {
+				registry.remove_all_components_of(entity);
 			}
 		}
 		if (text.tag == "HEALTH_COUNT") {
 			if (text.owner == player) {
-				text.string = "HEALTH " + std::to_string(registry.players.get(player).lives);
+				text.string = "LIVES: " + std::to_string(registry.players.get(player).lives);
 			}
 			else {
-				text.string = "HEALTH " + std::to_string(registry.players.get(player2).lives);
+				text.string = "LIVES: " + std::to_string(registry.players.get(player2).lives);
 			}
 		}
 	}
@@ -339,14 +346,16 @@ void WorldSystem::restart_game() {
 		createText("GREEN PLAYER", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {0.0f, 255.0f, 0.0f}, 2.5f, 1.0f, 2, 2, player, "PLAYER_ID");
 		createText("PISTOL", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
 		createText("20/20", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
-		createText("HEALTH " + std::to_string(registry.players.get(player).lives), { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset + 20}, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "HEALTH_COUNT");
+		createText("LIVES " + std::to_string(registry.players.get(player).lives), { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset + 20}, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "HEALTH_COUNT");
 	}
 
 	//Create text for ammo counter and weapon
 	createText("RED PLAYER", { textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 255.0f, 0.0f, 0.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "PLAYER_ID");
 	createText("PISTOL", { textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "CURRENT_GUN");
 	createText("20/20", { textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "AMMO_COUNT");
-	createText("HEALTH " + std::to_string(registry.players.get(player2).lives), { textHorizontalOffset + 80, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player2, "HEALTH_COUNT");
+	if (game_state_system->get_current_state() != 3) {
+		createText("LIVES " + std::to_string(registry.players.get(player2).lives), { textHorizontalOffset, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "HEALTH_COUNT");
+	}
 }
 
 Entity WorldSystem::spawn_player(vec2 player_location, vec3 player_color, Keybinds keybinds) {
