@@ -166,14 +166,20 @@ void MainMenuSystem::on_click() {
 			}
 		}
     }
+    else if (game_state_system->get_current_state() == -1) // story
+    {
+        printf("we in cutscene\n");
+    }
 }
 
 void MainMenuSystem::on_mouse_move(vec2 mouse_position) {
-	for (Button button : buttons) {
-		if (is_point_inside_button(button, mouse_position.x, mouse_position.y)) {
-			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
-			return;
-		}
-	}
-	glfwSetCursor(window, nullptr);
+    if (game_state_system->get_current_state() != -1) {
+        for (Button button : buttons) {
+            if (is_point_inside_button(button, mouse_position.x, mouse_position.y)) {
+                glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
+                return;
+            }
+        }
+        glfwSetCursor(window, nullptr);
+    }
 }

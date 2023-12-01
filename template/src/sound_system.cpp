@@ -33,12 +33,15 @@ void SoundSystem::init_sounds() {
     weapon_pickup_sound = Mix_LoadWAV(audio_path("guns/weapon_pickup.wav").c_str());
     powerup_pickup_sound = Mix_LoadWAV(audio_path("powerup_pickup.wav").c_str());
 
+
     hit_sound = Mix_LoadWAV(audio_path("hit_sound.wav").c_str());
 
     player_step_sound = Mix_LoadWAV(audio_path("step.wav").c_str());
 
     player_fall_sound = Mix_LoadWAV(audio_path("player_fall.wav").c_str());
 
+    background_burning = Mix_LoadMUS(audio_path("fire.wav").c_str());
+    bgm = Mix_LoadMUS(audio_path("bgm.wav").c_str());
 
     int volume = 8;  // to save some ears
     Mix_VolumeChunk(pistol_shoot_sound, volume/2);
@@ -54,6 +57,10 @@ void SoundSystem::init_sounds() {
     Mix_VolumeChunk(hit_sound, volume);
 
     Mix_VolumeChunk(player_step_sound, volume);
+
+    Mix_VolumeChunk(player_fall_sound, volume*2);
+
+    Mix_VolumeMusic(volume);
 }
 
 void SoundSystem::play_shoot_sound(std::string gun_type) {
@@ -122,5 +129,21 @@ void SoundSystem::play_fall_sound()
 void SoundSystem::play_hit_sound()
 {
     Mix_PlayChannel(-1, hit_sound, 0);
+}
+
+void SoundSystem::play_burning_sound()
+{
+    Mix_PlayMusic(background_burning, 0);
+}
+
+void SoundSystem::play_bgm()
+{
+    Mix_PlayMusic(bgm, 0);
+}
+
+
+void SoundSystem::stop_music()
+{
+    Mix_HaltMusic();
 }
 

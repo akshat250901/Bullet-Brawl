@@ -8,7 +8,7 @@
 #include "render_system.hpp"
 #include "world_system.hpp"
 #include "main_menu_system.hpp"
-
+#include "story_system.hpp"
 
 class InputSystem
 
@@ -20,9 +20,10 @@ private:
 
     WorldSystem* world_system;
     MainMenuSystem* main_menu_system;
+    StorySystem* story_system;
 
 public:
-    void init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, WorldSystem* world_system, MainMenuSystem* main_menu_system);
+    void init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, WorldSystem* world_system, MainMenuSystem* main_menu_system, StorySystem* story_system);
     
     // Input callback functions
     void on_key(int key, int, int action, int mod);

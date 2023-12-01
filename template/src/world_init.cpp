@@ -714,6 +714,37 @@ Entity createText(std::string text, vec2 position, vec3 color, float scale, floa
 	return entity;
 }
 
+std::tuple<Entity, Entity> createStoryFrame(RenderSystem* renderer, std::string text, TEXTURE_ASSET_ID background_image, vec2 position, vec2 size) {
+	auto entity = Entity();
+
+	// Store a reference to the potentially re-used mesh object
+	Mesh& mesh = renderer->getMesh(GEOMETRY_BUFFER_ID::SQUARE);
+	registry.meshPtrs.emplace(entity, &mesh);
+
+	// Initialize the position, scale, and physics components
+	Motion& motion = registry.motions.emplace(entity);
+	motion.position = position;
+	motion.scale = size;
+
+	// Add the Parallax component for the back layer, which might move the slowest.
+	ParallaxBackground& parallax = registry.parallaxes.emplace(entity);
+
+	StoryFrame frame = registry.storyFrames.emplace(entity);
+
+	frame.text = text;
+	frame.background = background_image;
+
+	Entity text_entity = createText(text, { 50, 630 }, { 1, 1, 1 }, 4.f, 1, 0, 1, entity, "STORY_TEXT");
+
+	registry.renderRequests.insert(
+		entity,
+		{ background_image,
+		 EFFECT_ASSET_ID::BACKGROUND,
+		 GEOMETRY_BUFFER_ID::SPRITE });
+
+	return std::make_tuple( entity, text_entity );
+}
+
 void createTutorialMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	// render text

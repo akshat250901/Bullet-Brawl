@@ -2,12 +2,13 @@
 
 #include "input_system.hpp"
 
-void InputSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, WorldSystem* world_system, MainMenuSystem* main_menu_system) {
+void InputSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_state_system, GLFWwindow* window, WorldSystem* world_system, MainMenuSystem* main_menu_system, StorySystem* story_system) {
     this->renderer = renderer_arg;
     this->game_state_system = game_state_system;
     this->window = window;
     this->world_system = world_system;
     this->main_menu_system = main_menu_system;
+    this->story_system = story_system;
 
     glfwSetWindowUserPointer(window, this);
 
@@ -42,6 +43,9 @@ void InputSystem::on_key(int key, int, int action, int mod) {
 void InputSystem::on_click() {
     if (game_state_system->get_current_state() == 0 || game_state_system->get_current_state() == 1) {
         main_menu_system->on_click();
+    }
+    if (game_state_system->get_current_state() == -1) { // story
+        story_system->on_click();
     }
 }
 
