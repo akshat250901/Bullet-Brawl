@@ -18,7 +18,7 @@
 #include "sound_system.hpp"
 #include "out_of_bounds_arrow_system.hpp"
 #include "rocket_system.hpp"
-
+#include "input_system.hpp"
 #include "player_respawn_system.hpp"
 #include "world_init.hpp"
 
@@ -42,7 +42,7 @@ int main()
 	OutOfBoundsArrowSystem out_of_bounds_arrow_system;
 	RocketSystem rocket_system;
 	PlayerRespawnSystem player_respawn_system(&render_system, &game_state_system, &sound_system);
-
+	InputSystem inputSystem;
 
 
 	// Initializing window
@@ -59,6 +59,7 @@ int main()
 	render_system.init(window);
 	main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 	random_drops_system.init(&game_state_system);
+	inputSystem.init(&render_system, &game_state_system, window, &world_system, &main_menu_system);
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -81,6 +82,7 @@ int main()
 		}
 		if (game_state_system.get_current_state() == 0 || game_state_system.get_current_state() == 1) {
 			if (game_state_system.is_state_changed) {
+				world_system.init(&render_system, &game_state_system, window, &sound_system, &random_drops_system);
 				main_menu_system.initialize_main_menu(&render_system, &game_state_system, window);
 				game_state_system.is_state_changed = false;
 			}

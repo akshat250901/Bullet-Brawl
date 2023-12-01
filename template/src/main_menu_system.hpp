@@ -24,7 +24,7 @@ public:
     bool is_point_inside_button(const Button& button, double x, double y);
     bool is_hovering_button(double x, double y);
 
-	void on_key(int key, int, int action, int mod);
+	void on_key(int key, int action, int mod);
     void on_click();
     void on_mouse_move(vec2 mouse_position);
 

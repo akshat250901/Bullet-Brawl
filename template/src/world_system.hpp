@@ -31,7 +31,7 @@ public:
 	void handle_collisions();
 
 	// Input callback functions
-	void on_key(int key, int, int action, int mod);
+	void on_key(int key, int action, int mod);
 	void on_mouse_move(vec2 pos);
 	void handle_player(int key, int action, Entity player_to_handle);
 
