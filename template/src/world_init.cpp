@@ -111,6 +111,12 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	motion.scale = size;
 	registry.platforms.emplace(entity);
 
+	// registry.renderRequests.insert(
+	// 	entity,
+	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+	// 	 EFFECT_ASSET_ID::COLOURED,
+	// 	 GEOMETRY_BUFFER_ID::SQUARE });
+
 	return entity;
 }
 
@@ -801,14 +807,13 @@ void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
 {
 	createBackgroundJungle(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 240, 190 }, { 300, 10 }); // Top left
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 830, 210 }, { 530, 10 }); // Top right
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 550, 305 }, { 960, 10 }); // long boi
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1005, 420 }, { 340, 10 }); // middle right
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 330, 420 }, { 300, 10 }); // middle left
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 779, 525 }, { 598, 10 }); // below middle right
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 426, 630 }, { 596, 10 }); // bottom left
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 970, 630 }, { 250, 10 }); // bottom right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 240, 190 }, { 290, 10 }); // Top left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 820, 210 }, { 500, 10 }); // Top right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 525, 305 }, { 950, 10 }); // long boi
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 1000, 420 }, { 315, 10 }); // middle right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 310, 420 }, { 260, 10 }); // middle left
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 820, 525 }, { 635, 10 }); // below middle right
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 660, 630 }, { 1000, 10 }); // bottom right
 }
 
 void createSpaceMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
@@ -829,10 +834,10 @@ void createTempleMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 {
 	createBackgroundTemple(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 720, 305 }, { 360, 1 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 600, 400 }, { 900, 1 }); // long
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 260, 505 }, { 380, 10 }); // long
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 850, 520 }, { 380, 10 }); // long
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 800, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 400 }, { 920, 1 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 255, 505 }, { 370, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 870, 520 }, { 365, 10 }); // long
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 620 }, { 840, 10 }); // long
 }
 
 

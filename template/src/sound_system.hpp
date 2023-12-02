@@ -54,5 +54,7 @@ public:
 
 	void play_bgm();
 	void stop_bgm();
+
+	~SoundSystem();
 };
 
