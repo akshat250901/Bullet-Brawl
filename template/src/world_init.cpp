@@ -213,7 +213,7 @@ Entity createBullet(RenderSystem* renderer, Entity gunEntity) {
  	bulletMotion.position = { bulletSpawnXPos, posGun.y };
 
 	// Set color of bullet
-	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
+	registry.colors.insert(entity, { 20.0f, 60.0f, 80.0f });
 
 	// Set bullet stats
 	Bullet& bullet = registry.bullets.emplace(entity);

@@ -104,6 +104,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 	}
 	else if (render_request.used_effect == EFFECT_ASSET_ID::BULLET) {
 		GLint in_position_loc = glGetAttribLocation(program, "in_position");
+		GLint in_color_loc = glGetAttribLocation(program, "in_color");
 		gl_has_errors();
 
 
@@ -111,6 +112,10 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		glEnableVertexAttribArray(in_position_loc);
 		glVertexAttribPointer(in_position_loc, 3, GL_FLOAT, GL_FALSE,
 			sizeof(ColoredVertex), (void*)0);
+
+		glEnableVertexAttribArray(in_color_loc);
+		glVertexAttribPointer(in_color_loc, 3, GL_FLOAT, GL_FALSE,
+			sizeof(ColoredVertex), (void*)sizeof(vec3));
 		gl_has_errors();
 
 		GLint color_uloc = glGetUniformLocation(program, "color");

@@ -1,5 +1,9 @@
 #version 330
 
+
+// From Vertex Shader
+in vec3 vcolor;
+
 // Application data
 uniform vec3 color;
 uniform int light_up_red;
@@ -11,7 +15,7 @@ layout(location = 0) out vec4 out_color;
 void main()
 {
  
-    out_color = vec4(color, 1.0);
+    out_color = vec4(color * vcolor, 1.0);
 
     if (light_up_green == 1)
     {
@@ -19,6 +23,14 @@ void main()
     } else if (light_up_red == 1)
     {
         out_color.xyz = 20.f * vec3(1.0, 0.0, 0.0);
+    } else{
+       // Add electricity effect
+        float electricityIntensity = 100.f;
+        float electricityFrequency = 10.0;
+        float electricityOffset = sin(gl_FragCoord.x * electricityFrequency);
+        vec3 electricityColor = vec3(1.0, 1.0, 0.0);
+
+        out_color.xyz += electricityIntensity * electricityOffset * electricityColor;
     }
 }
 
