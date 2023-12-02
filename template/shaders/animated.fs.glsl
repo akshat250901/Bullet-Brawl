@@ -1,5 +1,3 @@
-
-
 #version 330
 
 // From vertex shader
@@ -16,7 +14,7 @@ void main()
 {
     float electricityIntensity = 1000.f;
     float electricityFrequency = 60.0;
-    float electricityOffset = sin(gl_FragCoord.x * electricityFrequency);
+    float electricityOffset = sin(gl_FragCoord.y * electricityFrequency);
     // Set electricity color to grayscale
     vec3 electricityColor = vec3(0.0, 0.0, 0.001);
     
