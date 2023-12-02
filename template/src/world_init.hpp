@@ -34,6 +34,8 @@ Entity createMuzzleFlash(RenderSystem* renderSystem, Motion& motion, bool facing
 Entity createRocket(RenderSystem* renderer, vec2 position);
 // render space map
 Entity createBackgroundSpace(RenderSystem* renderer, GameStateSystem* game_state_system, vec2 position, vec2 size);
+// creates frame for story
+std::tuple<Entity, Entity> createStoryFrame(RenderSystem* renderer, std::string text, TEXTURE_ASSET_ID background_image, vec2 position, vec2 size);
 // create a text element
 Entity createText(std::string text, vec2 position, vec3 color, float scale, float opacity, int horizontalAlignment, int verticalAlignment, Entity owner, std::string tag, float timer = -1);
 // render tutorial map

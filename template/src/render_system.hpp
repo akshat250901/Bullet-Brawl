@@ -65,7 +65,11 @@ class RenderSystem {
 			textures_path("red_arrow.png"),
 			textures_path("green_arrow.png"),
 			textures_path("green_player_won.png"),
-			textures_path("red_player_won.png")
+			textures_path("red_player_won.png"),
+			textures_path("story/black.png"),
+			textures_path("story/house.png"),
+			textures_path("story/house_no_overlay.png"),
+			textures_path("story/photo.png"),
 	};
 
 	std::array<GLuint, effect_count> effects;
