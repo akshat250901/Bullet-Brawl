@@ -47,20 +47,20 @@ void SoundSystem::init_sounds() {
     Mix_VolumeChunk(pistol_shoot_sound, volume/2);
     Mix_VolumeChunk(smg_shoot_sound, volume);
     Mix_VolumeChunk(ar_shoot_sound, volume);
-    Mix_VolumeChunk(sniper_shoot_sound, volume/2);
-    Mix_VolumeChunk(shotgun_shoot_sound, volume / 2);
+    Mix_VolumeChunk(sniper_shoot_sound, volume);
+    Mix_VolumeChunk(shotgun_shoot_sound, volume);
 
     Mix_VolumeChunk(player_reload_sound, volume);
-    Mix_VolumeChunk(weapon_pickup_sound, volume*3);
+    Mix_VolumeChunk(weapon_pickup_sound, volume*6);
     Mix_VolumeChunk(powerup_pickup_sound, volume*2);
 
-    Mix_VolumeChunk(hit_sound, volume);
+    Mix_VolumeChunk(hit_sound, volume * 2.5);
 
-    Mix_VolumeChunk(player_step_sound, volume);
+    Mix_VolumeChunk(player_step_sound, volume * 2);
 
-    Mix_VolumeChunk(player_fall_sound, volume*2);
+    Mix_VolumeChunk(player_fall_sound, volume * 8);
 
-    Mix_VolumeMusic(volume);
+    Mix_VolumeMusic(volume / 2);
 }
 
 void SoundSystem::play_shoot_sound(std::string gun_type) {
