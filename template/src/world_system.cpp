@@ -49,11 +49,6 @@ GLFWwindow* WorldSystem::init(RenderSystem* renderer_arg, GameStateSystem* game_
 	this->game_state_system = game_state_system;
 	this->sound_system = sound_system;
 	this->random_drops_system = random_drops_system;
-	glfwSetWindowUserPointer(window, this);
-	auto key_redirect = [](GLFWwindow* wnd, int _0, int _1, int _2, int _3) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_key(_0, _1, _2, _3); };
-	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((WorldSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
-	glfwSetKeyCallback(window, key_redirect);
-	glfwSetCursorPosCallback(window, cursor_pos_redirect);
 	paused = false;
 
 	// Set all states to default
@@ -183,9 +178,6 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 				registry.motions.remove(popup_entity);
 			}
 		}
-
-
-		
 	}
 
 	//parallax background
@@ -332,29 +324,31 @@ void WorldSystem::restart_game() {
 	player2 = spawn_player({ 300, 200 }, { 1.f, 0, 0 }, player1_keys);
 	createOutOfBoundsArrow( renderer, player2, false);
 	CreateGunUtil::givePlayerStartingPistol(renderer, player2, false);
+	if (game_state_system->get_current_state() != 0 && game_state_system->get_current_state() != 1) {
+		if (game_state_system->get_current_state() == 3) {
+			player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
+			textHorizontalOffset = 600;
+			horizontalAlignment = 1;
+		}
+		else {
+			player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
+			createOutOfBoundsArrow(renderer, player, true);
+			CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
 
-	if (game_state_system->get_current_state() == 3) {
-		player = spawn_player({ 700, 200 }, { 1.f, 1.f, 1.f }, player2_keys);
-		textHorizontalOffset = 600;
-		horizontalAlignment = 1;
-	} else {
-		player = spawn_player({ 900, 300 }, { 0, 1.f, 0 }, player2_keys);
-		createOutOfBoundsArrow(renderer, player, true);
-		CreateGunUtil::givePlayerStartingPistol(renderer, player, false);
+			//Create text for ammo counter and weapon
+			createText("GREEN PLAYER", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 0.0f, 255.0f, 0.0f }, 2.5f, 1.0f, 2, 2, player, "PLAYER_ID");
+			createText("PISTOL", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
+			createText("20/20", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
+			createText("LIVES " + std::to_string(registry.players.get(player).lives), { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "HEALTH_COUNT");
+		}
 
 		//Create text for ammo counter and weapon
-		createText("GREEN PLAYER", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, {0.0f, 255.0f, 0.0f}, 2.5f, 1.0f, 2, 2, player, "PLAYER_ID");
-		createText("PISTOL", {window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, {255.0f, 255.0f, 255.0f}, 2.5f, 1.0f, 2, 2, player, "CURRENT_GUN");
-		createText("20/20", { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "AMMO_COUNT");
-		createText("LIVES " + std::to_string(registry.players.get(player).lives), { window_width_px - textHorizontalOffset, window_height_px - textVerticalOffset + 20}, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, 2, 2, player, "HEALTH_COUNT");
-	}
-
-	//Create text for ammo counter and weapon
-	createText("RED PLAYER", { textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 255.0f, 0.0f, 0.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "PLAYER_ID");
-	createText("PISTOL", { textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "CURRENT_GUN");
-	createText("20/20", { textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "AMMO_COUNT");
-	if (game_state_system->get_current_state() != 3) {
-		createText("LIVES " + std::to_string(registry.players.get(player2).lives), { textHorizontalOffset, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "HEALTH_COUNT");
+		createText("RED PLAYER", { textHorizontalOffset, window_height_px - textVerticalOffset - 40 }, { 255.0f, 0.0f, 0.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "PLAYER_ID");
+		createText("PISTOL", { textHorizontalOffset, window_height_px - textVerticalOffset - 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "CURRENT_GUN");
+		createText("20/20", { textHorizontalOffset, window_height_px - textVerticalOffset }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "AMMO_COUNT");
+		if (game_state_system->get_current_state() != 3) {
+			createText("LIVES " + std::to_string(registry.players.get(player2).lives), { textHorizontalOffset, window_height_px - textVerticalOffset + 20 }, { 255.0f, 255.0f, 255.0f }, 2.5f, 1.0f, horizontalAlignment, 2, player2, "HEALTH_COUNT");
+		}
 	}
 }
 
@@ -710,7 +704,20 @@ void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 }
 
 // On key callback
-void WorldSystem::on_key(int key, int, int action, int mod) {
+void WorldSystem::on_key(int key, int action, int mod) {
+	if (game_state_system->get_current_state() == 0) {
+		if (game_state_system && action == GLFW_RELEASE) {
+			if (key == GLFW_KEY_SPACE) {
+				game_state_system->change_game_state(1);
+			}
+			else if (key == GLFW_KEY_TAB) {
+				game_state_system->change_game_state(3);
+			}
+			else if (key == GLFW_KEY_ESCAPE) {
+				game_state_system->is_quit = true;
+			}
+		}
+	}
 
 	if (action == GLFW_RELEASE && key == GLFW_KEY_ESCAPE) {
 		// paused = !paused;
