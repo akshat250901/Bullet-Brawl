@@ -693,7 +693,6 @@ void WorldSystem::handle_player(int key, int action, Entity player_to_handle)
 
 	if (key == player_object.keybinds.projectile && action == GLFW_PRESS) {
 		Motion& player_motion = registry.motions.get(player_to_handle);
-		createProjectile(renderer, true, vec2(player_motion.position.x, player_motion.position.y), player_to_handle);
 	}
 	else if (key == player_object.keybinds.bullet && action == GLFW_PRESS) {
 		player_controller.fireKey = true;
@@ -738,19 +737,11 @@ void WorldSystem::on_key(int key, int action, int mod) {
 		
 
 		// Resetting game
-		if (action == GLFW_RELEASE && key == GLFW_KEY_R) {
+		if (action == GLFW_RELEASE && key == GLFW_KEY_7) {
 			int w, h;
 			glfwGetWindowSize(window, &w, &h);
 
 			restart_game();
-		}
-
-		// Debugging
-		if (key == GLFW_KEY_Q) {
-			if (action == GLFW_RELEASE)
-				debugging.in_debug_mode = false;
-			else
-				debugging.in_debug_mode = true;
 		}
 
 		// Control the current speed with `<` `>`
