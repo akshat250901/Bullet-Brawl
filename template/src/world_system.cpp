@@ -292,10 +292,12 @@ void WorldSystem::restart_game() {
 	} else if (game_state_system->get_current_state() == 2) {
 		int level = game_state_system->get_current_level();
 		if (level == 1) {
-			createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
+			createIslandMap(renderer, game_state_system, window_width_px, window_height_px);
 		} else if (level == 2) {
-			createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
+			createJungleMap(renderer, game_state_system, window_width_px, window_height_px);
 		} else if (level == 3) {
+			createSpaceMap(renderer, game_state_system, window_width_px, window_height_px);
+		} else if (level == 4) {
 			createTempleMap(renderer, game_state_system, window_width_px, window_height_px);
 		}
 	}

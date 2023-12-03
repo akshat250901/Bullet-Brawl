@@ -24,6 +24,7 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
 			create_button(renderer, button);
 		}
 	} else if (game_state_system->get_current_state() == 1) {
+        buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 2.7f }, { window_width / 3.4f, window_height / 16 }, "Island"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 2 }, { window_width / 3.4f, window_height / 16 }, "Jungle"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.6f }, { window_width / 3.4f, window_height / 16 }, "Space"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.3333f }, { window_width / 3.4f, window_height / 16 }, "Temple"});
