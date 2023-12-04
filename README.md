@@ -1,4 +1,7 @@
 # Team19-BulletBrawl
+
+Trailer: https://www.youtube.com/watch?v=HrgWrEJod6Q
+
 ## Milestone 1
 
 In this milestone, we implemented the basic gameplay features outlined in our initial development plan. We have basic collision between the player and the platform, as well as the movement and related physics implemented. The player can jump (and double jump) between the platforms, and can drop through if the “down” key is pressed. The player sprite flips based on the direction the player is facing, and the player can shoot or throw a projectile in that direction using F and P (these keybindings are subject to change).  We have also met the goals of adding assets such as textured geometry for the player sprites and implemented a test map. There are no drastic changes and all requirements for this milestone have been met so no update to the proposal is needed.
