@@ -120,3 +120,63 @@ Ishraq:
   - [MainMenuSystem::on_mouse_move()]
 - Updated player respawn positions to be random
   - [WorldSystem::step()]
+
+## Milestone 3
+
+In this final milestone, we integrated an external software library (GLText) for text rendering, allowing us to dynamically display key information such as lives, ammo count and current weapons through UI elements. On the visual front, we tackled platform art layout issues and fixed the player-winning screen to display the correct winner. There were improvements in stability with fixes for potential crashes related to mouse click handling. We also added a story to include some narrative in the game experience. In addition, we updated assets across menus, maps, and backgrounds refreshing the maps for more cleaner and aesthetically pleasing visuals. Some other rendering changes include an electric touch for powerups. Lastly, various balance changes were made to the guns and powerups while also introducing an initial invincibility upon player respawning to ensure fair and balanced gameplay.
+
+Danny:
+- Incorporated external software library text rendering to render text in our game
+  - Draw text in render system [RenderSystem::drawText()]
+  - Handle dynamic text resizing based on screen dimensions [RenderSystem::drawText() lines 339-360]
+  - Created wrapped that allows for ease of text rendering [WorldInit::createText()]
+- Implemented text showing then fading to highlight when the player dies [WorldSystem::step() lines 226-254]
+- Implemented UI elements to show ammo count and current gun for each player [WorldSystem::restart_game() lines 339-348, GunSystem::step() lines 121-133]
+- Readjust friction in the game to apply on every loop for consistency in knockback [PhysicsSystem::step() 260-277]
+
+Jason:
+- Fixed the platform art layout issue with the temple map
+- Fixed player winning screen always showing red player when winning [PlayerRespawnSystem::step() lines 45-50]
+
+Leo:
+- Implemented Story System [story_system.cpp/story_system.hpp]
+- Fixed mouse click handler nullptr that would crash the game if we clicked in-game [input_system.cpp/input_system.hpp]
+- Updated tutorial level [WorldInit::createTutorialMap line 754 + multiple places that check if game_state_system->get_current_state() == 3]
+- Updated various assets including, art and sounds.[Main menu, maps, bgm, story frames]
+- Created short trailer video
+
+
+Seraj:
+- Implemented text showing then fading to highlight when the player dies [WorldSystem::step() lines 226-254]
+- Implemented bullet prediction effect so that bullets light up with the shooter color when it’s predicted to hit the other player[PhysicsSystem::predictCollisionBetweenPlayerAndBullet()]
+- Implemented electric effect for bullets and powerups
+
+Ishraq:
+- Worked on assisting other teammates with their tasks, such as adding buttons to level selection screen [MainMenuSystem::initializeMainMenu()]
+- Wrote documentation and completed the ECS diagram
+- Added initial invincibility to players when respawning [PlayerRespawnSystem::step()] [WorldSystem::step()]
+
+
+## Report for changes in response to feedback:
+
+There were numerous changes made in response to feedback from users during the crossplay sessions and also from data collected from friends who were asked to test out the game. I have broken down the changes into user experience changes, including menus UI and other changes not related to gameplay or gameplay-specific balance changes.
+
+**User experience changes:**
+
+A friend mentioned the main menu art felt too plain and that it misrepresented our game thus we improved the look of the main menu by introducing higher-quality pixel art in the background including the silhouette of one of our characters.
+
+From M2 crossplay we received a comment about how dying could have a better indication. To address this we make it so that once a player dies text pops up and shows which player has lost a life, furthermore we have added a sound effect to indicate the player's death.
+
+During M2 crossplay another player commented that we could add a visual indication when reloading. Thus, we added a text element attached to the player to indicate that a player is reloading and the text element disappears when the player stops reloading. Furthermore, it enhances the experience when the player picks up elements. We also added similar text elements to indicate item pickups such as picking up mystery boxes and powerups to more clearly indicate exactly what was picked up.
+
+Another player commented that the tutorial needed improvement and we changed this by re-doing the art and map design such it was a simpler layout more easily accessible to beginner players and included various text descriptions explaining how each powerup or gun works. We also made it so that guns and powerups can be picked up at any time so players can experiment with the guns and powerups infinitely with a dummy player as well.
+
+Lastly, a friend commented on how the hearts to indicate lives in the top right and left of the screens sometimes obscured the gameplay, in this case, we refactored the health counter and included an ammo counter to help players keep track of the ammo in their gun which was a general comment people had in the crossplay session as well as they had no idea how much ammo was left.
+
+**Gameplay balance changes:**
+
+One player in M2 commented that occasionally the knockback of the guns felt too strong, this was an intentional mechanic such that knockback would be extremely hard if the player getting hit was going in the same direction as the bullet, this was done initially to introduce a skill gap into the game. However, as seen from the crossplay session most players did not understand the mechanic and thus had a difficult time comprehending why the knockback was inconsistent. Thus, this was removed and a consistent knockback was implemented instead.
+
+A player in M2 mentioned that the powerups felt underwhelming and this was addressed by improving the powers granted by powerups across the board. Speed boost was drastically increased and jump boost along with triple jump and their durations increased. This still felt underwhelming as during playtests with friends I noticed players still were not picking up powerups. In this case, I added a 30% knockback resistance to every powerup so that players would be more incentivized to pick up powerups.
+
+Lastly, various comments in M2 mentioned how the game felt like it lasted forever and dragged on too long. To address this we increased the knockback of all guns across the board, we also reduced the gun model sizes of the sniper and shotgun to decrease the distance where the bullet spawns. Overall the knockback increases made it such that it was far easier to get knocked off the platforms compared to before increasing the pace and tension of the game. This made it so that it was far more likely to kill the other player and thus rounds became shorter and fixed the issue of games feeling like they lasted too long. 
