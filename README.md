@@ -124,7 +124,7 @@ Ishraq:
 - Updated player respawn positions to be random
   - [WorldSystem::step()]
 
-## Milestone 3
+## Milestone 4
 
 In this final milestone, we integrated an external software library (GLText) for text rendering, allowing us to dynamically display key information such as lives, ammo count and current weapons through UI elements. On the visual front, we tackled platform art layout issues and fixed the player-winning screen to display the correct winner. There were improvements in stability with fixes for potential crashes related to mouse click handling. We also added a story to include some narrative in the game experience. In addition, we updated assets across menus, maps, and backgrounds refreshing the maps for more cleaner and aesthetically pleasing visuals. Some other rendering changes include an electric touch for powerups. Lastly, various balance changes were made to the guns and powerups while also introducing an initial invincibility upon player respawning to ensure fair and balanced gameplay.
 
