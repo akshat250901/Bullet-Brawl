@@ -23,14 +23,6 @@ void main()
     } else if (light_up_red == 1)
     {
         out_color.xyz = 20.f * vec3(1.0, 0.0, 0.0);
-    } else{
-       // Add electricity effect
-        float electricityIntensity = 100.f;
-        float electricityFrequency = 10.0;
-        float electricityOffset = sin(gl_FragCoord.x * electricityFrequency);
-        vec3 electricityColor = vec3(1.0, 1.0, 0.0);
-
-        out_color.xyz += electricityIntensity * electricityOffset * electricityColor;
     }
 }
 
