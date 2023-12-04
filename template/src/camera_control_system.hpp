@@ -26,6 +26,8 @@ public:
     CameraControlSystem(GameStateSystem* gameStateSystem);
     void update_camera(float elapsed_ms);
 
+    void reset_camera();
+
 private:
 
     GameStateSystem* game_state_system;
@@ -36,9 +38,9 @@ private:
     T lerp(const T& a, const T& b, float t);
 
     float elapsedTime = 0.0f;
-    const float focusDuration = 3000.0f; // Duration in seconds to focus on the winner
-    const float targetScale = 2.0f;   // Target zoom level for focusing
-    const float lerpRate = 0.1f;      // Rate of interpolation for smoothness
+    const float focusDuration = 4000.0f; // Duration in seconds to focus on the winner
+    const float targetScale = 3.0f;   // Target zoom level for focusing
+    const float lerpRate = 0.05f;      // Rate of interpolation for smoothness
 
     glm::vec2 initialCameraPos = glm::vec2(0.0f, 0.0f);
     float initialCameraScale = 1.0f;

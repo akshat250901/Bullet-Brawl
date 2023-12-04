@@ -434,16 +434,18 @@ void RenderSystem::draw()
 mat3 RenderSystem::createProjectionMatrix() {
 	auto camera = camera_control_system->get_camera();
 
-	float left = 0.f - camera.position.x * camera.scale;
-	float top = 0.f - camera.position.y * camera.scale;
-	float right = window_width_px - camera.position.x * camera.scale;
-	float bottom = window_height_px - camera.position.y * camera.scale;
+	float left = camera.position.x;
+	float right = camera.position.x + window_width_px / camera.scale;
+	float top = camera.position.y;
+	float bottom = camera.position.y + window_height_px / camera.scale;
 
+	// Create the orthographic projection matrix
 	float sx = 2.f / (right - left);
-	float sy = 2.f / (top - bottom);
+	float sy = 2.f / (top - bottom); 
 	float tx = -(right + left) / (right - left);
 	float ty = -(top + bottom) / (top - bottom);
 
 	return { {sx, 0.f, 0.f}, {0.f, sy, 0.f}, {tx, ty, 1.f} };
+
 }
 

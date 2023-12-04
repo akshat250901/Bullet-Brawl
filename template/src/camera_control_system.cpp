@@ -18,9 +18,9 @@ void CameraControlSystem::update_camera(float elapsed_ms) {
 void CameraControlSystem::focus_on_winner(float elapsed_ms) {
     if (elapsedTime < focusDuration) {
         glm::vec2 winnerPosition = get_winner_position();
-
+        glm::vec2 centeredCameraPosition = winnerPosition - glm::vec2(window_width_px / (2 * camera.scale), window_height_px / (2 * camera.scale));
+        camera.position = lerp(camera.position, centeredCameraPosition, lerpRate);
         // Smoothly interpolate camera's position and scale
-        camera.position = lerp<glm::vec2>(camera.position, winnerPosition, lerpRate);
         camera.scale = lerp<float>(camera.scale, targetScale, lerpRate);
         std::cout << "Camera Position: " << camera.position.x << ", " << camera.position.y << " | Scale: " << camera.scale << std::endl;
 
@@ -41,7 +41,8 @@ T CameraControlSystem::lerp(const T& a, const T& b, float t) {
 }
 
 glm::vec2 CameraControlSystem::get_winner_position() {
-    auto& player_container = registry.players;
+    
+  auto& player_container = registry.players;
 
     for (int i = 0; i < player_container.size(); i++) {
         Player& player_i = player_container.components[i];
@@ -49,17 +50,22 @@ glm::vec2 CameraControlSystem::get_winner_position() {
 
         if (player_i.lives != 0) {
             Motion& player_motion = registry.motions.get(entity_i);
-            vec2 pos= player_motion.position;
+            vec2 pos = player_motion.position;
             std::cout << "Player Position: " << pos.x << ", " << pos.y << std::endl;
             return player_motion.position;
         }
 
     }
 
-    return { 0.0f,0.0f };
+    return {0.0f,0.0f };
 }
 
 
 const CameraControlSystem::Camera& CameraControlSystem::get_camera() {
     return camera;
+}
+
+void CameraControlSystem::reset_camera() {
+    camera.position = initialCameraPos;
+    camera.scale = initialCameraScale;
 }
