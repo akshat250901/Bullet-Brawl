@@ -111,11 +111,11 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	motion.scale = size;
 	registry.platforms.emplace(entity);
 
-	// registry.renderRequests.insert(
-	// 	entity,
-	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
-	// 	 EFFECT_ASSET_ID::COLOURED,
-	// 	 GEOMETRY_BUFFER_ID::SQUARE });
+	registry.renderRequests.insert(
+		entity,
+		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+		 EFFECT_ASSET_ID::COLOURED,
+		 GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
 }
@@ -797,11 +797,11 @@ void createIslandMap(RenderSystem* renderer, GameStateSystem* game_state_system,
 	createBackgroundMiddle(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundForeground(renderer, { window_width_px / 2,window_height_px / 2 }, { window_width_px, window_height_px });
 	createBackgroundIsland(renderer, game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 320, 10 }); // Top
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 415, 220 }, { 470, 10 }); // Second
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 470, 310 }, { 616, 10 }); // Third 
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 530, 415 }, { 800, 10 }); // Fourth
-	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 590, 530 }, { 1011, 10 }); // Bottom
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 390, 130 }, { 305, 10 }); // Top
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 410, 220 }, { 400, 10 }); // Second
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 475, 310 }, { 580, 10 }); // Third 
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 525, 415 }, { 745, 10 }); // Fourth
+	createPlatform(renderer, { 255.0f, 0.1f, 0.1f }, { 605, 530 }, { 950, 10 }); // Bottom
 }
 
 void createJungleMap(RenderSystem* renderer, GameStateSystem* game_state_system, int window_width_px, int window_height_px)
