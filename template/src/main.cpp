@@ -22,7 +22,7 @@
 #include "player_respawn_system.hpp"
 #include "story_system.hpp"
 #include "world_init.hpp"
-
+#include "camera_control_system.hpp"
 
 using Clock = std::chrono::high_resolution_clock;
 
@@ -31,9 +31,10 @@ int main()
 {
 	// Global systems
 	GameStateSystem game_state_system;
+	CameraControlSystem cameraControlSystem(&game_state_system);
 	MainMenuSystem main_menu_system;
 	WorldSystem world_system;
-	RenderSystem render_system;
+	RenderSystem render_system(&cameraControlSystem);
 	PhysicsSystem physics_system;
 	AnimationSystem animation_system;
 	RandomDropsSystem random_drops_system(&render_system);
@@ -65,6 +66,9 @@ int main()
 	story_system.init(&render_system, &game_state_system, &sound_system);
 	inputSystem.init(&render_system, &game_state_system, window, &world_system, &main_menu_system, &story_system);
 
+	bool isCameraZooming = false;
+	float cameraZoomTime = 0.0f;
+	float zoomDuration = 3000.0f;
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -79,11 +83,22 @@ int main()
 		t = now;
 
 		if (game_state_system.get_current_state() == GameStateSystem::GameState::Winner) {
-			createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
-			game_state_system.set_winner(-1);
-			game_state_system.change_game_state(0);
-			render_system.draw();
-			std::this_thread::sleep_for(std::chrono::seconds(3));
+			if (!isCameraZooming) {
+				isCameraZooming = true;
+				cameraZoomTime = 0.0f;
+			}
+			if (isCameraZooming) {
+				cameraZoomTime += elapsed_ms;
+				cameraControlSystem.update_camera(elapsed_ms);
+				if (cameraZoomTime >= zoomDuration) {
+					createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
+					game_state_system.set_winner(-1);
+					game_state_system.change_game_state(0);
+					render_system.draw();
+					std::this_thread::sleep_for(std::chrono::seconds(3));
+					isCameraZooming = false;
+				}
+			}
 		}
 		if (game_state_system.get_current_state() == -1) {
 			// this is for story sequence

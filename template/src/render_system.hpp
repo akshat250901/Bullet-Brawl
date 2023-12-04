@@ -6,6 +6,7 @@
 #include "common.hpp"
 #include "components.hpp"
 #include "tiny_ecs.hpp"
+#include "camera_control_system.hpp"
 
 // System responsible for setting up OpenGL and for rendering all the
 // visual entities in the game
@@ -108,6 +109,9 @@ public:
 	// shader
 	bool initScreenTexture();
 
+	RenderSystem(CameraControlSystem* cameraControlSystem)
+		: camera_control_system(cameraControlSystem) {};
+
 	// Destroy resources associated to one or all entities created by the system
 	~RenderSystem();
 
@@ -117,6 +121,7 @@ public:
 	mat3 createProjectionMatrix();
 
 private:
+	CameraControlSystem* camera_control_system;
 	// Internal drawing functions for each entity type
 	void drawTexturedMesh(Entity entity, const mat3& projection);
 	void drawToScreen();
