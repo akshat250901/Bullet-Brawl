@@ -41,7 +41,7 @@ class RenderSystem {
 			textures_path("foreground.png"),
 			textures_path("menuBackground.png"),
 			textures_path("levelSelectBackground.png"),
-			textures_path("islandPlatform.png"),
+			textures_path("islandPlatform_new.png"),
 			textures_path("islandPlatformTutorial.png"),
 			textures_path("pistol.png"),
 			textures_path("smg.png"),
@@ -50,9 +50,9 @@ class RenderSystem {
 			textures_path("shotgun.png"),
 			textures_path("shotgun_muzzle.png"),
 			textures_path("weapon_box.png"),
-			textures_path("JUNGLEMAP.png"),
-			textures_path("SPACEMAP.png"),
-			textures_path("TEMPLEMAP.png"),
+			textures_path("JUNGLEMAP_NEW.png"),
+			textures_path("SPACEMAP_NEW.png"),
+			textures_path("TEMPLEMAP_NEW.png"),
 			textures_path("TUTORIALMAP.png"),
 			textures_path("popup_text/speedboost.png"),
 			textures_path("popup_text/superjump.png"),
@@ -65,7 +65,11 @@ class RenderSystem {
 			textures_path("red_arrow.png"),
 			textures_path("green_arrow.png"),
 			textures_path("green_player_won.png"),
-			textures_path("red_player_won.png")
+			textures_path("red_player_won.png"),
+			textures_path("story/black.png"),
+			textures_path("story/house.png"),
+			textures_path("story/house_no_overlay.png"),
+			textures_path("story/photo.png"),
 	};
 
 	std::array<GLuint, effect_count> effects;

@@ -10,23 +10,7 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
     this->game_state_system = game_state_system;
     this->window = window;
     this->renderer = renderer_arg;
-	
-    glfwSetWindowUserPointer(window, this);
 
-    // createMenuBackground(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
-
-    auto key_redirect = [](GLFWwindow* wnd, int key, int scancode, int action, int mods) {
-        ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_key(key, scancode, action, mods);
-    };
-
-    auto mouse_button_redirect = [](GLFWwindow* wnd, int button, int action, int mods) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-            ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_click();
-        }
-    };
-
-    glfwSetKeyCallback(window, key_redirect);
-    glfwSetMouseButtonCallback(window, mouse_button_redirect);
 
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	int window_width = mode->width;
@@ -40,6 +24,7 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
 			create_button(renderer, button);
 		}
 	} else if (game_state_system->get_current_state() == 1) {
+        buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 2.7f }, { window_width / 3.4f, window_height / 16 }, "Island"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 2 }, { window_width / 3.4f, window_height / 16 }, "Jungle"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.6f }, { window_width / 3.4f, window_height / 16 }, "Space"});
 		buttons.push_back({{ 0.8f, 0.8f, 1.0f }, { window_width / 2, window_height / 1.3333f }, { window_width / 3.4f, window_height / 16 }, "Temple"});
@@ -51,8 +36,6 @@ void MainMenuSystem::initialize_main_menu(RenderSystem* renderer_arg, GameStateS
 
     createMenuBackground(renderer, { window_width_px / 2, window_height_px / 2 }, { window_width_px + 200, window_height_px });
 
-	auto cursor_pos_redirect = [](GLFWwindow* wnd, double _0, double _1) { ((MainMenuSystem*)glfwGetWindowUserPointer(wnd))->on_mouse_move({ _0, _1 }); };
-	glfwSetCursorPosCallback(window, cursor_pos_redirect);
 }
 
 void MainMenuSystem::create_button(RenderSystem* renderer, const Button& button) {
@@ -128,7 +111,7 @@ bool MainMenuSystem::is_hovering_button(double x, double y) {
 	return false;
 }
 
-void MainMenuSystem::on_key(int key, int, int action, int mod) {
+void MainMenuSystem::on_key(int key, int action, int mod) {
      if (game_state_system->get_current_state() == 0)  {
          if (game_state_system && action == GLFW_RELEASE) {
              if (key == GLFW_KEY_SPACE) {
@@ -184,14 +167,20 @@ void MainMenuSystem::on_click() {
 			}
 		}
     }
+    else if (game_state_system->get_current_state() == -1) // story
+    {
+        printf("we in cutscene\n");
+    }
 }
 
 void MainMenuSystem::on_mouse_move(vec2 mouse_position) {
-	for (Button button : buttons) {
-		if (is_point_inside_button(button, mouse_position.x, mouse_position.y)) {
-			glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
-			return;
-		}
-	}
-	glfwSetCursor(window, nullptr);
+    if (game_state_system->get_current_state() != -1) {
+        for (Button button : buttons) {
+            if (is_point_inside_button(button, mouse_position.x, mouse_position.y)) {
+                glfwSetCursor(window, glfwCreateStandardCursor(GLFW_HAND_CURSOR));
+                return;
+            }
+        }
+        glfwSetCursor(window, nullptr);
+    }
 }

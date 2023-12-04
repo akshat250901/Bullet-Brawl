@@ -12,6 +12,8 @@
 // stlib
 #include <iostream>
 #include <sstream>
+#define GLT_IMPLEMENTATION
+#include "../ext/gltext/gltext.h"
 
 // World initialization
 bool RenderSystem::init(GLFWwindow* window_arg)
@@ -233,6 +235,10 @@ void RenderSystem::initializeGlGeometryBuffers()
 
 RenderSystem::~RenderSystem()
 {
+	// Terminate text render library
+	gltTerminate();
+	gl_has_errors();
+
 	// Don't need to free gl resources since they last for as long as the program,
 	// but it's polite to clean after yourself.
 	glDeleteBuffers((GLsizei)vertex_buffers.size(), vertex_buffers.data());

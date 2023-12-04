@@ -33,6 +33,9 @@ public:
 	// misc sounds
 	Mix_Chunk* powerup_pickup_sound;
 
+	Mix_Music* background_burning;
+	Mix_Music* bgm;
+
 	void init_sounds();
 
 	// gun sounds
@@ -45,5 +48,13 @@ public:
 	void play_walk_sound();
 
 	void play_fall_sound();
+
+	void play_burning_sound();
+	void stop_music();
+
+	void play_bgm();
+	void stop_bgm();
+
+	~SoundSystem();
 };
 

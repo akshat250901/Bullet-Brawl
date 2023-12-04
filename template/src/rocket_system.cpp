@@ -21,6 +21,7 @@ void RocketSystem::updateBezierMotion(Entity& entity, float deltaTime_ms) {
     if (motion.position.x - abs(motion.scale.x / 2) > window_width_px) {
 
         motion.position.x = motion.scale.x * -1;
+        motion.position.y = 80.0f;
 
         bezier.elapsedTime = 0;
 
@@ -38,6 +39,7 @@ void RocketSystem::updateBezierMotion(Entity& entity, float deltaTime_ms) {
         motion.position = interpolate(bezier.controlPoints, t);
     } else {
         bezier.elapsedTime = 0;
+        motion.position.y = 80.0f;
 
 	    bezier.controlPoints = {
             motion.position,

@@ -8,8 +8,8 @@ const float POWERUP_DELAY_MS = 15000.0f;
 const float TUTORIAL_POWERUP_DELAY_MS = 2000.f;
 const float POWERUP_SIZE = 50.f;
 
-const size_t MAX_MYSTERY_BOX = 1;
-const float MYSTERY_BOX_DELAY_MS = 12000.0f;
+const size_t MAX_MYSTERY_BOX = 3;
+const float MYSTERY_BOX_DELAY_MS = 10000.0f;
 const float MYSTERY_BOX_SIZE = 40.0f;
 
 RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
@@ -38,7 +38,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     submachineGun.statModifier = submachineStatModifier;
     submachineGun.fireRateMs = 100.0f;
     
-    submachineGun.knockback = 800.0f;
+    submachineGun.knockback = 1000.0f;
     submachineGun.bulletVelocity = 1100.0f;
     submachineGun.distanceStrengthModifier = 1.2f;
     submachineGun.hasNormalDropOff = true;
@@ -69,9 +69,9 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
 
     assaultRifle.name = "ASSAULT RIFLE";
     assaultRifle.statModifier = assaultRifleStatModifier;
-    assaultRifle.fireRateMs = 250.0f;
+    assaultRifle.fireRateMs = 175.0f;
     
-    assaultRifle.knockback = 1300.0f;
+    assaultRifle.knockback = 1400.0f;
     assaultRifle.bulletVelocity = 1200.0f;
     assaultRifle.distanceStrengthModifier = 0.2f;
     assaultRifle.hasNormalDropOff = true;

@@ -1,7 +1,7 @@
 #include "game_state_system.hpp"
 
 GameStateSystem::GameStateSystem() {
-    currentState = 0;
+    currentState = -1;
 };
 
 int GameStateSystem::get_current_state() {

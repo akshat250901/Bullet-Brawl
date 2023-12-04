@@ -256,7 +256,9 @@ struct Text {
 
 	Entity owner;
 	std::string tag;
-	float timer_ms;
+	float timer_ms; // fade out timer
+	float total_fade_time = 1000.0f;
+	float persist_timer_ms = 3000.0f;
 };
 
 
@@ -416,7 +418,11 @@ enum class TEXTURE_ASSET_ID {
 	GREEN_ARROW = RED_ARROW + 1,
 	GREEN_PLAYER_WON = GREEN_ARROW + 1,
 	RED_PLAYER_WON = GREEN_PLAYER_WON + 1,
-	TEXTURE_COUNT = RED_PLAYER_WON + 1
+	STORY_BLACK = RED_PLAYER_WON + 1,
+	STORY_HOUSE = STORY_BLACK + 1,
+	STORY_HOUSE2 = STORY_HOUSE + 1,
+	STORY_PHOTO = STORY_HOUSE2 + 1,
+	TEXTURE_COUNT = STORY_PHOTO + 1
 };
 const int texture_count = (int)TEXTURE_ASSET_ID::TEXTURE_COUNT;
 
@@ -458,3 +464,8 @@ struct OutOfBoundsArrow {
 	TEXTURE_ASSET_ID textureId;
 };
 
+// Component for every frame of story
+struct StoryFrame {
+	std::string text = "";
+	TEXTURE_ASSET_ID background;
+};
