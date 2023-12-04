@@ -38,7 +38,7 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
     submachineGun.statModifier = submachineStatModifier;
     submachineGun.fireRateMs = 100.0f;
     
-    submachineGun.knockback = 800.0f;
+    submachineGun.knockback = 850.0f;
     submachineGun.bulletVelocity = 1100.0f;
     submachineGun.distanceStrengthModifier = 1.2f;
     submachineGun.hasNormalDropOff = true;
@@ -69,9 +69,9 @@ RandomDropsSystem::RandomDropsSystem(RenderSystem* renderSystem)
 
     assaultRifle.name = "ASSAULT RIFLE";
     assaultRifle.statModifier = assaultRifleStatModifier;
-    assaultRifle.fireRateMs = 250.0f;
+    assaultRifle.fireRateMs = 175.0f;
     
-    assaultRifle.knockback = 1300.0f;
+    assaultRifle.knockback = 1600.0f;
     assaultRifle.bulletVelocity = 1200.0f;
     assaultRifle.distanceStrengthModifier = 0.2f;
     assaultRifle.hasNormalDropOff = true;

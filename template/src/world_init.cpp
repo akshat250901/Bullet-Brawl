@@ -111,11 +111,11 @@ Entity createPlatform(RenderSystem* renderer, vec3 color, vec2 position, vec2 si
 	motion.scale = size;
 	registry.platforms.emplace(entity);
 
-	registry.renderRequests.insert(
-		entity,
-		{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
-		 EFFECT_ASSET_ID::COLOURED,
-		 GEOMETRY_BUFFER_ID::SQUARE });
+	// registry.renderRequests.insert(
+	// 	entity,
+	// 	{ TEXTURE_ASSET_ID::TEXTURE_COUNT,
+	// 	 EFFECT_ASSET_ID::COLOURED,
+	// 	 GEOMETRY_BUFFER_ID::SQUARE });
 
 	return entity;
 }
