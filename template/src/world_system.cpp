@@ -253,10 +253,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
-	if (game_state_system->get_current_state() != 3) {
+	/*if (game_state_system->get_current_state() != 3) {
 		// reduce window brightness if any of the present salmons is dying
 		screen.screen_darken_factor = 1 - min_timer_ms / 1000;
-	}
+	}*/
+	
 
 	return true;
 }

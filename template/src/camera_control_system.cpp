@@ -20,10 +20,16 @@ void CameraControlSystem::focus_on_winner(float elapsed_ms) {
         glm::vec2 winnerPosition = get_winner_position();
         glm::vec2 centeredCameraPosition = winnerPosition - glm::vec2(window_width_px / (2 * camera.scale), window_height_px / (2 * camera.scale));
         camera.position = lerp(camera.position, centeredCameraPosition, lerpRate);
-        // Smoothly interpolate camera's position and scale
         camera.scale = lerp<float>(camera.scale, targetScale, lerpRate);
-        std::cout << "Camera Position: " << camera.position.x << ", " << camera.position.y << " | Scale: " << camera.scale << std::endl;
-
+        //std::cout << "Camera Position: " << camera.position.x << ", " << camera.position.y << " | Scale: " << camera.scale << std::endl;
+        float leftBoundary = 0.0f; 
+        float rightBoundary = window_width_px - window_width_px / camera.scale;
+        float topBoundary = 0.0f; 
+        float bottomBoundary = window_height_px - window_height_px / camera.scale;
+        camera.position.x = std::max(camera.position.x, leftBoundary);
+        camera.position.x = std::min(camera.position.x, rightBoundary);
+        camera.position.y = std::max(camera.position.y, topBoundary);
+        camera.position.y = std::min(camera.position.y, bottomBoundary);
         elapsedTime += elapsed_ms; // Increment elapsed time by the time since last frame
     }
     else {
@@ -41,8 +47,7 @@ T CameraControlSystem::lerp(const T& a, const T& b, float t) {
 }
 
 glm::vec2 CameraControlSystem::get_winner_position() {
-    
-  auto& player_container = registry.players;
+    auto& player_container = registry.players;
 
     for (int i = 0; i < player_container.size(); i++) {
         Player& player_i = player_container.components[i];
@@ -56,7 +61,6 @@ glm::vec2 CameraControlSystem::get_winner_position() {
         }
 
     }
-
     return {0.0f,0.0f };
 }
 

@@ -68,7 +68,7 @@ int main()
 
 	bool isCameraZooming = false;
 	float cameraZoomTime = 0.0f;
-	float zoomDuration = 4000.0f;
+	float zoomDuration = 6000.0f;
 
 	// variable timestep loop
 	auto t = Clock::now();
@@ -90,6 +90,15 @@ int main()
 			if (isCameraZooming) {
 				cameraZoomTime += elapsed_ms;
 				cameraControlSystem.update_camera(elapsed_ms);
+				movement_system.step(elapsed_ms);
+				player_respawn_system.step();
+				world_system.step(elapsed_ms);
+				physics_system.step(elapsed_ms);
+				gun_system.step(elapsed_ms);
+				animation_system.step(elapsed_ms);
+				sound_system.step(elapsed_ms);
+				world_system.handle_collisions();
+				rocket_system.step(elapsed_ms);
 				if (cameraZoomTime >= zoomDuration) {
 					cameraControlSystem.reset_camera();
 					createDeathScreen(&render_system, &game_state_system, { window_width_px / 2, window_height_px / 2 }, { window_width_px, window_height_px });
