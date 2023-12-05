@@ -126,7 +126,7 @@ Ishraq:
 
 ## Milestone 4
 
-In this final milestone, we integrated an external software library (GLText) for text rendering, allowing us to dynamically display key information such as lives, ammo count and current weapons through UI elements. On the visual front, we tackled platform art layout issues and fixed the player-winning screen to display the correct winner. There were improvements in stability with fixes for potential crashes related to mouse click handling. We also added a story to include some narrative in the game experience. In addition, we updated assets across menus, maps, and backgrounds refreshing the maps for more cleaner and aesthetically pleasing visuals. Some other rendering changes include an electric touch for powerups. Lastly, various balance changes were made to the guns and powerups while also introducing an initial invincibility upon player respawning to ensure fair and balanced gameplay.
+In this final milestone, we integrated an external software library (GLText) for text rendering, allowing us to dynamically display key information such as lives, ammo count and current weapons through UI elements. On the visual front, we tackled platform art layout issues and fixed the player-winning screen to display the correct winner. There were improvements in stability with fixes for potential crashes related to mouse click handling. We also added a story to include some narrative in the game experience. In addition, we updated assets across menus, maps, and backgrounds refreshing the maps for more cleaner and aesthetically pleasing visuals. Some other rendering changes include an electric touch for powerups. Along with that we also implemented camera controls so that the camera focuses on winning player and follows it. Lastly, various balance changes were made to the guns and powerups while also introducing an initial invincibility upon player respawning to ensure fair and balanced gameplay.
 
 Danny:
 - Incorporated external software library text rendering to render text in our game
@@ -153,6 +153,11 @@ Seraj:
 - Implemented text showing then fading to highlight when the player dies [WorldSystem::step() lines 226-254]
 - Implemented bullet prediction effect so that bullets light up with the shooter color when it’s predicted to hit the other player[PhysicsSystem::predictCollisionBetweenPlayerAndBullet()]
 - Implemented electric effect for bullets and powerups
+
+Akshat:
+- Implemeneted a camera control system which focuses on the winner and follows it for a few seconds before transitioning to end game screen [camera_control_system.cpp and camera_control_system.hpp]
+- Updated the projection matrix in render system to a new projection matrix which also uses camera's position and scale[render_system::createProjectionMatrix()]
+- Incorporated these changes in main.cpp to correctly transition between states
 
 Ishraq:
 - Worked on assisting other teammates with their tasks, such as adding buttons to level selection screen [MainMenuSystem::initializeMainMenu()]
