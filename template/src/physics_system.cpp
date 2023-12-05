@@ -161,11 +161,31 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndPowerups() {
 	}
 }
 
+bool PhysicsSystem::predictCollisionBetweenPlayerAndBullet(const Mesh* mesh, Motion& player_motion, Motion& bullet_motion, float timeToCollision) {
+	// Calculate future positions based on velocities and time
+	vec2 futurePosition_i = player_motion.position + player_motion.velocity * timeToCollision;
+
+	vec2 futurePosition_j = bullet_motion.position + bullet_motion.velocity * timeToCollision;
+
+	vec2 temp_i = player_motion.position;
+	vec2 temp_j = bullet_motion.position;
+
+	player_motion.position = futurePosition_i;
+	bullet_motion.position = futurePosition_j;
+
+	// Use the provided meshIntersectsMotion function to check for collision
+	bool collisionPredicted = meshIntersectsMotion(mesh, bullet_motion, player_motion);
+	player_motion.position = temp_i;
+	bullet_motion.position = temp_j;
+
+	return collisionPredicted;
+}
+
 void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
     auto& motion_container = registry.motions;
     auto& players_container = registry.players;
     auto& bullets_container = registry.bullets;
-
+	float timeToCollision = 0.4f;
     // Check for collisions between players and bullets
 	for(uint i = 0; i < players_container.components.size(); i++)
 	{
@@ -181,7 +201,16 @@ void PhysicsSystem::checkCollisionBetweenPlayersAndBullets() {
 			if (!bullet.isHitscan) { // compute collisions only if bullet is not hitscan
 				Motion& motion_j = motion_container.get(entity_j);
 				const Mesh* bullet_mesh = registry.meshPtrs.get(entity_j);
+				if (bullet.shooter != entity_i && predictCollisionBetweenPlayerAndBullet(bullet_mesh, motion_i, motion_j, timeToCollision)) {
+					Player& player = registry.players.get(entity_i);
 
+					if (player.color == vec3(1.f, 0, 0)) {
+						registry.greenBullet.emplace_with_duplicates(entity_j);
+					}
+					else {
+						registry.redBullet.emplace_with_duplicates(entity_j);
+					}
+				}
 				if (bullet.shooter != entity_i && meshIntersectsMotion(bullet_mesh, motion_j, motion_i))
 				{
 					// Create a collisions event

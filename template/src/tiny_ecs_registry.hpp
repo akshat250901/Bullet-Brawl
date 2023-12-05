@@ -48,6 +48,8 @@ public:
 	ComponentContainer<Text> texts;
 	ComponentContainer<StoryFrame> storyFrames;
 	ComponentContainer<TextDeathLog> deathLog;
+	ComponentContainer<BulletShooter> redBullet;
+	ComponentContainer<BulletShooter> greenBullet;
 
 	ComponentContainer<PopupIndicator> popupIndicator;
 	// ComponentContainer<Button> buttons;
@@ -88,8 +90,10 @@ public:
 		registry_list.push_back(&invincibility);
 		registry_list.push_back(&texts);
 		registry_list.push_back(&storyFrames);
-		registry_list.push_back(&deathLog);
 
+		registry_list.push_back(&deathLog);
+		registry_list.push_back(&redBullet);
+		registry_list.push_back(&greenBullet);
 
 		// Collisions
 		registry_list.push_back(&playerPlatformCollisions);

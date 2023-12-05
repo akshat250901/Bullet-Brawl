@@ -219,7 +219,7 @@ Entity createBullet(RenderSystem* renderer, Entity gunEntity) {
  	bulletMotion.position = { bulletSpawnXPos, posGun.y };
 
 	// Set color of bullet
-	registry.colors.insert(entity, { 255.0f, 255.0f, 255.0f });
+	registry.colors.insert(entity, { 20.0f, 60.0f, 80.0f });
 
 	// Set bullet stats
 	Bullet& bullet = registry.bullets.emplace(entity);
@@ -232,7 +232,7 @@ Entity createBullet(RenderSystem* renderer, Entity gunEntity) {
 	registry.renderRequests.insert(
 		entity,
 		{ TEXTURE_ASSET_ID::TEXTURE_COUNT, // TEXTURE_COUNT indicates that no texture is needed
-			EFFECT_ASSET_ID::COLOURED,
+			EFFECT_ASSET_ID::BULLET,
 			GEOMETRY_BUFFER_ID::BULLET });
 
 	return entity;

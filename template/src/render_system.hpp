@@ -82,6 +82,7 @@ class RenderSystem {
 		shader_path("water"),
 		shader_path("background"),
 		shader_path("animated"),
+		shader_path("bullet"),
 	};
 
 	std::array<GLuint, geometry_count> vertex_buffers;
