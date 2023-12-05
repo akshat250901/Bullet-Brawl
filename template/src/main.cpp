@@ -89,12 +89,13 @@ int main()
 			}
 			if (isCameraZooming) {
 				cameraZoomTime += elapsed_ms;
-				cameraControlSystem.update_camera(elapsed_ms);
 				movement_system.step(elapsed_ms);
-				player_respawn_system.step();
+				cameraControlSystem.update_camera(elapsed_ms);
+				out_of_bounds_arrow_system.step();
+				gun_system.step(elapsed_ms);
 				world_system.step(elapsed_ms);
 				physics_system.step(elapsed_ms);
-				gun_system.step(elapsed_ms);
+				random_drops_system.step(elapsed_ms);
 				animation_system.step(elapsed_ms);
 				sound_system.step(elapsed_ms);
 				world_system.handle_collisions();

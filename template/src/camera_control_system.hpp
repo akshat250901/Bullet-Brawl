@@ -41,7 +41,6 @@ private:
     const float focusDuration = 6000.0f; // Duration in seconds to focus on the winner
     const float targetScale = 3.0f;   // Target zoom level for focusing
     const float lerpRate = 0.05f;      // Rate of interpolation for smoothness
-    bool isPlayerInView(glm::vec2& playerPos, glm::vec2& topLeft, glm::vec2& bottomRight);
     glm::vec2 initialCameraPos = glm::vec2(0.0f, 0.0f);
     float initialCameraScale = 1.0f;
 };

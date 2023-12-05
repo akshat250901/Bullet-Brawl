@@ -266,11 +266,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-
 	upKey = false;
 	downKey = false;
 	rightKey = false;
 	leftKey = false;
+
 
 	printf("Restarting\n");
 
