@@ -127,7 +127,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 		glUniform3fv(color_uloc, 1, (float*)&entityColor);
 		gl_has_errors();
 
-		if (registry.greenBullet.has(entity)) {
+		/*if (registry.greenBullet.has(entity)) {
 			GLint light_up_uloc = glGetUniformLocation(program, "light_up_green");
 			GLint light_up_uloc_red = glGetUniformLocation(program, "light_up_red");
 			assert(light_up_uloc >= 0);
@@ -157,7 +157,7 @@ void RenderSystem::drawTexturedMesh(Entity entity,
 			glUniform1i(light_up_uloc_red, (float)0.0f);
 			glUniform1i(light_up_uloc_green, (float)0.0f);
 			gl_has_errors();
-		}
+		}*/
 		
 	}
 	else if (render_request.used_effect == EFFECT_ASSET_ID::COLOURED) {
