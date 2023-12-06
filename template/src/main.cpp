@@ -68,7 +68,7 @@ int main()
 
 	bool isCameraZooming = false;
 	float cameraZoomTime = 0.0f;
-	float zoomDuration = 6000.0f;
+	float zoomDuration = 4000.0f;
 
 	// variable timestep loop
 	auto t = Clock::now();

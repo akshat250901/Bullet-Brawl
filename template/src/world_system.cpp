@@ -733,11 +733,8 @@ void WorldSystem::on_key(int key, int action, int mod) {
 	}
 
 	if (!paused) {
-		if (game_state_system->get_current_state() == 2) {
-			handle_player(key, action, player);
-		}
+		handle_player(key, action, player);
 		handle_player(key, action, player2);
-		
 
 		// Resetting game
 		if (action == GLFW_RELEASE && key == GLFW_KEY_7) {

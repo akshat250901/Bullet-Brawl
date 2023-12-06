@@ -19,29 +19,40 @@ void CameraControlSystem::focus_on_winner(float elapsed_ms) {
     if (elapsedTime < focusDuration) {
         glm::vec2 winnerPosition = get_winner_position();
 
-        // Check if the winnerPosition is within the visible area
+        
         float leftBoundary = camera.position.x;
         float rightBoundary = camera.position.x + window_width_px / camera.scale;
         float topBoundary = camera.position.y;
         float bottomBoundary = camera.position.y + window_height_px / camera.scale;
 
-        bool playerInsideVisibleArea =
-            (winnerPosition.x >= leftBoundary) && (winnerPosition.x <= rightBoundary) &&
-            (winnerPosition.y >= topBoundary) && (winnerPosition.y <= bottomBoundary);
+       
+        float horizontalBuffer = window_width_px / (4 * camera.scale);
+        float verticalBuffer = window_height_px / (4 * camera.scale);
 
-        if (playerInsideVisibleArea) {
-            glm::vec2 centeredCameraPosition = winnerPosition - glm::vec2(window_width_px / (2 * camera.scale), window_height_px / (2 * camera.scale));
-            camera.position = lerp(camera.position, centeredCameraPosition, lerpRate);
-            camera.scale = lerp<float>(camera.scale, targetScale, lerpRate);
-            camera.position.x = std::max(camera.position.x, leftBoundary);
-            camera.position.x = std::min(camera.position.x, rightBoundary);
-            camera.position.y = std::max(camera.position.y, topBoundary);
-            camera.position.y = std::min(camera.position.y, bottomBoundary);
-            elapsedTime += elapsed_ms; // Increment elapsed time by the time since the last frame
+        
+        if (winnerPosition.x < leftBoundary + horizontalBuffer) {
+            camera.position.x = winnerPosition.x - horizontalBuffer;
         }
-        else {
-            // Player is outside the visible area, so don't zoom
+        else if (winnerPosition.x > rightBoundary - horizontalBuffer) {
+            camera.position.x = winnerPosition.x - (window_width_px / camera.scale) + horizontalBuffer;
         }
+
+        if (winnerPosition.y < topBoundary + verticalBuffer) {
+            camera.position.y = winnerPosition.y - verticalBuffer;
+        }
+        else if (winnerPosition.y > bottomBoundary - verticalBuffer) {
+            camera.position.y = winnerPosition.y - (window_height_px / camera.scale) + verticalBuffer;
+        }
+
+        // Interpolate camera position and scale
+        glm::vec2 targetPosition = { std::max(camera.position.x, leftBoundary), std::max(camera.position.y, topBoundary) };
+        //glm::vec2 centeredCameraPosition = winnerPosition - glm::vec2(window_width_px / (2 * camera.scale), window_height_px / (2 * camera.scale));
+        camera.position = lerp(camera.position, targetPosition, lerpRate);
+        camera.scale = lerp<float>(camera.scale, targetScale, lerpRate);
+        camera.position.x = std::min(camera.position.x, rightBoundary);
+        camera.position.y = std::max(camera.position.y, topBoundary);
+        camera.position.y = std::min(camera.position.y, bottomBoundary);
+        elapsedTime += elapsed_ms; // Increment elapsed time
     }
     else {
         // Reset camera after focus duration
@@ -49,7 +60,6 @@ void CameraControlSystem::focus_on_winner(float elapsed_ms) {
         camera.scale = initialCameraScale;
         elapsedTime = 0.0f; // Reset the timer
     }
-
 }
 
 
@@ -67,8 +77,6 @@ glm::vec2 CameraControlSystem::get_winner_position() {
 
         if (player_i.lives != 0) {
             Motion& player_motion = registry.motions.get(entity_i);
-            vec2 pos = player_motion.position;
-            std::cout << "Player Position: " << pos.x << ", " << pos.y << std::endl;
             return player_motion.position;
         }
 
