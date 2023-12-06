@@ -253,10 +253,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 		}
 	}
 
-	if (game_state_system->get_current_state() != 3) {
+	/*if (game_state_system->get_current_state() != 3) {
 		// reduce window brightness if any of the present salmons is dying
 		screen.screen_darken_factor = 1 - min_timer_ms / 1000;
-	}
+	}*/
+	
 
 	return true;
 }
@@ -265,11 +266,11 @@ bool WorldSystem::step(float elapsed_ms_since_last_update) {
 void WorldSystem::restart_game() {
 	// Debugging for memory/component leaks
 	registry.list_all_components();
-
 	upKey = false;
 	downKey = false;
 	rightKey = false;
 	leftKey = false;
+
 
 	printf("Restarting\n");
 
@@ -732,11 +733,8 @@ void WorldSystem::on_key(int key, int action, int mod) {
 	}
 
 	if (!paused) {
-		if (game_state_system->get_current_state() == 2) {
-			handle_player(key, action, player);
-		}
+		handle_player(key, action, player);
 		handle_player(key, action, player2);
-		
 
 		// Resetting game
 		if (action == GLFW_RELEASE && key == GLFW_KEY_7) {
