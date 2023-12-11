@@ -188,3 +188,6 @@ One player in M2 commented that occasionally the knockback of the guns felt too 
 A player in M2 mentioned that the powerups felt underwhelming and this was addressed by improving the powers granted by powerups across the board. Speed boost was drastically increased and jump boost along with triple jump and their durations increased. This still felt underwhelming as during playtests with friends I noticed players still were not picking up powerups. In this case, I added a 30% knockback resistance to every powerup so that players would be more incentivized to pick up powerups.
 
 Lastly, various comments in M2 mentioned how the game felt like it lasted forever and dragged on too long. To address this we increased the knockback of all guns across the board, we also reduced the gun model sizes of the sniper and shotgun to decrease the distance where the bullet spawns. Overall the knockback increases made it such that it was far easier to get knocked off the platforms compared to before increasing the pace and tension of the game. This made it so that it was far more likely to kill the other player and thus rounds became shorter and fixed the issue of games feeling like they lasted too long. 
+
+## References
+player_fall.wav: https://freesound.org/people/thecheeseman/sounds/44429/
